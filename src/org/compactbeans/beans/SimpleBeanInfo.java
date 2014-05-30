@@ -27,7 +27,7 @@ package org.compactbeans.beans;
 
 /**
  * This is a support class to make it easier for people to provide
- * BeanInfo classes.
+ * <code>BeanInfo</code> classes.
  * <p>
  * It defaults to providing "noop" information, and can be selectively
  * overridden to provide more explicit information on chosen topics.

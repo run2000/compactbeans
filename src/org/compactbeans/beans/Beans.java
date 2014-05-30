@@ -65,8 +65,8 @@ public final class Beans {
      * instance of that class.
      *
      * @param     cls         the class-loader from which we should create
-     *                        the bean.  If this is null, then the system
-     *                        class-loader is used.
+     *                        the bean.  If this is <code>null</code>,
+     *                        then the system class-loader is used.
      * @param     beanName    the name of the bean within the class-loader.
      *                        For example "sun.beanbox.foobah"
      *

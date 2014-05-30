@@ -96,23 +96,24 @@ public class PropertyChangeEvent extends java.util.EventObject {
     }
 
     /**
-     * Sets the propagationId object for the event.
+     * Sets the <code>propagationId</code> object for the event.
      *
-     * @param propagationId  The propagationId object for the event.
+     * @param propagationId The <code>propagationId</code> object for the event.
      */
     public void setPropagationId(Object propagationId) {
         this.propagationId = propagationId;
     }
 
     /**
-     * The "propagationId" field is reserved for future use.  In Beans 1.0
-     * the sole requirement is that if a listener catches a PropertyChangeEvent
-     * and then fires a PropertyChangeEvent of its own, then it should
-     * make sure that it propagates the propagationId field from its
-     * incoming event to its outgoing event.
+     * The <code>propagationId</code> field is reserved for future use.
+     * In Beans 1.0 the sole requirement is that if a listener catches a
+     * <code>PropertyChangeEvent</code> and then fires a
+     * <code>PropertyChangeEvent</code> of its own, then it should
+     * make sure that it propagates the <code>propagationId</code> field
+     * from its incoming event to its outgoing event.
      *
-     * @return the propagationId object associated with a bound/constrained
-     *          property update.
+     * @return the <code>propagationId</code> object associated with a
+     * bound/constrained property update.
      */
     public Object getPropagationId() {
         return propagationId;
