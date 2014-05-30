@@ -2,7 +2,7 @@ Overview
 --------
 
 This is a separated-out implementation of the java.beans.Introspector and
-associated Descriptor classes, targeted at Java 1.8 compact profile 1.
+associated Descriptor classes, targeted at Java 1.8SE Compact Profile 1.
 
 The code is based on the openjdk7u40 source bundle, downloaded from
 https://jdk7.java.net/source.html
