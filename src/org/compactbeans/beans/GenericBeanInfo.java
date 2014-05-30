@@ -60,7 +60,15 @@ final class GenericBeanInfo implements BeanInfo {
         return properties;
     }
 
+    public int getDefaultPropertyIndex() {
+        return -1;
+    }
+
     public MethodDescriptor[] getMethodDescriptors() {
         return methods;
+    }
+
+    public int getDefaultEventIndex() {
+        return -1;
     }
 }

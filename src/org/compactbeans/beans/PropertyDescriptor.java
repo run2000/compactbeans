@@ -39,6 +39,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
     private Reference<Method> readMethodRef;
     private Reference<Method> writeMethodRef;
 
+    private boolean bound;
+
     // The base name of the method name which will be prefixed with the
     // read and write method. If name == "foo" then the baseName is "Foo"
     private String baseName;
@@ -150,6 +152,31 @@ public class PropertyDescriptor implements FeatureDescriptor {
         } catch (IntrospectionException ex) {
             // Fall through
         }
+
+        bound = x.bound | y.bound;
+    }
+
+    /**
+     * Creates <code>PropertyDescriptor</code> for the specified bean
+     * with the specified name and methods to read/write the property value.
+     *
+     * @param bean the type of the target bean
+     * @param base the base name of the property (the rest of the method name)
+     * @param read the method used for reading the property value
+     * @param write the method used for writing the property value
+     * @throws IntrospectionException if an exception occurs during introspection
+     *
+     * @since 1.7
+     */
+    PropertyDescriptor(Class<?> bean, String base, Method read, Method write) throws IntrospectionException {
+        if (bean == null) {
+            throw new IntrospectionException("Target Bean class is null");
+        }
+        setClass0(bean);
+        name = NameGenerator.decapitalize(base);
+        setReadMethod(read);
+        setWriteMethod(write);
+        this.baseName = base;
     }
 
     /*
@@ -165,6 +192,17 @@ public class PropertyDescriptor implements FeatureDescriptor {
         writeMethodRef = old.writeMethodRef;
         readMethodName = old.readMethodName;
         writeMethodName = old.writeMethodName;
+        bound = old.bound;
+    }
+
+    void updateGenericsFor(Class<?> type) {
+        setClass0(type);
+        try {
+            setPropertyType(findPropertyType(getReadMethod0(), getWriteMethod0()));
+        }
+        catch (IntrospectionException exception) {
+            setPropertyType(null);
+        }
     }
 
     /**
@@ -340,6 +378,26 @@ public class PropertyDescriptor implements FeatureDescriptor {
         return RefUtil.getObject(writeMethodRef);
     }
 
+    /**
+     * Updates to "bound" properties will cause a "PropertyChange" event to
+     * get fired when the property is changed.
+     *
+     * @return <code>true</code> if this is a bound property.
+     */
+    public boolean isBound() {
+        return bound;
+    }
+
+    /**
+     * Updates to "bound" properties will cause a "PropertyChange" event to
+     * get fired when the property is changed.
+     *
+     * @param bound <code>true</code> if this is a bound property.
+     */
+    void setBound(boolean bound) {
+        this.bound = bound;
+    }
+
     // Calculate once since capitalize() is expensive.
     String getBaseName() {
         if (baseName == null) {
@@ -384,6 +442,18 @@ public class PropertyDescriptor implements FeatureDescriptor {
     }
 
     /**
+     * Gets any explicit PropertyEditor Class that has been registered
+     * for this property.
+     *
+     * @return this will return <code>null</code>,
+     *          indicating that no special editor has been registered
+     */
+    public Class<?> getPropertyEditorClass() {
+        // We don't ever look for property editors in the introspection code
+        return null;
+    }
+
+    /**
      * Compares this <code>PropertyDescriptor</code> against the specified object.
      * Returns true if the objects are the same. Two <code>PropertyDescriptor</code>s
      * are the same if the read, write, property types, property editor and
@@ -410,6 +480,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
             }
 
             return (getPropertyType() == other.getPropertyType()) &&
+                    (bound == other.isBound()) &&
                     (writeMethodName == other.writeMethodName) &&
                     (readMethodName == other.readMethodName);
         }
@@ -480,6 +551,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
         result = 37 * result + ((readMethodName == null) ? 0 :
                 readMethodName.hashCode());
         result = 37 * result + getName().hashCode();
+        result = 37 * result + ((bound) ? 1 : 0);
 
         return result;
     }

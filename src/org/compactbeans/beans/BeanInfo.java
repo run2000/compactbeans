@@ -53,6 +53,19 @@ public interface BeanInfo {
     EventSetDescriptor[] getEventSetDescriptors();
 
     /**
+     * A bean may have a "default" event that is the event that will
+     * mostly commonly be used by humans when using the bean.
+     * <p>
+     * Returns -1 if there is no default event.</p>
+     *
+     * @return Index of the default event in the
+     * <code>EventSetDescriptor</code> array returned by
+     * <code>getEventSetDescriptors</code>.
+     *
+     */
+    int getDefaultEventIndex();
+
+    /**
      * Gets the beans <code>PropertyDescriptor</code>s.
      * <p>
      * If a property is indexed, then its entry in the result array will
@@ -64,6 +77,19 @@ public interface BeanInfo {
      * properties supported by this bean.
      */
     PropertyDescriptor[] getPropertyDescriptors();
+
+    /**
+     * A bean may have a "default" property that is the property that will
+     * mostly commonly be initially chosen for update by humans who are
+     * customizing the bean.
+     * <p>
+     * Returns -1 if there is no default property.</p>
+     *
+     * @return  Index of the default property in the
+     * <code>PropertyDescriptor</code> array returned by
+     * <code>getPropertyDescriptors</code>.
+     */
+    int getDefaultPropertyIndex();
 
     /**
      * Gets the beans <code>MethodDescriptor</code>s.

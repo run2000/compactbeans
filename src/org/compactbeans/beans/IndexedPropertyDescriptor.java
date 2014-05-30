@@ -76,6 +76,54 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     }
 
     /**
+     * Creates <code>PropertyDescriptor</code> for the specified bean
+     * with the specified name and methods to read/write the property value.
+     *
+     * @param bean the type of the target bean
+     * @param base the base name of the property (the rest of the method name)
+     * @param read the method used for reading the property value
+     * @param write the method used for writing the property value
+     * @param readIndexed the method used for reading an indexed property value
+     * @param writeIndexed the method used for writing an indexed property value
+     * @thorws IntrospectionException if an exception occurs during introspection
+     *
+     * @since 1.7
+     */
+    IndexedPropertyDescriptor(Class<?> bean, String base, Method read, Method write, Method readIndexed, Method writeIndexed) throws IntrospectionException {
+        super(bean, base, read, write);
+
+        setIndexedReadMethod0(readIndexed);
+        setIndexedWriteMethod0(writeIndexed);
+
+        // Type checking
+        setIndexedPropertyType(findIndexedPropertyType(readIndexed, writeIndexed));
+    }
+
+    /*
+     * Package-private dup constructor
+     * This must isolate the new object from any changes to the old object.
+     */
+    IndexedPropertyDescriptor(IndexedPropertyDescriptor old) {
+        super(old);
+        indexedReadMethodRef = old.indexedReadMethodRef;
+        indexedWriteMethodRef = old.indexedWriteMethodRef;
+        indexedPropertyTypeRef = old.indexedPropertyTypeRef;
+        indexedWriteMethodName = old.indexedWriteMethodName;
+        indexedReadMethodName = old.indexedReadMethodName;
+    }
+
+    @Override
+    void updateGenericsFor(Class<?> type) {
+        super.updateGenericsFor(type);
+        try {
+            setIndexedPropertyType(findIndexedPropertyType(getIndexedReadMethod0(), getIndexedWriteMethod0()));
+        }
+        catch (IntrospectionException exception) {
+            setIndexedPropertyType(null);
+        }
+    }
+
+    /**
      * Gets the method that should be used to read an indexed
      * property value.
      *

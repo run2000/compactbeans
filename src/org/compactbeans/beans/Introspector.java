@@ -78,7 +78,7 @@ public final class Introspector {
      */
     public static BeanInfo getBeanInfo(Class<?> beanClass)
             throws IntrospectionException {
-        return getBeanInfo(beanClass, null, true);
+        return getBeanInfo(beanClass, null, ReflectUtil.isPackageAccessible(beanClass));
     }
 
     /**
@@ -133,19 +133,19 @@ public final class Introspector {
      *
      * @param beanClass the bean class to be analyzed
      * @param stopClass the parent class at which to stop the analysis
-     * @param useAllInfo <code>true</code> to indicate all BeanInfo that can
-     *     be discovered should be used, otherwise
-     *     <code>false</code> to indicate there is a stopping point
+     * @param useBeanInfoCache <code>true</code> to indicate the BeanInfo cache
+     *     should be used where possible, otherwise
+     *     <code>false</code> to avoid the BeanInfo cache
      * @return a BeanInfo object describing the target bean
      * @throws IntrospectionException if an exception occurs during introspection
      */
     private static BeanInfo getBeanInfo(Class<?> beanClass, Class<?> stopClass,
-            boolean useAllInfo) throws IntrospectionException {
+            boolean useBeanInfoCache) throws IntrospectionException {
         BeanInfo superBeanInfo;
         Class superClass = beanClass.getSuperclass();
         BeanInfo beanInfo;
 
-        if(useAllInfo) {
+        if(useBeanInfoCache) {
             beanInfo = IntrospectorSupport.getCachedBeanInfo(beanClass);
             if(beanInfo != null) {
                 return beanInfo;
@@ -153,7 +153,8 @@ public final class Introspector {
         }
 
         if ((superClass != null) && (superClass != stopClass)) {
-            superBeanInfo = getBeanInfo(superClass, stopClass, useAllInfo);
+            boolean newUseBeanInfoCache = useBeanInfoCache || (stopClass == null);
+            superBeanInfo = getBeanInfo(superClass, stopClass, newUseBeanInfoCache);
         } else {
             superBeanInfo = null;
         }
@@ -173,7 +174,7 @@ public final class Introspector {
 
         beanInfo = new GenericBeanInfo(bd, esds, pds, mds);
 
-        if(useAllInfo) {
+        if(useBeanInfoCache) {
             IntrospectorSupport.putCachedBeanInfo(beanClass, beanInfo);
         }
 
@@ -204,7 +205,7 @@ public final class Introspector {
      * information indirectly obtained from the target Class object.
      *
      * @param clz Class object to be flushed
-     * @throws NullPointerException If the Class object is null
+     * @throws NullPointerException If the Class object is <code>null</code>
      */
     public static void flushFromCaches(Class<?> clz) {
         IntrospectorSupport.flushFromCaches(clz);
@@ -216,6 +217,7 @@ public final class Introspector {
 
     private final Class beanClass;
     private final BeanInfo superBeanInfo;
+    private boolean propertyChangeSource;
 
     private Introspector(Class beanClass, BeanInfo superBeanInfo) {
         this.beanClass = beanClass;
@@ -247,7 +249,7 @@ public final class Introspector {
             // We have no explicit BeanInfo properties.  Check with our parent.
             PropertyDescriptor supers[] = superBeanInfo.getPropertyDescriptors();
             for (int i = 0; i < supers.length; i++) {
-                pdStore.addPropertyDescriptor(supers[i]);
+                pdStore.addPropertyDescriptor(beanClass, supers[i]);
             }
         }
 
@@ -282,30 +284,27 @@ public final class Introspector {
                 if (argCount == 0) {
                     if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
                         // Simple getter
-                        pd = new PropertyDescriptor(NameGenerator.decapitalize(name.substring(3)),
-                                method, null);
-                    } else if ((resultType == boolean.class) && name.startsWith(IntrospectorSupport.IS_PREFIX)) {
+                        pd = new PropertyDescriptor(this.beanClass, name.substring(3), method, null);
+                    } else if (resultType == boolean.class && name.startsWith(IntrospectorSupport.IS_PREFIX)) {
                         // Boolean getter
-                        pd = new PropertyDescriptor(NameGenerator.decapitalize(name.substring(2)),
-                                method, null);
+                        pd = new PropertyDescriptor(this.beanClass, name.substring(2), method, null);
                     }
                 } else if (argCount == 1) {
-                    if ((argTypes[0] == int.class) && name.startsWith(IntrospectorSupport.GET_PREFIX)) {
-                        pd = new IndexedPropertyDescriptor(
-                                NameGenerator.decapitalize(name.substring(3)),
-                                null, null,
-                                method, null);
-                    } else if ((resultType == void.class) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
+                    if (int.class.equals(argTypes[0]) && name.startsWith(IntrospectorSupport.GET_PREFIX)) {
+                        pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, method, null);
+                    } else if (void.class.equals(resultType) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
                         // Simple setter
-                        pd = new PropertyDescriptor(NameGenerator.decapitalize(name.substring(3)),
-                                null, method);
+                        pd = new PropertyDescriptor(this.beanClass, name.substring(3), null, method);
+//                        if (throwsException(method, PropertyVetoException.class)) {
+//                            pd.setConstrained(true);
+//                        }
                     }
                 } else if (argCount == 2) {
-                    if ((argTypes[0] == int.class) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
-                        pd = new IndexedPropertyDescriptor(
-                                NameGenerator.decapitalize(name.substring(3)),
-                                null, null,
-                                null, method);
+                        if (void.class.equals(resultType) && int.class.equals(argTypes[0]) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
+                        pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, null, method);
+//                        if (throwsException(method, PropertyVetoException.class)) {
+//                            pd.setConstrained(true);
+//                        }
                     }
                 }
             } catch (IntrospectionException ex) {
@@ -317,7 +316,12 @@ public final class Introspector {
             }
 
             if (pd != null) {
-                pdStore.addPropertyDescriptor(pd);
+                // If this class or one of its base classes is a PropertyChange
+                // source, then we assume that any properties we discover are "bound".
+                if (propertyChangeSource) {
+                    pd.setBound(true);
+                }
+                pdStore.addPropertyDescriptor(beanClass, pd);
             }
         }
 
@@ -590,109 +594,6 @@ public final class Introspector {
         }
     }
 
-
-    //======================================================================
-    // 			Create method descriptors
-    //======================================================================
-
-    /**
-     * @return An array of MethodDescriptors describing the private
-     * methods supported by the target bean.
-     */
-    private MethodDescriptor[] getTargetMethodInfo() {
-        // Methods maps from Method objects to MethodDescriptors
-        Map methods = new HashMap(60);
-
-        if (superBeanInfo != null) {
-            // We have no explicit BeanInfo methods.  Check with our parent.
-            MethodDescriptor supers[] = superBeanInfo.getMethodDescriptors();
-            for (int i = 0; i < supers.length; i++) {
-                addMethod(methods, supers[i]);
-            }
-        }
-
-        // Apply some reflection to the current class.
-
-        // First get an array of all the beans methods at this level
-        Method methodList[] = IntrospectorSupport.getPublicDeclaredMethods(beanClass);
-
-        // Now analyze each method.
-        for (int i = 0; i < methodList.length; i++) {
-            Method method = methodList[i];
-            if (method != null) {
-                MethodDescriptor md = new MethodDescriptor(method);
-                addMethod(methods, md);
-            }
-        }
-
-        // Allocate and populate the result array.
-        MethodDescriptor result[] = new MethodDescriptor[methods.size()];
-        result = (MethodDescriptor[]) methods.values().toArray(result);
-
-        return result;
-    }
-
-    private static void addMethod(Map methods, MethodDescriptor md) {
-        // We have to be careful here to distinguish method by both name
-        // and argument lists.
-        // This method gets called a *lot*, so we try to be efficient.
-        String name = md.getName();
-
-        MethodDescriptor old = (MethodDescriptor) methods.get(name);
-        if (old == null) {
-            // This is the common case.
-            methods.put(name, md);
-            return;
-        }
-
-        // We have a collision on method names.  This is rare.
-
-        // Check if old and md have the same type.
-        String[] p1 = md.getParamNames();
-        String[] p2 = old.getParamNames();
-
-        boolean match = false;
-        if (p1.length == p2.length) {
-            match = true;
-            for (int i = 0; i < p1.length; i++) {
-                if (p1[i] != p2[i]) {
-                    match = false;
-                    break;
-                }
-            }
-        }
-        if (match) {
-            MethodDescriptor composite = new MethodDescriptor(old, md);
-            methods.put(name, composite);
-            return;
-        }
-
-        // We have a collision on method names with different type signatures.
-        // This is very rare.
-
-        String longKey = makeQualifiedMethodName(name, p1);
-        old = (MethodDescriptor) methods.get(longKey);
-        if (old == null) {
-            methods.put(longKey, md);
-            return;
-        }
-        MethodDescriptor composite = new MethodDescriptor(old, md);
-        methods.put(longKey, composite);
-    }
-
-    /**
-     * Creates a key for a method in a method cache.
-     */
-    private static String makeQualifiedMethodName(String name, String[] params) {
-        StringBuilder sb = new StringBuilder(name);
-        sb.append('=');
-        for (int i = 0; i < params.length; i++) {
-            sb.append(':');
-            sb.append(params[i]);
-        }
-        return sb.toString();
-    }
-
     //======================================================================
     // 			Create event descriptors
     //======================================================================
@@ -703,10 +604,6 @@ public final class Introspector {
      */
     private EventSetDescriptor[] getTargetEventInfo() throws IntrospectionException {
         Map events = new HashMap();
-
-        // Check if the bean has its own BeanInfo that will provide
-        // explicit information.
-        EventSetDescriptor[] explicitEvents = null;
 
         if (superBeanInfo != null) {
             // We have no explicit BeanInfo events.  Check with our parent.
@@ -814,7 +711,7 @@ public final class Introspector {
                     String listenerName = (String) keys.next();
                     // Skip any "add" which doesn't have a matching "remove" or
                     // a listener name that doesn't end with Listener
-                    if (removes.get(listenerName) == null || !listenerName.endsWith("Listener")) {
+                    if ((removes.get(listenerName) == null) || !listenerName.endsWith("Listener")) {
                         continue;
                     }
                     String eventName = NameGenerator.decapitalize(listenerName.substring(0, listenerName.length()-8));
@@ -868,11 +765,9 @@ public final class Introspector {
 
     private void addEvent(Map events, EventSetDescriptor esd) {
         String key = esd.getName();
-/*
-        if (esd.getName().equals("propertyChange")) {
+        if ("propertyChange".equals(esd.getName())) {
             propertyChangeSource = true;
         }
-*/
         EventSetDescriptor old = (EventSetDescriptor)events.get(key);
         if (old == null) {
             events.put(key, esd);
@@ -882,6 +777,107 @@ public final class Introspector {
         events.put(key, composite);
     }
 
+    //======================================================================
+    // 			Create method descriptors
+    //======================================================================
+
+    /**
+     * @return An array of MethodDescriptors describing the private
+     * methods supported by the target bean.
+     */
+    private MethodDescriptor[] getTargetMethodInfo() {
+        // Methods maps from Method objects to MethodDescriptors
+        Map methods = new HashMap(60);
+
+        if (superBeanInfo != null) {
+            // We have no explicit BeanInfo methods.  Check with our parent.
+            MethodDescriptor supers[] = superBeanInfo.getMethodDescriptors();
+            for (int i = 0; i < supers.length; i++) {
+                addMethod(methods, supers[i]);
+            }
+        }
+
+        // Apply some reflection to the current class.
+
+        // First get an array of all the beans methods at this level
+        Method methodList[] = IntrospectorSupport.getPublicDeclaredMethods(beanClass);
+
+        // Now analyze each method.
+        for (int i = 0; i < methodList.length; i++) {
+            Method method = methodList[i];
+            if (method != null) {
+                MethodDescriptor md = new MethodDescriptor(method);
+                addMethod(methods, md);
+            }
+        }
+
+        // Allocate and populate the result array.
+        MethodDescriptor result[] = new MethodDescriptor[methods.size()];
+        result = (MethodDescriptor[]) methods.values().toArray(result);
+
+        return result;
+    }
+
+    private static void addMethod(Map methods, MethodDescriptor md) {
+        // We have to be careful here to distinguish method by both name
+        // and argument lists.
+        // This method gets called a *lot*, so we try to be efficient.
+        String name = md.getName();
+
+        MethodDescriptor old = (MethodDescriptor) methods.get(name);
+        if (old == null) {
+            // This is the common case.
+            methods.put(name, md);
+            return;
+        }
+
+        // We have a collision on method names.  This is rare.
+
+        // Check if old and md have the same type.
+        String[] p1 = md.getParamNames();
+        String[] p2 = old.getParamNames();
+
+        boolean match = false;
+        if (p1.length == p2.length) {
+            match = true;
+            for (int i = 0; i < p1.length; i++) {
+                if (p1[i] != p2[i]) {
+                    match = false;
+                    break;
+                }
+            }
+        }
+        if (match) {
+            MethodDescriptor composite = new MethodDescriptor(old, md);
+            methods.put(name, composite);
+            return;
+        }
+
+        // We have a collision on method names with different type signatures.
+        // This is very rare.
+
+        String longKey = makeQualifiedMethodName(name, p1);
+        old = (MethodDescriptor) methods.get(longKey);
+        if (old == null) {
+            methods.put(longKey, md);
+            return;
+        }
+        MethodDescriptor composite = new MethodDescriptor(old, md);
+        methods.put(longKey, composite);
+    }
+
+    /**
+     * Creates a key for a method in a method cache.
+     */
+    private static String makeQualifiedMethodName(String name, String[] params) {
+        StringBuilder sb = new StringBuilder(name);
+        sb.append('=');
+        for (int i = 0; i < params.length; i++) {
+            sb.append(':');
+            sb.append(params[i]);
+        }
+        return sb.toString();
+    }
 
 
     /**
@@ -895,12 +891,37 @@ public final class Introspector {
         /**
          * Adds the property descriptor to the list store.
          */
-        public void addPropertyDescriptor(PropertyDescriptor pd) {
+        public void addPropertyDescriptor(Class beanClass, PropertyDescriptor pd) {
             String propName = pd.getName();
             List list = (List) pdStore.get(propName);
             if (list == null) {
                 list = new ArrayList();
                 pdStore.put(propName, list);
+            }
+            if (beanClass != pd.getClass0()) {
+                // replace existing property descriptor
+                // only if we have types to resolve
+                // in the context of this.beanClass
+                Method read = pd.getReadMethod();
+                Method write = pd.getWriteMethod();
+                boolean cls = true;
+                if (read != null) cls = cls && read.getGenericReturnType() instanceof Class;
+                if (write != null) cls = cls && write.getGenericParameterTypes()[0] instanceof Class;
+                if (pd instanceof IndexedPropertyDescriptor) {
+                    IndexedPropertyDescriptor ipd = (IndexedPropertyDescriptor) pd;
+                    Method readI = ipd.getIndexedReadMethod();
+                    Method writeI = ipd.getIndexedWriteMethod();
+                    if (readI != null) cls = cls && readI.getGenericReturnType() instanceof Class;
+                    if (writeI != null) cls = cls && writeI.getGenericParameterTypes()[1] instanceof Class;
+                    if (!cls) {
+                        pd = new IndexedPropertyDescriptor(ipd);
+                        pd.updateGenericsFor(beanClass);
+                    }
+                }
+                else if (!cls) {
+                    pd = new PropertyDescriptor(pd);
+                    pd.updateGenericsFor(beanClass);
+                }
             }
             list.add(pd);
         }

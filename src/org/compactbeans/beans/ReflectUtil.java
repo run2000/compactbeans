@@ -39,7 +39,7 @@ final class ReflectUtil {
      * a non-public interface (i.e. may be in a non-restricted package),
      * also check the package access on the proxy interfaces.
      */
-    private static void checkPackageAccess(Class<?> clazz) {
+    public static void checkPackageAccess(Class<?> clazz) {
         checkPackageAccess(clazz.getName());
         if (isNonPublicProxyClass(clazz)) {
             checkProxyPackageAccess(clazz);
@@ -52,7 +52,7 @@ final class ReflectUtil {
      * available and the caller attempts to load a class on behalf of
      * the true caller (application).
      */
-    private static void checkPackageAccess(String name) {
+    public static void checkPackageAccess(String name) {
         SecurityManager s = System.getSecurityManager();
         if (s != null) {
             String cname = name.replace('/', '.');

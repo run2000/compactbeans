@@ -129,7 +129,7 @@ final class IntrospectorSupport {
      * information indirectly obtained from the target Class object.</p>
      *
      * @param clz Class object to be flushed.
-     * @throws NullPointerException If the Class object is null.
+     * @throws NullPointerException If the Class object is <code>null</code>.
      */
     static void flushFromCaches(Class<?> clz) {
         if (clz == null) {
