@@ -51,10 +51,10 @@ final class GenericArrayTypeImpl
 
 
     /**
-     * Returns  a <tt>Type</tt> object representing the component type
+     * Returns a <code>Type</code> object representing the component type
      * of this array.
      *
-     * @return  a <tt>Type</tt> object representing the component type
+     * @return a <code>Type</code> object representing the component type
      *     of this array
      * @since 1.5
      */
@@ -62,6 +62,7 @@ final class GenericArrayTypeImpl
         return genericComponentType; // return cached component type
     }
 
+    @Override
     public String toString() {
         Type componentType = getGenericComponentType();
         StringBuilder sb = new StringBuilder();

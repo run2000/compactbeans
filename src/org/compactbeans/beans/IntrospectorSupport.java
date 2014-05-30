@@ -31,11 +31,23 @@ import java.util.EventListener;
 import java.util.EventObject;
 
 /**
- * Support methods, including the WeakCache, for the Introspector.
+ * Support methods, including the caches, for the Introspector.
+ * Factored out from Introspector and Descriptor classes.
+ * <p>
+ * There are two caches managed here.</p>
+ * <ol>
+ *     <li>The <code>declaredMethodCache</code>. This is a weak mapping of class
+ *     objects to the publicly declared methods. This is accessed and
+ *     updated <em>during</em> introspection.</li>
+ *     <li>The <code>ThreadGroupContext</code> cache. This caches entire
+ *     <code>BeanInfo</code> objects. It is updated with the <em>results</em>
+ *     of introspection, and queried <em>instead</em> of introspection.</li>
+ * </ol>
+ * <p>They are both synchronized on the same mutex object.</p>
  */
 final class IntrospectorSupport {
 
-    // Static Caches to speed up introspection.
+    // Static Cache to speed up introspection.
     private static WeakCache<Class<?>, Method[]> declaredMethodCache =
             new WeakCache<Class<?>, Method[]>();
 
@@ -50,19 +62,59 @@ final class IntrospectorSupport {
     private IntrospectorSupport() {
     }
 
+    //======================================================================
+    // Caching and cache management.
+    //======================================================================
+
+    /**
+     * A cache of BeanInfo objects previously built by the introspector.
+     * Note that this only makes sense when the BeanInfo is fully populated,
+     * ie. when there is no <code>stopClass</code> that prematurely
+     * terminates the introspector search.
+     *
+     * @param beanClass the previously cached bean class
+     * @return the BeanInfo cached from previous introspection, or
+     * <code>null</code> if there is no previously cached bean info
+     */
+    static BeanInfo getCachedBeanInfo(Class<?> beanClass) {
+        ThreadGroupContext context = ThreadGroupContext.getContext();
+        BeanInfo beanInfo;
+
+        synchronized (declaredMethodCache) {
+            beanInfo = context.getBeanInfo(beanClass);
+        }
+        return beanInfo;
+    }
+
+    /**
+     * A cache of BeanInfo objects previously built by the introspector.
+     * Note that this only makes sense when the BeanInfo is fully populated,
+     * ie. when there is no <code>stopClass</code> that prematurely
+     * terminates the introspector search.
+     *
+     * @param beanClass the introspected bean class
+     * @param beanInfo the BeanInfo data to be cached
+     */
+    static void putCachedBeanInfo(Class<?> beanClass, BeanInfo beanInfo) {
+        ThreadGroupContext context = ThreadGroupContext.getContext();
+
+        synchronized (declaredMethodCache) {
+            context.putBeanInfo(beanClass, beanInfo);
+        }
+    }
+
     /**
      * Flush all of the Introspector's internal caches.  This method is
      * not normally required.  It is normally only needed by advanced
      * tools that update existing "Class" objects in-place and need
      * to make the Introspector re-analyze existing Class objects.
      */
-/*
     static void flushCaches() {
         synchronized (declaredMethodCache) {
+            ThreadGroupContext.getContext().clearBeanInfoCache();
             declaredMethodCache.clear();
         }
     }
-*/
 
     /**
      * Flush the Introspector's internal cached information for a given class.
@@ -79,16 +131,15 @@ final class IntrospectorSupport {
      * @param clz Class object to be flushed.
      * @throws NullPointerException If the Class object is null.
      */
-/*
     static void flushFromCaches(Class<?> clz) {
         if (clz == null) {
             throw new NullPointerException();
         }
         synchronized (declaredMethodCache) {
+            ThreadGroupContext.getContext().removeBeanInfo(clz);
             declaredMethodCache.put(clz, null);
         }
     }
-*/
 
     /*
      * Internal method to return *public* methods within a class.
@@ -296,5 +347,26 @@ final class IntrospectorSupport {
             return false;
         }
         return isSubclass(TypeResolver.erase(TypeResolver.resolveInClass(beanClass, argTypes[0])), EventObject.class);
+    }
+
+    /**
+     * Package private helper method for Descriptor .equals methods.
+     *
+     * @param a first method to compare
+     * @param b second method to compare
+     * @return boolean to indicate that the methods are equivalent
+     */
+    static boolean compareMethods(Method a, Method b) {
+        // Note: perhaps this should be a protected method in FeatureDescriptor
+        if ((a == null) != (b == null)) {
+            return false;
+        }
+
+        if ((a != null) && (b != null)) {
+            if (!a.equals(b)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

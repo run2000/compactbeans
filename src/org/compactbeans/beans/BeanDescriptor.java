@@ -29,16 +29,16 @@ import java.lang.ref.Reference;
 
 /**
  * A BeanDescriptor provides global information about a "bean",
- * including its Java class, its displayName, etc.
+ * including its Java class, its programmatic name, etc.
  * <p>
  * This is one of the kinds of descriptor returned by a BeanInfo object,
- * which also returns descriptors for properties, method, and events.
+ * which also returns descriptors for properties, method, and events.</p>
  */
 
 public final class BeanDescriptor implements FeatureDescriptor {
 
     private final Reference<Class> beanClassRef;
-    private String name;
+    private final String name;
 
     /**
      * Create a BeanDescriptor for a bean that doesn't have a customizer.
@@ -62,17 +62,25 @@ public final class BeanDescriptor implements FeatureDescriptor {
      * @return The Class object for the bean.
      */
     public Class getBeanClass() {
-        return (this.beanClassRef != null)
-                ? (Class)this.beanClassRef.get()
-                : null;
+        return RefUtil.getObject(this.beanClassRef);
     }
 
     /**
      * Gets the programmatic name of this feature.
      *
-     * @return The programmatic name of the property/method/event
+     * @return The programmatic name of the bean
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets the descriptor type for this object.
+     *
+     * @return <code>DescriptorType.BEAN</code> to indicate this is a
+     * BeanDescriptor object
+     */
+    public DescriptorType getDescriptorType() {
+        return DescriptorType.BEAN;
     }
 }

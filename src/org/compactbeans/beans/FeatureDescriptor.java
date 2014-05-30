@@ -29,11 +29,24 @@ package org.compactbeans.beans;
  * The FeatureDescriptor class is the common interface for PropertyDescriptor,
  * EventSetDescriptor, and MethodDescriptor, etc.
  * <p>
- * It supports some common information that can be set and retrieved for
- * any of the introspection descriptors.
+ * It supports some common information that can be retrieved for any of the
+ * introspection descriptors.</p>
  */
 public interface FeatureDescriptor {
 
+    /**
+     * Gets the programmatic name of this feature.
+     *
+     * @return The programmatic name of the bean/property/method/event
+     */
     String getName();
+
+    /**
+     * Gets the descriptor type for this object.
+     *
+     * @return one of the <code>DescriptorType</code> types to indicate
+     * the object type the implementation class
+     */
+    DescriptorType getDescriptorType();
 
 }

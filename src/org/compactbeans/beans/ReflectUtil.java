@@ -39,7 +39,7 @@ final class ReflectUtil {
      * a non-public interface (i.e. may be in a non-restricted package),
      * also check the package access on the proxy interfaces.
      */
-    public static void checkPackageAccess(Class<?> clazz) {
+    private static void checkPackageAccess(Class<?> clazz) {
         checkPackageAccess(clazz.getName());
         if (isNonPublicProxyClass(clazz)) {
             checkProxyPackageAccess(clazz);
@@ -49,16 +49,16 @@ final class ReflectUtil {
     /**
      * Checks package access on the given classname.
      * This method is typically called when the Class instance is not
-     * available and the caller attempts to load a class on behalf
+     * available and the caller attempts to load a class on behalf of
      * the true caller (application).
      */
-    public static void checkPackageAccess(String name) {
+    private static void checkPackageAccess(String name) {
         SecurityManager s = System.getSecurityManager();
         if (s != null) {
             String cname = name.replace('/', '.');
             if (cname.startsWith("[")) {
                 int b = cname.lastIndexOf('[') + 2;
-                if (b > 1 && b < cname.length()) {
+                if ((b > 1) && (b < cname.length())) {
                     cname = cname.substring(b);
                 }
             }
@@ -69,6 +69,12 @@ final class ReflectUtil {
         }
     }
 
+    /**
+     * Determines whether the package is accessible on the given classname.
+     * This method is typically called when the Class instance is not
+     * available and the caller attempts to load a class on behalf of
+     * the true caller (application).
+     */
     public static boolean isPackageAccessible(Class clazz) {
         try {
             checkPackageAccess(clazz);
@@ -84,7 +90,7 @@ final class ReflectUtil {
      *
      * @param clazz Proxy class object
      */
-    public static void checkProxyPackageAccess(Class<?> clazz) {
+    private static void checkProxyPackageAccess(Class<?> clazz) {
         SecurityManager s = System.getSecurityManager();
         if (s != null) {
             // check proxy interfaces if the given class is a proxy class
@@ -103,7 +109,7 @@ final class ReflectUtil {
      * non-public interface.  Such proxy class may be in a non-restricted
      * package that bypasses checkPackageAccess.
      */
-    public static boolean isNonPublicProxyClass(Class<?> cls) {
+    private static boolean isNonPublicProxyClass(Class<?> cls) {
         String name = cls.getName();
         int i = name.lastIndexOf('.');
         String pkg = (i != -1) ? name.substring(0, i) : "";

@@ -48,54 +48,14 @@ public class PropertyDescriptor implements FeatureDescriptor {
     private Reference<Class> classRef;
 
     /**
-     * This constructor takes the name of a simple property, and method
-     * names for reading and writing the property.
-     *
-     * @param propertyName    The programmatic name of the property.
-     * @param beanClass       The Class object for the target bean.  For
-     *                        example sun.beans.OurButton.class.
-     * @param readMethodName  The name of the method used for reading the property
-     *                        value.  May be null if the property is write-only.
-     * @param writeMethodName The name of the method used for writing the property
-     *                        value.  May be null if the property is read-only.
-     * @throws IntrospectionException if an exception occurs during
-     *                                introspection.
-     */
-    public PropertyDescriptor(String propertyName, Class<?> beanClass,
-                              String readMethodName, String writeMethodName)
-            throws IntrospectionException {
-        if (beanClass == null) {
-            throw new IntrospectionException("Target Bean class is null");
-        }
-        if (propertyName == null || propertyName.length() == 0) {
-            throw new IntrospectionException("bad property name");
-        }
-        if ("".equals(readMethodName) || "".equals(writeMethodName)) {
-            throw new IntrospectionException("read or write method name should not be the empty string");
-        }
-
-        name = propertyName;
-        classRef = RefUtil.createWeakReference((Class)beanClass);
-
-        this.readMethodName = readMethodName;
-        if (readMethodName != null && getReadMethod() == null) {
-            throw new IntrospectionException("Method not found: " + readMethodName);
-        }
-        this.writeMethodName = writeMethodName;
-        if (writeMethodName != null && getWriteMethod() == null) {
-            throw new IntrospectionException("Method not found: " + writeMethodName);
-        }
-    }
-
-    /**
      * This constructor takes the name of a simple property, and Method
      * objects for reading and writing the property.
      *
      * @param propertyName The programmatic name of the property.
      * @param readMethod The method used for reading the property value.
-     *          May be null if the property is write-only.
+     *          May be <code>null</code> if the property is write-only.
      * @param writeMethod The method used for writing the property value.
-     *          May be null if the property is read-only.
+     *          May be <code>null</code> if the property is read-only.
      * @throws IntrospectionException if an exception occurs during
      *              introspection.
      */
@@ -244,7 +204,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Gets the method that should be used to read the property value.
      *
      * @return The method that should be used to read the property value.
-     * May return null if the property can't be read.
+     * May return <code>null</code> if the property can't be read.
      */
     public synchronized Method getReadMethod() {
         Method readMethod = getReadMethod0();
@@ -307,7 +267,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Gets the method that should be used to write the property value.
      *
      * @return The method that should be used to write the property value.
-     * May return null if the property can't be written.
+     * May return <code>null</code> if the property can't be written.
      */
     public synchronized Method getWriteMethod() {
         Method writeMethod = getWriteMethod0();
@@ -357,7 +317,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      *
      * @param writeMethod The new write method.
      */
-    public synchronized void setWriteMethod(Method writeMethod)
+    synchronized void setWriteMethod(Method writeMethod)
             throws IntrospectionException {
         if (writeMethod == null) {
             writeMethodName = null;
@@ -391,10 +351,20 @@ public class PropertyDescriptor implements FeatureDescriptor {
     /**
      * Gets the programmatic name of this feature.
      *
-     * @return The programmatic name of the property/method/event
+     * @return The programmatic name of the property
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets the descriptor type for this object.
+     *
+     * @return <code>DescriptorType.PROPERTY</code> to indicate this is a
+     * PropertyDescriptor object
+     */
+    public DescriptorType getDescriptorType() {
+        return DescriptorType.PROPERTY;
     }
 
     /**
@@ -421,6 +391,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      *
      * @since 1.4
      */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -430,11 +401,11 @@ public class PropertyDescriptor implements FeatureDescriptor {
             Method otherReadMethod = other.getReadMethod();
             Method otherWriteMethod = other.getWriteMethod();
 
-            if (!compareMethods(getReadMethod(), otherReadMethod)) {
+            if (!IntrospectorSupport.compareMethods(getReadMethod(), otherReadMethod)) {
                 return false;
             }
 
-            if (!compareMethods(getWriteMethod(), otherWriteMethod)) {
+            if (!IntrospectorSupport.compareMethods(getWriteMethod(), otherWriteMethod)) {
                 return false;
             }
 
@@ -443,27 +414,6 @@ public class PropertyDescriptor implements FeatureDescriptor {
                     (readMethodName == other.readMethodName);
         }
         return false;
-    }
-
-    /**
-     * Package private helper method for Descriptor .equals methods.
-     *
-     * @param a first method to compare
-     * @param b second method to compare
-     * @return boolean to indicate that the methods are equivalent
-     */
-    protected boolean compareMethods(Method a, Method b) {
-        // Note: perhaps this should be a protected method in FeatureDescriptor
-        if ((a == null) != (b == null)) {
-            return false;
-        }
-
-        if ((a != null) && (b != null)) {
-            if (!a.equals(b)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -515,6 +465,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * @return a hash code value for this object.
      * @since 1.5
      */
+    @Override
     public int hashCode() {
         int result = 7;
 

@@ -31,6 +31,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * Wrapping and unwrapping of Reference objects.
+ * Factored out from Descriptor classes.
  */
 final class RefUtil {
 
@@ -45,7 +46,7 @@ final class RefUtil {
      */
     static <T> Reference<T> createSoftReference(T obj) {
         if (obj != null) {
-            return new SoftReference(obj);
+            return new SoftReference<T>(obj);
         } else {
             return null;
         }
@@ -59,7 +60,7 @@ final class RefUtil {
      */
     static <T> Reference<T> createWeakReference(T obj) {
         if (obj != null) {
-            return new WeakReference(obj);
+            return new WeakReference<T>(obj);
         } else {
             return null;
         }

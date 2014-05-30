@@ -33,7 +33,7 @@ import java.util.*;
 
 /**
  * The Introspector class provides a standard way for tools to learn about
- * the properties and methods supported by a target Java Bean.
+ * the properties, events, and methods supported by a target Java Bean.
  *
  * <p>For each of these kinds of information, the Introspector will
  * separately analyze the bean's class and superclasses looking for
@@ -78,12 +78,82 @@ public final class Introspector {
      */
     public static BeanInfo getBeanInfo(Class<?> beanClass)
             throws IntrospectionException {
+        return getBeanInfo(beanClass, null, true);
+    }
 
-        Class superClass = beanClass.getSuperclass();
+    /**
+     * Introspect on a Java Bean and learn about all its properties, exposed
+     * methods, and events.
+     *
+     * <p>If the BeanInfo class for a Java Bean has been previously
+     * Introspected then the BeanInfo class is retrieved from the BeanInfo
+     * cache.</p>
+     *
+     * @param beanClass The bean class to be analyzed.
+     * @param stopClass The base class at which to stop the analysis.  Any
+     *    methods/properties/events in the stopClass or in its base classes
+     *    will be ignored in the analysis.
+     * @return A BeanInfo object describing the target bean.
+     * @throws IntrospectionException if an exception occurs during
+     *                                introspection.
+     */
+    public static BeanInfo getBeanInfo(Class<?> beanClass, Class<?> stopClass)
+            throws IntrospectionException {
+        boolean useAllInfo = (stopClass == null);
+
+        // Check stopClass is a superClass of startClass.
+        if (!useAllInfo) {
+            boolean isSuper = false;
+            for (Class c = beanClass.getSuperclass(); c != null; c = c.getSuperclass()) {
+                if (c == stopClass) {
+                    isSuper = true;
+                    break;
+                }
+            }
+            if (!isSuper) {
+                throw new IntrospectionException(stopClass.getName() + " not superclass of " +
+                                        beanClass.getName());
+            }
+        }
+
+        return getBeanInfo(beanClass, stopClass, useAllInfo);
+    }
+
+    /**
+     * Introspect on a Java Bean and learn about all its properties,
+     * exposed methods and events, below a given {@code stopClass} point
+     * subject to the <code>useAllInfo</code> flag.
+     * <p>
+     * Any methods/properties/events in the {@code stopClass}
+     * or in its parent classes will be ignored in the analysis.</p>
+     * <p>
+     * If the BeanInfo class for a Java Bean has been
+     * previously introspected based on the same arguments then
+     * the BeanInfo class is retrieved from the BeanInfo cache.</p>
+     *
+     * @param beanClass the bean class to be analyzed
+     * @param stopClass the parent class at which to stop the analysis
+     * @param useAllInfo <code>true</code> to indicate all BeanInfo that can
+     *     be discovered should be used, otherwise
+     *     <code>false</code> to indicate there is a stopping point
+     * @return a BeanInfo object describing the target bean
+     * @throws IntrospectionException if an exception occurs during introspection
+     */
+    private static BeanInfo getBeanInfo(Class<?> beanClass, Class<?> stopClass,
+            boolean useAllInfo) throws IntrospectionException {
         BeanInfo superBeanInfo;
+        Class superClass = beanClass.getSuperclass();
+        BeanInfo beanInfo;
 
-        if (superClass != null) {
-            superBeanInfo = getBeanInfo(superClass);
+        if(useAllInfo) {
+            beanInfo = IntrospectorSupport.getCachedBeanInfo(beanClass);
+            if(beanInfo != null) {
+                return beanInfo;
+            }
+        }
+
+        if ((superClass != null) && (superClass != stopClass)) {
+            superBeanInfo = getBeanInfo(superClass, stopClass, useAllInfo);
         } else {
             superBeanInfo = null;
         }
@@ -101,8 +171,43 @@ public final class Introspector {
         PropertyDescriptor pds[] = new PropertyDescriptor[properties.size()];
         pds = (PropertyDescriptor[]) properties.values().toArray(pds);
 
-        BeanInfo beanInfo = new GenericBeanInfo(bd, esds, pds, mds);
+        beanInfo = new GenericBeanInfo(bd, esds, pds, mds);
+
+        if(useAllInfo) {
+            IntrospectorSupport.putCachedBeanInfo(beanClass, beanInfo);
+        }
+
         return beanInfo;
+    }
+
+    /**
+     * Flush all of the Introspector's internal caches.  This method is
+     * not normally required.  It is normally only needed by advanced
+     * tools that update existing "Class" objects in-place and need
+     * to make the Introspector re-analyze existing Class objects.
+     */
+
+    public static void flushCaches() {
+        IntrospectorSupport.flushCaches();
+    }
+
+    /**
+     * Flush the Introspector's internal cached information for a given class.
+     * This method is not normally required.  It is normally only needed
+     * by advanced tools that update existing "Class" objects in-place
+     * and need to make the Introspector re-analyze an existing Class object.
+     *
+     * Note that only the direct state associated with the target Class
+     * object is flushed.  We do not flush state for other Class objects
+     * with the same name, nor do we flush state for any related Class
+     * objects (such as subclasses), even though their state may include
+     * information indirectly obtained from the target Class object.
+     *
+     * @param clz Class object to be flushed
+     * @throws NullPointerException If the Class object is null
+     */
+    public static void flushFromCaches(Class<?> clz) {
+        IntrospectorSupport.flushFromCaches(clz);
     }
 
     //======================================================================
@@ -496,7 +601,7 @@ public final class Introspector {
      */
     private MethodDescriptor[] getTargetMethodInfo() {
         // Methods maps from Method objects to MethodDescriptors
-        Map methods = new HashMap(30);
+        Map methods = new HashMap(60);
 
         if (superBeanInfo != null) {
             // We have no explicit BeanInfo methods.  Check with our parent.

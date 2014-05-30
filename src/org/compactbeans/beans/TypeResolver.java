@@ -139,7 +139,7 @@ final class TypeResolver {
      * inherited type parameters will also be replaced by their erasures.
      * The erasure of a Class is the Class itself, so a "raw" subinterface of
      * StringToIntMap will still show the K from Map as String.class.  But
-     * in a case like this...
+     * in a case like this...</p>
      *
      * <pre>
      * public interface StringToIntListMap extends Map&lt;String,List&lt;Integer>> {}

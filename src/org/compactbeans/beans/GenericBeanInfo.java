@@ -28,8 +28,8 @@ package org.compactbeans.beans;
 /**
  * Package private implementation support class for Introspector's
  * internal use.
- * <p/>
- * Mostly this is used as a placeholder for the descriptors.
+ * <p>
+ * Mostly this is used as a placeholder for the descriptors.</p>
  */
 final class GenericBeanInfo implements BeanInfo {
 

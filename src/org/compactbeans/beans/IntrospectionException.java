@@ -35,6 +35,7 @@ package org.compactbeans.beans;
  */
 
 public class IntrospectionException extends Exception {
+    private static final long serialVersionUID = 6711573495309115741L;
 
     /**
      * Constructs an <code>IntrospectionException</code> with a

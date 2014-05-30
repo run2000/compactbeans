@@ -53,13 +53,13 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      *
      * @param propertyName The programmatic name of the property.
      * @param readMethod The method used for reading the property values as an array.
-     *          May be null if the property is write-only or must be indexed.
+     *          May be <code>null</code> if the property is write-only or must be indexed.
      * @param writeMethod The method used for writing the property values as an array.
-     *          May be null if the property is read-only or must be indexed.
+     *          May be <code>null</code> if the property is read-only or must be indexed.
      * @param indexedReadMethod The method used for reading an indexed property value.
-     *          May be null if the property is write-only.
+     *          May be <code>null</code> if the property is write-only.
      * @param indexedWriteMethod The method used for writing an indexed property value.
-     *          May be null if the property is read-only.
+     *          May be <code>null</code> if the property is read-only.
      * @throws IntrospectionException if an exception occurs during
      *              introspection.
      */
@@ -81,7 +81,8 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      *
      * @return The method that should be used to read an indexed
      * property value.
-     * May return null if the property isn't indexed or is write-only.
+     * May return <code>null</code> if the property isn't indexed
+     * or is write-only.
      */
     public synchronized Method getIndexedReadMethod() {
         Method indexedReadMethod = getIndexedReadMethod0();
@@ -146,7 +147,8 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      *
      * @return The method that should be used to write an indexed
      * property value.
-     * May return null if the property isn't indexed or is read-only.
+     * May return <code>null</code> if the property isn't indexed
+     * or is read-only.
      */
     public synchronized Method getIndexedWriteMethod() {
         Method indexedWriteMethod = getIndexedWriteMethod0();
@@ -299,6 +301,17 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     }
 
     /**
+     * Gets the descriptor type for this object.
+     *
+     * @return <code>DescriptorType.INDEXED_PROPERTY</code> to indicate
+     * this is an IndexedPropertyDescriptor object
+     */
+    @Override
+    public DescriptorType getDescriptorType() {
+        return DescriptorType.INDEXED_PROPERTY;
+    }
+
+    /**
      * Compares this <code>PropertyDescriptor</code> against the specified object.
      * Returns true if the objects are the same. Two <code>PropertyDescriptor</code>s
      * are the same if the read, write, property types, property editor and
@@ -306,6 +319,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      *
      * @since 1.4
      */
+    @Override
     public boolean equals(Object obj) {
         // Note: This would be identical to PropertyDescriptor but they don't
         // share the same fields.
@@ -318,11 +332,11 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             Method otherIndexedReadMethod = other.getIndexedReadMethod();
             Method otherIndexedWriteMethod = other.getIndexedWriteMethod();
 
-            if (!compareMethods(getIndexedReadMethod(), otherIndexedReadMethod)) {
+            if (!IntrospectorSupport.compareMethods(getIndexedReadMethod(), otherIndexedReadMethod)) {
                 return false;
             }
 
-            if (!compareMethods(getIndexedWriteMethod(), otherIndexedWriteMethod)) {
+            if (!IntrospectorSupport.compareMethods(getIndexedWriteMethod(), otherIndexedWriteMethod)) {
                 return false;
             }
 
@@ -385,6 +399,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      * @return a hash code value for this object.
      * @since 1.5
      */
+    @Override
     public int hashCode() {
         int result = super.hashCode();
 

@@ -26,7 +26,6 @@
 package org.compactbeans.beans;
 
 import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +151,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
 
         for (int i = 0; i < params.size(); i++) {
             Reference<Class> ref = params.get(i);
-            Class cls = ref.get();
+            Class cls = RefUtil.getObject(ref);
             if (cls == null) {
                 return null;
             } else {
@@ -165,10 +164,20 @@ public final class MethodDescriptor implements FeatureDescriptor {
     /**
      * Gets the programmatic name of this feature.
      *
-     * @return The programmatic name of the property/method/event
+     * @return The programmatic name of the method
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets the descriptor type for this object.
+     *
+     * @return <code>DescriptorType.METHOD</code> to indicate this is a
+     * MethodDescriptor object
+     */
+    public DescriptorType getDescriptorType() {
+        return DescriptorType.METHOD;
     }
 
     private Class getClass0() {

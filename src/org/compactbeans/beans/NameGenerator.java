@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2005, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,14 +25,18 @@
 
 package org.compactbeans.beans;
 
-import java.util.Locale;
+import static java.util.Locale.ENGLISH;
 
 /**
- * Created by IntelliJ IDEA.
- * To change this template use File | Settings | File Templates.
+ * A utility class which generates unique names for object instances.
+ * The name will be a concatenation of the unqualified class name
+ * and an instance number.
+ * <p>
+ * For example, if the first object instance javax.swing.JButton
+ * is passed into <code>instanceName</code> then the returned
+ * string identifier will be &quot;JButton0&quot;.</p>
  *
- * @author NCull
- * @version 21/05/2014, 4:22 PM
+ * @author Philip Milne
  */
 public final class NameGenerator {
 
@@ -45,9 +49,9 @@ public final class NameGenerator {
      * character from upper case to lower case, but in the (unusual) special
      * case when there is more than one character and both the first and
      * second characters are upper case, we leave it alone.
-     * <p/>
+     * <p>
      * Thus "FooBah" becomes "fooBah" and "X" becomes "x", but "URL" stays
-     * as "URL".
+     * as "URL".</p>
      *
      * @param name The string to be decapitalized.
      * @return The decapitalized version of the string.
@@ -72,7 +76,6 @@ public final class NameGenerator {
         if (name == null || name.length() == 0) {
             return name;
         }
-        return name.substring(0, 1).toUpperCase(Locale.ENGLISH) + name.substring(1);
+        return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
     }
-
 }
