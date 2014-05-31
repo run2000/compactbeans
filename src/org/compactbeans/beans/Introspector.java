@@ -46,8 +46,8 @@ import java.util.*;
  * superclass and add in the information from it (and possibly on up the
  * superclass chain).</p>
  *
- * <p>Because the Introspector caches BeanInfo classes for better performance,
- * take care if you use it in an application that uses
+ * <p>Because the Introspector caches <code>BeanInfo</code> classes for
+ * better performance, take care if you use it in an application that uses
  * multiple class loaders.</p>
  *
  * <p>For more information about introspection and design patterns, please
@@ -67,12 +67,12 @@ public final class Introspector {
      * Introspect on a Java Bean and learn about all its properties, exposed
      * methods, and events.
      *
-     * <p>If the BeanInfo class for a Java Bean has been previously
-     * Introspected then the BeanInfo class is retrieved from the BeanInfo
-     * cache.</p>
+     * <p>If the <code>BeanInfo</code> class for a Java Bean has been previously
+     * Introspected then the <code>BeanInfo</code> class is retrieved from
+     * the <code>BeanInfo</code> cache.</p>
      *
      * @param beanClass The bean class to be analyzed.
-     * @return A BeanInfo object describing the target bean.
+     * @return A <code>BeanInfo</code> object describing the target bean.
      * @throws IntrospectionException if an exception occurs during
      *                                introspection.
      */
@@ -85,15 +85,15 @@ public final class Introspector {
      * Introspect on a Java Bean and learn about all its properties, exposed
      * methods, and events.
      *
-     * <p>If the BeanInfo class for a Java Bean has been previously
-     * Introspected then the BeanInfo class is retrieved from the BeanInfo
-     * cache.</p>
+     * <p>If the <code>BeanInfo</code> class for a Java Bean has been previously
+     * Introspected then the <code>BeanInfo</code> class is retrieved from
+     * the <code>BeanInfo</code> cache.</p>
      *
      * @param beanClass The bean class to be analyzed.
      * @param stopClass The base class at which to stop the analysis.  Any
      *    methods/properties/events in the stopClass or in its base classes
      *    will be ignored in the analysis.
-     * @return A BeanInfo object describing the target bean.
+     * @return A <code>BeanInfo</code> object describing the target bean.
      * @throws IntrospectionException if an exception occurs during
      *                                introspection.
      */
@@ -127,15 +127,16 @@ public final class Introspector {
      * Any methods/properties/events in the {@code stopClass}
      * or in its parent classes will be ignored in the analysis.</p>
      * <p>
-     * If the BeanInfo class for a Java Bean has been
+     * If the <code>BeanInfo</code> class for a Java Bean has been
      * previously introspected based on the same arguments then
-     * the BeanInfo class is retrieved from the BeanInfo cache.</p>
+     * the <code>BeanInfo</code> class is retrieved from the
+     * <code>BeanInfo</code> cache.</p>
      *
      * @param beanClass the bean class to be analyzed
      * @param stopClass the parent class at which to stop the analysis
-     * @param useBeanInfoCache <code>true</code> to indicate the BeanInfo cache
-     *     should be used where possible, otherwise
-     *     <code>false</code> to avoid the BeanInfo cache
+     * @param useBeanInfoCache <code>true</code> to indicate the
+     *     <code>BeanInfo</code> cache should be used where possible, otherwise
+     *     <code>false</code> to avoid the <code>BeanInfo</code> cache
      * @return a BeanInfo object describing the target bean
      * @throws IntrospectionException if an exception occurs during introspection
      */
@@ -184,8 +185,8 @@ public final class Introspector {
     /**
      * Flush all of the Introspector's internal caches.  This method is
      * not normally required.  It is normally only needed by advanced
-     * tools that update existing "Class" objects in-place and need
-     * to make the Introspector re-analyze existing Class objects.
+     * tools that update existing <code>Class</code> objects in-place and need
+     * to make the Introspector re-analyze existing <code>Class</code> objects.
      */
 
     public static void flushCaches() {
@@ -195,17 +196,20 @@ public final class Introspector {
     /**
      * Flush the Introspector's internal cached information for a given class.
      * This method is not normally required.  It is normally only needed
-     * by advanced tools that update existing "Class" objects in-place
-     * and need to make the Introspector re-analyze an existing Class object.
+     * by advanced tools that update existing <code>Class</code> objects in-place
+     * and need to make the Introspector re-analyze an existing
+     * <code>Class</code> object.
+     * <p>
+     * Note that only the direct state associated with the target <code>Class</code>
+     * object is flushed.  We do not flush state for other <code>Class</code>
+     * objects with the same name, nor do we flush state for any related
+     * <code>Class</code> objects (such as subclasses), even though their state
+     * may include information indirectly obtained from the target
+     * <code>Class</code> object.</p>
      *
-     * Note that only the direct state associated with the target Class
-     * object is flushed.  We do not flush state for other Class objects
-     * with the same name, nor do we flush state for any related Class
-     * objects (such as subclasses), even though their state may include
-     * information indirectly obtained from the target Class object.
-     *
-     * @param clz Class object to be flushed
-     * @throws NullPointerException If the Class object is <code>null</code>
+     * @param clz <code>Class</code> object to be flushed
+     * @throws NullPointerException If the <code>Class</code> object is
+     * <code>null</code>
      */
     public static void flushFromCaches(Class<?> clz) {
         IntrospectorSupport.flushFromCaches(clz);

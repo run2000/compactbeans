@@ -31,8 +31,8 @@ import java.lang.ref.Reference;
  * A BeanDescriptor provides global information about a "bean",
  * including its Java class, its programmatic name, etc.
  * <p>
- * This is one of the kinds of descriptor returned by a BeanInfo object,
- * which also returns descriptors for properties, method, and events.</p>
+ * This is one of the kinds of descriptor returned by a <code>BeanInfo</code>
+ * object, which also returns descriptors for properties, method, and events.</p>
  */
 
 public final class BeanDescriptor implements FeatureDescriptor {
@@ -43,8 +43,8 @@ public final class BeanDescriptor implements FeatureDescriptor {
     /**
      * Create a BeanDescriptor for a bean that doesn't have a customizer.
      *
-     * @param beanClass the Class object of the Java class that implements
-     *          the bean.  For example sun.beans.OurButton.class.
+     * @param beanClass the <code>Class</code> object of the Java class
+     *          that implements the bean.  For example sun.beans.OurButton.class
      */
     public BeanDescriptor(Class<?> beanClass) {
         this.beanClassRef = RefUtil.createWeakReference((Class)beanClass);
@@ -57,9 +57,9 @@ public final class BeanDescriptor implements FeatureDescriptor {
     }
 
     /**
-     * Gets the bean's Class object.
+     * Gets the bean's <code>Class</code> object.
      *
-     * @return The Class object for the bean.
+     * @return The <code>Class</code> object for the bean
      */
     public Class getBeanClass() {
         return RefUtil.getObject(this.beanClassRef);

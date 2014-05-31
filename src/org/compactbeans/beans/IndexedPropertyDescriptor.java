@@ -48,8 +48,8 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     private String indexedWriteMethodName;
 
     /**
-     * This constructor takes the name of a simple property, and Method
-     * objects for reading and writing the property.
+     * This constructor takes the name of a simple property, and
+     * <code>Method</code> objects for reading and writing the property.
      *
      * @param propertyName The programmatic name of the property.
      * @param readMethod The method used for reading the property values as an array.
@@ -85,7 +85,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      * @param write the method used for writing the property value
      * @param readIndexed the method used for reading an indexed property value
      * @param writeIndexed the method used for writing an indexed property value
-     * @thorws IntrospectionException if an exception occurs during introspection
+     * @throws IntrospectionException if an exception occurs during introspection
      *
      * @since 1.7
      */

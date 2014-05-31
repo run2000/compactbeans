@@ -26,8 +26,9 @@
 package org.compactbeans.beans;
 
 /**
- * The FeatureDescriptor class is the common interface for PropertyDescriptor,
- * EventSetDescriptor, and MethodDescriptor, etc.
+ * The FeatureDescriptor interface is the common interface for
+ * <code>PropertyDescriptor</code>, <code>EventSetDescriptor</code>,
+ * and <code>MethodDescriptor</code>, etc.
  * <p>
  * It supports some common information that can be retrieved for any of the
  * introspection descriptors.</p>

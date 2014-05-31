@@ -92,12 +92,12 @@ public final class PropertyChangeSupport implements Serializable {
     }
 
     /**
-     * Add a PropertyChangeListener to the listener list.
+     * Add a <code>PropertyChangeListener</code> to the listener list.
      * The listener is registered for all properties.
      * The same listener object may be added more than once, and will be called
      * as many times as it is added.
-     * If <code>listener</code> is null, no exception is thrown and no action
-     * is taken.
+     * If <code>listener</code> is <code>null</code>, no exception is thrown
+     * and no action is taken.
      *
      * @param listener  The PropertyChangeListener to be added
      */
@@ -117,13 +117,13 @@ public final class PropertyChangeSupport implements Serializable {
     }
 
     /**
-     * Remove a PropertyChangeListener from the listener list.
+     * Remove a <code>PropertyChangeListener</code> from the listener list.
      * This removes a PropertyChangeListener that was registered
      * for all properties.
      * If <code>listener</code> was added more than once to the same event
      * source, it will be notified one less time after being removed.
-     * If <code>listener</code> is null, or was never added, no exception is
-     * thrown and no action is taken.
+     * If <code>listener</code> is <code>null</code>, or was never added,
+     * no exception is thrown and no action is taken.
      *
      * @param listener  The PropertyChangeListener to be removed
      */
@@ -144,19 +144,19 @@ public final class PropertyChangeSupport implements Serializable {
 
     /**
      * Returns an array of all the listeners that were added to the
-     * PropertyChangeSupport object with addPropertyChangeListener().
+     * PropertyChangeSupport object with <code>addPropertyChangeListener()</code>.
      * <p>
      * If some listeners have been added with a named property, then
-     * the returned array will be a mixture of PropertyChangeListeners
+     * the returned array will be a mixture of <code>PropertyChangeListener</code>s
      * and <code>PropertyChangeListenerProxy</code>s. If the calling
      * method is interested in distinguishing the listeners then it must
      * test each element to see if it's a
      * <code>PropertyChangeListenerProxy</code>, perform the cast, and examine
-     * the parameter.
+     * the parameter.</p>
      *
      * <pre>
      * PropertyChangeListener[] listeners = bean.getPropertyChangeListeners();
-     * for (int i = 0; i < listeners.length; i++) {
+     * for (int i = 0; i &lt; listeners.length; i++) {
      *   if (listeners[i] instanceof PropertyChangeListenerProxy) {
      *     PropertyChangeListenerProxy proxy =
      *                    (PropertyChangeListenerProxy)listeners[i];
@@ -178,14 +178,14 @@ public final class PropertyChangeSupport implements Serializable {
     }
 
     /**
-     * Add a PropertyChangeListener for a specific property.  The listener
-     * will be invoked only when a call on firePropertyChange names that
-     * specific property.
+     * Add a <code>PropertyChangeListener</code> for a specific property.
+     * The listener will be invoked only when a call on firePropertyChange
+     * names that specific property.
      * The same listener object may be added more than once.  For each
      * property,  the listener will be invoked the number of times it was added
      * for that property.
-     * If <code>propertyName</code> or <code>listener</code> is null, no
-     * exception is thrown and no action is taken.
+     * If <code>propertyName</code> or <code>listener</code> is <code>null</code>,
+     * no exception is thrown and no action is taken.
      *
      * @param propertyName  The name of the property to listen on.
      * @param listener  The PropertyChangeListener to be added
@@ -203,14 +203,14 @@ public final class PropertyChangeSupport implements Serializable {
     }
 
     /**
-     * Remove a PropertyChangeListener for a specific property.
+     * Remove a <code>PropertyChangeListener</code> for a specific property.
      * If <code>listener</code> was added more than once to the same event
      * source for the specified property, it will be notified one less time
      * after being removed.
-     * If <code>propertyName</code> is null,  no exception is thrown and no
-     * action is taken.
-     * If <code>listener</code> is null, or was never added for the specified
-     * property, no exception is thrown and no action is taken.
+     * If <code>propertyName</code> is <code>null</code>, no exception
+     * is thrown and no action is taken.
+     * If <code>listener</code> is <code>null</code>, or was never added
+     * for the specified property, no exception is thrown and no action is taken.
      *
      * @param propertyName  The name of the property that was listened on.
      * @param listener  The PropertyChangeListener to be removed
@@ -234,8 +234,8 @@ public final class PropertyChangeSupport implements Serializable {
      * @param propertyName  The name of the property being listened to
      * @return all of the <code>PropertyChangeListeners</code> associated with
      *         the named property.  If no such listeners have been added,
-     *         or if <code>propertyName</code> is null, an empty array is
-     *         returned.
+     *         or if <code>propertyName</code> is <code>null</code>,
+     *         an empty array is returned.
      * @since 1.4
      */
     public PropertyChangeListener[] getPropertyChangeListeners(String propertyName) {
@@ -247,10 +247,10 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal and non-null.
+     * No event is fired if old and new values are equal and non-null.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #firePropertyChange(PropertyChangeEvent)} method.
+     * {@link #firePropertyChange(PropertyChangeEvent)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that was changed
      * @param oldValue      the old value of the property
@@ -267,10 +267,10 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal.
+     * No event is fired if old and new values are equal.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #firePropertyChange(String, Object, Object)}  method.
+     * {@link #firePropertyChange(String, Object, Object)}  method.</p>
      *
      * @param propertyName  the programmatic name of the property that was changed
      * @param oldValue      the old value of the property
@@ -287,10 +287,10 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal.
+     * No event is fired if old and new values are equal.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #firePropertyChange(String, Object, Object)}  method.
+     * {@link #firePropertyChange(String, Object, Object)}  method.</p>
      *
      * @param propertyName  the programmatic name of the property that was changed
      * @param oldValue      the old value of the property
@@ -340,10 +340,10 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal and non-null.
+     * No event is fired if old and new values are equal and non-null.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #firePropertyChange(PropertyChangeEvent)} method.
+     * {@link #firePropertyChange(PropertyChangeEvent)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that was changed
      * @param index         the index of the property element that was changed
@@ -362,10 +362,10 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal.
+     * No event is fired if old and new values are equal.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #fireIndexedPropertyChange(String, int, Object, Object)} method.
+     * {@link #fireIndexedPropertyChange(String, int, Object, Object)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that was changed
      * @param index         the index of the property element that was changed
@@ -384,10 +384,10 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal.
+     * No event is fired if old and new values are equal.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #fireIndexedPropertyChange(String, int, Object, Object)} method.
+     * {@link #fireIndexedPropertyChange(String, int, Object, Object)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that was changed
      * @param index         the index of the property element that was changed
@@ -417,7 +417,7 @@ public final class PropertyChangeSupport implements Serializable {
      * @serialData Null terminated list of <code>PropertyChangeListeners</code>.
      * <p>
      * At serialization time we skip non-serializable listeners and
-     * only serialize the serializable listeners.
+     * only serialize the serializable listeners.</p>
      */
     private void writeObject(ObjectOutputStream s) throws IOException {
         Hashtable<String, PropertyChangeSupport> children = null;

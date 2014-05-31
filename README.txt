@@ -10,17 +10,17 @@ https://jdk7.java.net/source.html
 License
 -------
 
-The license is the same as for openjdk7 itself. That is, GPL version 2 only,
+The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
 with the "Classpath" exception as described in the LICENSE file.
 
-This can be found on the openjdk web site at
+This can be found on the OpenJDK web site at
 http://openjdk.java.net/legal/gplv2+ce.html
 
 Design goals
 ------------
 
-Track and keep consistent with the openjdk implementation and future releases
-of openjdk.
+Track and keep consistent with the OpenJDK implementation and future releases
+of OpenJDK.
 
 API compatibility as much as possible. In the simplest case, a package
 import rename is all that is required.

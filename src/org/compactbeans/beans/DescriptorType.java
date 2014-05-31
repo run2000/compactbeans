@@ -27,14 +27,14 @@ package org.compactbeans.beans;
  * <code>instanceof</code> tests.
  */
 public enum DescriptorType {
-    /** This is a BeanDescriptor object */
+    /** This is a <code>BeanDescriptor</code> object */
     BEAN,
-    /** This is a MethodDescriptor object */
+    /** This is a <code>MethodDescriptor</code> object */
     METHOD,
-    /** This is an EventSetDescriptor object */
+    /** This is an <code>EventSetDescriptor</code> object */
     EVENT_SET,
-    /** This is a PropertyDescriptor object */
+    /** This is a <code>PropertyDescriptor</code> object */
     PROPERTY,
-    /** This is an IndexedPropertyDescriptor object */
+    /** This is an <code>IndexedPropertyDescriptor</code> object */
     INDEXED_PROPERTY
 }

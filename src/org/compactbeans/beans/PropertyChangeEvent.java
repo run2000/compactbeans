@@ -76,20 +76,20 @@ public class PropertyChangeEvent extends java.util.EventObject {
     }
 
     /**
-     * Gets the new value for the property, expressed as an Object.
+     * Gets the new value for the property, expressed as an <code>Object</code>.
      *
-     * @return  The new value for the property, expressed as an Object.
-     *          May be null if multiple properties have changed.
+     * @return  The new value for the property, expressed as an <code>Object</code>.
+     *          May be <code>null</code> if multiple properties have changed.
      */
     public Object getNewValue() {
         return newValue;
     }
 
     /**
-     * Gets the old value for the property, expressed as an Object.
+     * Gets the old value for the property, expressed as an <code>Object</code>.
      *
-     * @return  The old value for the property, expressed as an Object.
-     *          May be null if multiple properties have changed.
+     * @return  The old value for the property, expressed as an <code>Object</code>.
+     *          May be <code>null</code> if multiple properties have changed.
      */
     public Object getOldValue() {
         return oldValue;

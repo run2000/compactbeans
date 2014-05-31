@@ -29,5 +29,8 @@
  * <p>
  * The code is based on the openjdk7u40 source bundle, downloaded from
  * <a href="https://jdk7.java.net/source.html">https://jdk7.java.net/source.html</a></p>
+ * <p>
+ * The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
+ * with the "Classpath" exception as described in the LICENSE file.</p>
  */
 package org.compactbeans.beans;

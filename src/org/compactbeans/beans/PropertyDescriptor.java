@@ -50,8 +50,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
     private Reference<Class> classRef;
 
     /**
-     * This constructor takes the name of a simple property, and Method
-     * objects for reading and writing the property.
+     * This constructor takes the name of a simple property, and
+     * <code>Method</code> objects for reading and writing the property.
      *
      * @param propertyName The programmatic name of the property.
      * @param readMethod The method used for reading the property value.
@@ -428,7 +428,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
     /**
      * Overridden to ensure that a super class doesn't take precedent
      */
-    protected void setClass0(Class clz) {
+    void setClass0(Class clz) {
         Class currClass = getClass0();
 
         // don't replace a subclass with a superclass
@@ -442,7 +442,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
     }
 
     /**
-     * Gets any explicit PropertyEditor Class that has been registered
+     * Gets any explicit PropertyEditor <code>Class</code> that has been registered
      * for this property.
      *
      * @return this will return <code>null</code>,

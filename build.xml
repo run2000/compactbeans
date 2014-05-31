@@ -1,0 +1,54 @@
+<project name="CompactBeans" default="dist" basedir=".">
+    <description>Ant build file for CompactBeans</description>
+
+    <!-- set global properties for this build -->
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="doc" location="docs"/>
+    <property name="dist" location="dist"/>
+    <property name="version" value="0.5"/>
+
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+        <mkdir dir="${doc}"/>
+    </target>
+
+    <target name="compile" depends="init"
+            description="compile the source">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <javac srcdir="${src}" destdir="${build}" source="1.8" target="1.8"
+                includeAntRuntime="false">
+            <compilerarg line="-profile compact1"/>
+        </javac>
+    </target>
+
+    <target name="javadoc" depends="init"
+            description="build the javadoc">
+        <mkdir dir="${doc}/api" />
+        <javadoc sourcepath="${src}" destdir="${doc}/api"
+                 windowtitle="CompactBeans API ${version}">
+        </javadoc>
+    </target>
+
+
+    <target name="dist" depends="compile, javadoc"
+            description="generate the distribution files" >
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/lib"/>
+
+        <!-- Put everything in ${build} into the dist/lib directory -->
+        <jar jarfile="${dist}/lib/compactbeans-${version}.jar" basedir="${build}"/>
+        <zip destfile="${dist}/lib/compactbeans-javadoc-${version}.zip" basedir="${doc}"/>
+    </target>
+
+    <target name="clean"
+            description="clean up" >
+        <!-- Delete the ${build}, ${doc}, and ${dist} directory trees -->
+        <delete dir="${build}"/>
+        <delete dir="${doc}"/>
+        <delete dir="${dist}"/>
+    </target>
+</project>

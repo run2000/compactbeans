@@ -66,13 +66,13 @@ public final class Beans {
      *
      * @param     cls         the class-loader from which we should create
      *                        the bean.  If this is <code>null</code>,
-     *                        then the system class-loader is used.
+     *                        then the system class-loader is used
      * @param     beanName    the name of the bean within the class-loader.
      *                        For example "sun.beanbox.foobah"
      *
      * @exception ClassNotFoundException if the class of a serialized
-     *              object could not be found.
-     * @exception IOException if an I/O error occurs.
+     *              object could not be found
+     * @exception IOException if an I/O error occurs
      */
 
     public static Object instantiate(ClassLoader cls, String beanName) throws IOException, ClassNotFoundException {
@@ -174,8 +174,8 @@ public final class Beans {
      * This method is provided in Beans 1.0 as a hook to allow the
      * addition of more flexible bean behaviour in the future.
      *
-     * @param bean        Object from which we want to obtain a view.
-     * @param targetType  The type of view we'd like to get.
+     * @param bean <code>Object</code> from which we want to obtain a view
+     * @param targetType The type of view we'd like to get
      *
      */
     public static Object getInstanceOf(Object bean, Class<?> targetType) {
