@@ -50,8 +50,8 @@ public final class BeanDescriptor implements FeatureDescriptor {
         this.beanClassRef = RefUtil.createWeakReference((Class)beanClass);
 
         String name = beanClass.getName();
-        while (name.indexOf('.') >= 0) {
-            name = name.substring(name.indexOf('.') + 1);
+        if(name.lastIndexOf('.') >= 0) {
+            name = name.substring(name.lastIndexOf('.') + 1);
         }
         this.name = name;
     }

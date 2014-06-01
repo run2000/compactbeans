@@ -274,42 +274,51 @@ public final class Introspector {
                 continue;
             }
             String name = method.getName();
-            Class argTypes[] = method.getParameterTypes();
             Class resultType = method.getReturnType();
-            int argCount = argTypes.length;
+            int argCount = method.getParameterCount();
             PropertyDescriptor pd = null;
 
-            if ((name.length() <= 3) && !name.startsWith(IntrospectorSupport.IS_PREFIX)) {
-                // Optimization. Don't bother with invalid propertyNames.
+            if ((argCount > 2) || (name.length() < 3)) {
+                // Optimization. Don't bother with invalid properties.
                 continue;
             }
 
             try {
-                if (argCount == 0) {
-                    if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
-                        // Simple getter
-                        pd = new PropertyDescriptor(this.beanClass, name.substring(3), method, null);
-                    } else if (resultType == boolean.class && name.startsWith(IntrospectorSupport.IS_PREFIX)) {
-                        // Boolean getter
-                        pd = new PropertyDescriptor(this.beanClass, name.substring(2), method, null);
-                    }
-                } else if (argCount == 1) {
-                    if (int.class.equals(argTypes[0]) && name.startsWith(IntrospectorSupport.GET_PREFIX)) {
-                        pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, method, null);
-                    } else if (void.class.equals(resultType) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
-                        // Simple setter
-                        pd = new PropertyDescriptor(this.beanClass, name.substring(3), null, method);
-//                        if (throwsException(method, PropertyVetoException.class)) {
-//                            pd.setConstrained(true);
-//                        }
-                    }
-                } else if (argCount == 2) {
-                        if (void.class.equals(resultType) && int.class.equals(argTypes[0]) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
-                        pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, null, method);
-//                        if (throwsException(method, PropertyVetoException.class)) {
-//                            pd.setConstrained(true);
-//                        }
-                    }
+                switch (argCount) {
+                    case 0:
+                        if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
+                            // Simple getter
+                            pd = new PropertyDescriptor(this.beanClass, name.substring(3), method, null);
+                        } else if ((resultType == boolean.class) && name.startsWith(IntrospectorSupport.IS_PREFIX)) {
+                            // Boolean getter
+                            pd = new PropertyDescriptor(this.beanClass, name.substring(2), method, null);
+                        }
+                        break;
+                    case 1:
+                        if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
+                            Class<?>[] parameterTypes = method.getParameterTypes();
+                            if((parameterTypes.length > 0) && (int.class == parameterTypes[0])) {
+                                pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, method, null);
+                            }
+                        } else if ((void.class == resultType) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
+                            // Simple setter
+                            pd = new PropertyDescriptor(this.beanClass, name.substring(3), null, method);
+//                          if (throwsException(method, PropertyVetoException.class)) {
+//                              pd.setConstrained(true);
+//                          }
+                        }
+                        break;
+                    case 2:
+                        if ((void.class == resultType) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
+                            Class<?>[] parameterTypes = method.getParameterTypes();
+                            if((parameterTypes.length > 0) && (int.class == parameterTypes[0])) {
+                                pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, null, method);
+//                              if (throwsException(method, PropertyVetoException.class)) {
+//                                  pd.setConstrained(true);
+//                              }
+                            }
+                        }
+                        break;
                 }
             } catch (IntrospectionException ex) {
                 // This happens if a PropertyDescriptor or IndexedPropertyDescriptor
@@ -612,152 +621,143 @@ public final class Introspector {
         if (superBeanInfo != null) {
             // We have no explicit BeanInfo events.  Check with our parent.
             EventSetDescriptor supers[] = superBeanInfo.getEventSetDescriptors();
-            for (int i = 0 ; i < supers.length; i++) {
-                addEvent(events, supers[i]);
+            for (int j = 0 ; j < supers.length; j++) {
+                addEvent(events, supers[j]);
             }
         }
 
-        {
-            // Apply some reflection to the current class.
+        // Apply some reflection to the current class.
 
-            // Get an array of all the public beans methods at this level
-            Method methodList[] = IntrospectorSupport.getPublicDeclaredMethods(beanClass);
+        // Get an array of all the public beans methods at this level
+        Method methodList[] = IntrospectorSupport.getPublicDeclaredMethods(beanClass);
 
-            // Find all suitable "add", "remove" and "get" Listener methods
-            // The name of the listener type is the key for these hashtables
-            // i.e, ActionListener
-            Map adds = null;
-            Map removes = null;
-            Map gets = null;
+        // Find all suitable "add", "remove" and "get" Listener methods
+        // The name of the listener type is the key for these hashtables
+        // i.e, ActionListener
+        Map adds = null;
+        Map removes = null;
+        Map gets = null;
 
-            for (int i = 0; i < methodList.length; i++) {
-                Method method = methodList[i];
-                if (method == null) {
-                    continue;
-                }
-                // skip static methods.
-                int mods = method.getModifiers();
-                if (Modifier.isStatic(mods)) {
-                    continue;
-                }
-                String name = method.getName();
-                // Optimization avoid getParameterTypes
-                if (!name.startsWith(IntrospectorSupport.ADD_PREFIX)
-                        && !name.startsWith(IntrospectorSupport.REMOVE_PREFIX)
-                        && !name.startsWith(IntrospectorSupport.GET_PREFIX)) {
-                    continue;
-                }
+        for (int i = 0; i < methodList.length; i++) {
+            Method method = methodList[i];
+            if (method == null) {
+                continue;
+            }
+            // skip static methods.
+            int mods = method.getModifiers();
+            if (Modifier.isStatic(mods)) {
+                continue;
+            }
+            String name = method.getName();
 
-                if (name.startsWith(IntrospectorSupport.ADD_PREFIX)) {
-                    Class<?> returnType = method.getReturnType();
-                    if (returnType == void.class) {
+            if (name.startsWith(IntrospectorSupport.ADD_PREFIX)) {
+                Class<?> returnType = method.getReturnType();
+                if (returnType == void.class) {
+                    if (method.getParameterCount() == 1) {
                         Type[] parameterTypes = method.getGenericParameterTypes();
-                        if (parameterTypes.length == 1) {
-                            Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
-                            if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
-                                String listenerName = name.substring(3);
-                                if (listenerName.length() > 0 &&
-                                        type.getName().endsWith(listenerName)) {
-                                    if (adds == null) {
-                                        adds = new HashMap();
-                                    }
-                                    adds.put(listenerName, method);
+                        Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
+                        if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
+                            String listenerName = name.substring(3);
+                            if (listenerName.length() > 0 &&
+                                    type.getName().endsWith(listenerName)) {
+                                if (adds == null) {
+                                    adds = new HashMap();
                                 }
-                            }
-                        }
-                    }
-                }
-                else if (name.startsWith(IntrospectorSupport.REMOVE_PREFIX)) {
-                    Class<?> returnType = method.getReturnType();
-                    if (returnType == void.class) {
-                        Type[] parameterTypes = method.getGenericParameterTypes();
-                        if (parameterTypes.length == 1) {
-                            Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
-                            if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
-                                String listenerName = name.substring(6);
-                                if (listenerName.length() > 0 &&
-                                        type.getName().endsWith(listenerName)) {
-                                    if (removes == null) {
-                                        removes = new HashMap();
-                                    }
-                                    removes.put(listenerName, method);
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
-                    Class<?>[] parameterTypes = method.getParameterTypes();
-                    if (parameterTypes.length == 0) {
-                        Class<?> returnType = IntrospectorSupport.getReturnType(beanClass, method);
-                        if (returnType.isArray()) {
-                            Class<?> type = returnType.getComponentType();
-                            if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
-                                String listenerName  = name.substring(3, name.length() - 1);
-                                if (listenerName.length() > 0 &&
-                                        type.getName().endsWith(listenerName)) {
-                                    if (gets == null) {
-                                        gets = new HashMap();
-                                    }
-                                    gets.put(listenerName, method);
-                                }
+                                adds.put(listenerName, method);
                             }
                         }
                     }
                 }
             }
+            else if (name.startsWith(IntrospectorSupport.REMOVE_PREFIX)) {
+                Class<?> returnType = method.getReturnType();
+                if (returnType == void.class) {
+                    if (method.getParameterCount() == 1) {
+                        Type[] parameterTypes = method.getGenericParameterTypes();
+                        Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
+                        if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
+                            String listenerName = name.substring(6);
+                            if (listenerName.length() > 0 &&
+                                    type.getName().endsWith(listenerName)) {
+                                if (removes == null) {
+                                    removes = new HashMap();
+                                }
+                                removes.put(listenerName, method);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
+                if (method.getParameterCount() == 0) {
+                    Class<?> returnType = IntrospectorSupport.getReturnType(beanClass, method);
+                    if (returnType.isArray()) {
+                        Class<?> type = returnType.getComponentType();
+                        if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
+                            String listenerName  = name.substring(3, name.length() - 1);
+                            if (listenerName.length() > 0 &&
+                                    type.getName().endsWith(listenerName)) {
+                                if (gets == null) {
+                                    gets = new HashMap();
+                                }
+                                gets.put(listenerName, method);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-            if ((adds != null) && (removes != null)) {
-                // Now look for matching addFooListener+removeFooListener pairs.
-                // Bonus if there is a matching getFooListeners method as well.
-                Iterator keys = adds.keySet().iterator();
-                while (keys.hasNext()) {
-                    String listenerName = (String) keys.next();
-                    // Skip any "add" which doesn't have a matching "remove" or
-                    // a listener name that doesn't end with Listener
-                    if ((removes.get(listenerName) == null) || !listenerName.endsWith("Listener")) {
+        if ((adds != null) && (removes != null)) {
+            // Now look for matching addFooListener+removeFooListener pairs.
+            // Bonus if there is a matching getFooListeners method as well.
+            Iterator keys = adds.keySet().iterator();
+            while (keys.hasNext()) {
+                String listenerName = (String) keys.next();
+                // Skip any "add" which doesn't have a matching "remove" or
+                // a listener name that doesn't end with Listener
+                if ((removes.get(listenerName) == null) || !listenerName.endsWith("Listener")) {
+                    continue;
+                }
+                String eventName = NameGenerator.decapitalize(listenerName.substring(0, listenerName.length()-8));
+                Method addMethod = (Method)adds.get(listenerName);
+                Method removeMethod = (Method)removes.get(listenerName);
+                Method getMethod = null;
+                if (gets != null) {
+                    getMethod = (Method)gets.get(listenerName);
+                }
+                Class argType = IntrospectorSupport.getParameterTypes(beanClass, addMethod)[0];
+
+                // generate a list of Method objects for each of the target methods:
+                Method allMethods[] = IntrospectorSupport.getPublicDeclaredMethods(argType);
+                List validMethods = new ArrayList(allMethods.length);
+                for (int i = 0; i < allMethods.length; i++) {
+                    if (allMethods[i] == null) {
                         continue;
                     }
-                    String eventName = NameGenerator.decapitalize(listenerName.substring(0, listenerName.length()-8));
-                    Method addMethod = (Method)adds.get(listenerName);
-                    Method removeMethod = (Method)removes.get(listenerName);
-                    Method getMethod = null;
-                    if (gets != null) {
-                        getMethod = (Method)gets.get(listenerName);
+
+                    if (IntrospectorSupport.isEventHandler(beanClass, allMethods[i])) {
+                        validMethods.add(allMethods[i]);
                     }
-                    Class argType = IntrospectorSupport.getParameterTypes(beanClass, addMethod)[0];
-
-                    // generate a list of Method objects for each of the target methods:
-                    Method allMethods[] = IntrospectorSupport.getPublicDeclaredMethods(argType);
-                    List validMethods = new ArrayList(allMethods.length);
-                    for (int i = 0; i < allMethods.length; i++) {
-                        if (allMethods[i] == null) {
-                            continue;
-                        }
-
-                        if (IntrospectorSupport.isEventHandler(beanClass, allMethods[i])) {
-                            validMethods.add(allMethods[i]);
-                        }
-                    }
-                    Method[] methods = (Method[])validMethods.toArray(new Method[validMethods.size()]);
-
-                    EventSetDescriptor esd = new EventSetDescriptor(eventName, argType,
-                            methods, addMethod,
-                            removeMethod,
-                            getMethod);
-
-                    // If the adder method throws the TooManyListenersException then it
-                    // is a Unicast event source.
-                    if (IntrospectorSupport.throwsException(addMethod,
-                            java.util.TooManyListenersException.class)) {
-                        esd.setUnicast(true);
-                    }
-                    addEvent(events, esd);
                 }
-            } // if (adds != null ...
-        }
+                Method[] methods = new Method[validMethods.size()];
+                methods = (Method[])validMethods.toArray(methods);
+
+                EventSetDescriptor esd = new EventSetDescriptor(eventName, argType,
+                        methods, addMethod, removeMethod, getMethod);
+
+                // If the adder method throws the TooManyListenersException then it
+                // is a Unicast event source.
+                if (IntrospectorSupport.throwsException(addMethod,
+                        java.util.TooManyListenersException.class)) {
+                    esd.setUnicast(true);
+                }
+                addEvent(events, esd);
+            }
+        } // if (adds != null ...
+
         EventSetDescriptor[] result;
-        if (events.size() == 0) {
+        if (events.isEmpty()) {
             result = EMPTY_EVENTSETDESCRIPTORS;
         } else {
             // Allocate and populate the result array.
@@ -909,14 +909,18 @@ public final class Introspector {
                 Method read = pd.getReadMethod();
                 Method write = pd.getWriteMethod();
                 boolean cls = true;
-                if (read != null) cls = cls && read.getGenericReturnType() instanceof Class;
-                if (write != null) cls = cls && write.getGenericParameterTypes()[0] instanceof Class;
+                if (read != null)
+                    cls = cls && (read.getGenericReturnType() instanceof Class);
+                if (write != null)
+                    cls = cls && (write.getGenericParameterTypes()[0] instanceof Class);
                 if (pd instanceof IndexedPropertyDescriptor) {
                     IndexedPropertyDescriptor ipd = (IndexedPropertyDescriptor) pd;
                     Method readI = ipd.getIndexedReadMethod();
                     Method writeI = ipd.getIndexedWriteMethod();
-                    if (readI != null) cls = cls && readI.getGenericReturnType() instanceof Class;
-                    if (writeI != null) cls = cls && writeI.getGenericParameterTypes()[1] instanceof Class;
+                    if (readI != null)
+                        cls = cls && (readI.getGenericReturnType() instanceof Class);
+                    if (writeI != null)
+                        cls = cls && (writeI.getGenericParameterTypes()[1] instanceof Class);
                     if (!cls) {
                         pd = new IndexedPropertyDescriptor(ipd);
                         pd.updateGenericsFor(beanClass);
