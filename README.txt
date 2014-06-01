@@ -1,5 +1,5 @@
 Overview
---------
+========
 
 This is a separated-out implementation of the java.beans.Introspector and
 associated Descriptor classes, targeted at Java 1.8SE Compact Profile 1.
@@ -47,7 +47,7 @@ Code that pre-supposes a GUI or an IDE is omitted.
   * No reference to the java.awt.* packages.
      - No icons
 
-Most things(*) that requires a specific reference to the java.beans.* package
+Most things that requires a specific reference to the java.beans.* package
 are omitted.
 
   * No BeanInfo classes, beyond the GenericBeanInfo returned by the
@@ -80,8 +80,8 @@ No XMLEncoder, XMLDecoder
   * Unused in examples encountered so far
 
 
-(*)Property Change Events
--------------------------
+Property Change Events
+----------------------
 These are included in the source, including:
 
   * IndexedPropertyChangeEvent
