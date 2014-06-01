@@ -83,4 +83,24 @@ public final class BeanDescriptor implements FeatureDescriptor {
     public DescriptorType getDescriptorType() {
         return DescriptorType.BEAN;
     }
+
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return a string representation of the object
+     *
+     * @since 1.7
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(getClass().getName());
+        sb.append("[name=").append(this.name);
+        if (this.beanClassRef != null) {
+            Object value = this.beanClassRef.get();
+            if (value != null) {
+                sb.append("; beanClass=").append(value);
+            }
+        }
+        return sb.append("]").toString();
+    }
 }

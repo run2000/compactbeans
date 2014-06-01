@@ -556,6 +556,39 @@ public class PropertyDescriptor implements FeatureDescriptor {
         return result;
     }
 
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return a string representation of the object
+     *
+     * @since 1.7
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(getClass().getName());
+        sb.append("[name=").append(this.name);
+        if (this.bound) {
+            sb.append("; ").append("bound");
+        }
+        appendTo(sb, "propertyType", this.propertyTypeRef);
+        appendTo(sb, "readMethod", this.readMethodRef);
+        appendTo(sb, "writeMethod", this.writeMethodRef);
+        appendTo(sb);
+        return sb.append("]").toString();
+    }
+
+    void appendTo(StringBuilder sb) {
+    }
+
+    static void appendTo(StringBuilder sb, String name, Reference reference) {
+        if (reference != null) {
+            Object value = reference.get();
+            if (value != null) {
+                sb.append("; ").append(name).append("=").append(value);
+            }
+        }
+    }
+
     private boolean isAssignable(Method m1, Method m2) {
         if (m1 == null) {
             return true; // choose second method

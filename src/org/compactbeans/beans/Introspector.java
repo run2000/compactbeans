@@ -269,8 +269,7 @@ public final class Introspector {
                 continue;
             }
             // skip static methods.
-            int mods = method.getModifiers();
-            if (Modifier.isStatic(mods)) {
+            if (Modifier.isStatic(method.getModifiers())) {
                 continue;
             }
             String name = method.getName();
@@ -644,8 +643,7 @@ public final class Introspector {
                 continue;
             }
             // skip static methods.
-            int mods = method.getModifiers();
-            if (Modifier.isStatic(mods)) {
+            if (Modifier.isStatic(method.getModifiers())) {
                 continue;
             }
             String name = method.getName();

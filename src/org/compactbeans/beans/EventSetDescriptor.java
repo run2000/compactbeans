@@ -382,4 +382,34 @@ public final class EventSetDescriptor implements FeatureDescriptor {
                 ? descriptor.getMethod()
                 : null;
     }
+
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return a string representation of the object
+     *
+     * @since 1.7
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(getClass().getName());
+        sb.append("[name=").append(this.name);
+        if (this.unicast) {
+            sb.append("; ").append("unicast");
+        }
+        sb.append("; ").append("inDefaultEventSet");
+        if (this.listenerTypeRef != null) {
+            appendTo(sb, "listenerType", this.listenerTypeRef.get());
+        }
+        appendTo(sb, "getListenerMethod", getMethod(this.getMethodDescriptor));
+        appendTo(sb, "addListenerMethod", getMethod(this.addMethodDescriptor));
+        appendTo(sb, "removeListenerMethod", getMethod(this.removeMethodDescriptor));
+        return sb.append("]").toString();
+    }
+
+    private static void appendTo(StringBuilder sb, String name, Object value) {
+        if (value != null) {
+            sb.append("; ").append(name).append('=').append(value);
+        }
+    }
 }

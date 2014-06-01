@@ -460,4 +460,11 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
 
         return result;
     }
+
+    @Override
+    void appendTo(StringBuilder sb) {
+        appendTo(sb, "indexedPropertyType", this.indexedPropertyTypeRef);
+        appendTo(sb, "indexedReadMethod", this.indexedReadMethodRef);
+        appendTo(sb, "indexedWriteMethod", this.indexedWriteMethodRef);
+    }
 }

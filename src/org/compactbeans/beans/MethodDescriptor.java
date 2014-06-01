@@ -28,6 +28,7 @@ package org.compactbeans.beans;
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -182,5 +183,28 @@ public final class MethodDescriptor implements FeatureDescriptor {
 
     private Class getClass0() {
         return RefUtil.getObject(classRef);
+    }
+
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return a string representation of the object
+     *
+     * @since 1.7
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(getClass().getName());
+        sb.append("[name=").append(this.name);
+        if (this.methodRef != null) {
+            Object value = this.methodRef.get();
+            if (value != null) {
+                sb.append("; method=").append(value);
+            }
+        }
+        sb.append("; paramNames={");
+        sb.append(Arrays.toString(paramNames));
+        sb.append('}');
+        return sb.append(']').toString();
     }
 }
