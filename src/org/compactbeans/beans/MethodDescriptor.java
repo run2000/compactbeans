@@ -202,9 +202,8 @@ public final class MethodDescriptor implements FeatureDescriptor {
                 sb.append("; method=").append(value);
             }
         }
-        sb.append("; paramNames={");
+        sb.append("; paramNames=");
         sb.append(Arrays.toString(paramNames));
-        sb.append('}');
         return sb.append(']').toString();
     }
 }

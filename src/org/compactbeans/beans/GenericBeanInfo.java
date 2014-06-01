@@ -25,6 +25,8 @@
 
 package org.compactbeans.beans;
 
+import java.util.Arrays;
+
 /**
  * Package private implementation support class for Introspector's
  * internal use.
@@ -70,5 +72,16 @@ final class GenericBeanInfo implements BeanInfo {
 
     public int getDefaultEventIndex() {
         return -1;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("GenericBeanInfo{");
+        sb.append("beanDescriptor=").append(beanDescriptor);
+        sb.append(", methods=").append(Arrays.toString(methods));
+        sb.append(", events=").append(Arrays.toString(events));
+        sb.append(", properties=").append(Arrays.toString(properties));
+        sb.append('}');
+        return sb.toString();
     }
 }
