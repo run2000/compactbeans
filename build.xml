@@ -35,7 +35,7 @@
 
 
     <target name="dist" depends="compile, javadoc"
-            description="generate the distribution files" >
+            description="generate the distribution files">
         <!-- Create the distribution directory -->
         <mkdir dir="${dist}/lib"/>
 
@@ -44,11 +44,49 @@
         <zip destfile="${dist}/lib/compactbeans-javadoc-${version}.zip" basedir="${doc}"/>
     </target>
 
+    <target name="release" depends="clean, dist"
+            description="build the release files">
+
+        <patternset id="redistributables">
+            <include name="src/**" />
+            <include name="dist/**" />
+            <include name="docs/**" />
+            <include name="*.xml" />
+            <include name="*.md" />
+            <include name="LICENSE" />
+            <include name="ASSEMBLY_EXCEPTION" />
+        </patternset>
+
+        <zip destfile="../compactbeans-${version}.zip">
+            <fileset dir=".">
+                <patternset refid="redistributables" />
+            </fileset>
+        </zip>
+
+        <tar destfile="../compactbeans-${version}.tar">
+            <fileset dir=".">
+                <patternset refid="redistributables" />
+            </fileset>
+        </tar>
+
+        <gzip src="../compactbeans-${version}.tar"
+              destfile="../compactbeans-${version}.tar.gz" />
+
+        <bzip2 src="../compactbeans-${version}.tar"
+               destfile="../compactbeans-${version}.tar.bz2" />
+
+        <delete file="../compactbeans-${version}.tar" />
+    </target>
+
     <target name="clean"
             description="clean up" >
         <!-- Delete the ${build}, ${doc}, and ${dist} directory trees -->
         <delete dir="${build}"/>
         <delete dir="${doc}"/>
         <delete dir="${dist}"/>
+        <delete file="../compactbeans-${version}.zip" />
+        <delete file="../compactbeans-${version}.tar" />
+        <delete file="../compactbeans-${version}.tar.gz" />
+        <delete file="../compactbeans-${version}.tar.bz2" />
     </target>
 </project>
