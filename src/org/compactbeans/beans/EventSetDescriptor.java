@@ -53,6 +53,36 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     private boolean unicast;
 
     /**
+     * Creates an <code>EventSetDescriptor</code> from scratch using
+     * string names.
+     *
+     * @param sourceClass  The class firing the event.
+     * @param eventSetName The programmatic name of the event set.
+     *          Note that this should normally start with a lower-case character.
+     * @param listenerType  The Class of the target interface that events
+     *          will get delivered to.
+     * @param listenerMethodNames The names of the methods that will get called
+     *          when the event gets delivered to its target listener interface.
+     * @param addListenerMethodName  The name of the method on the event source
+     *          that can be used to register an event listener object.
+     * @param removeListenerMethodName  The name of the method on the event source
+     *          that can be used to de-register an event listener object.
+     * @exception IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public EventSetDescriptor(Class<?> sourceClass,
+                              String eventSetName,
+                              Class<?> listenerType,
+                              String listenerMethodNames[],
+                              String addListenerMethodName,
+                              String removeListenerMethodName)
+            throws IntrospectionException {
+        this(sourceClass, eventSetName, listenerType,
+                listenerMethodNames, addListenerMethodName,
+                removeListenerMethodName, null);
+    }
+
+    /**
      * This constructor creates an EventSetDescriptor from scratch using
      * string names.
      *
@@ -106,6 +136,32 @@ public final class EventSetDescriptor implements FeatureDescriptor {
         if (method != null) {
             setGetListenerMethod(method);
         }
+    }
+
+    /**
+     * Creates an <code>EventSetDescriptor</code> from scratch using
+     * <code>java.lang.reflect.Method</code> and <code>java.lang.Class</code>
+     * objects.
+     *
+     * @param eventSetName The programmatic name of the event set.
+     * @param listenerType The Class for the listener interface.
+     * @param listenerMethods  An array of Method objects describing each
+     *          of the event handling methods in the target listener.
+     * @param addListenerMethod  The method on the event source
+     *          that can be used to register an event listener object.
+     * @param removeListenerMethod  The method on the event source
+     *          that can be used to de-register an event listener object.
+     * @exception IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public EventSetDescriptor(String eventSetName,
+                              Class<?> listenerType,
+                              Method listenerMethods[],
+                              Method addListenerMethod,
+                              Method removeListenerMethod)
+            throws IntrospectionException {
+        this(eventSetName, listenerType, listenerMethods,
+                addListenerMethod, removeListenerMethod, null);
     }
 
     /**

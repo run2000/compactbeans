@@ -6,7 +6,7 @@
     <property name="build" location="build"/>
     <property name="doc" location="docs"/>
     <property name="dist" location="dist"/>
-    <property name="version" value="0.5"/>
+    <property name="version" value="0.6"/>
 
     <target name="init">
         <!-- Create the time stamp -->
