@@ -275,17 +275,22 @@ public final class Introspector {
             String name = method.getName();
             Class resultType = method.getReturnType();
             int argCount = method.getParameterCount();
+            int nameLen = name.length();
             PropertyDescriptor pd = null;
 
-            if ((argCount > 2) || (name.length() < 3)) {
-                // Optimization. Don't bother with invalid properties.
+            // Optimization. Don't bother with invalid properties.
+            if (argCount == 0) {
+                if(nameLen < 3) {
+                    continue;
+                }
+            } else if ((argCount > 2) || (nameLen < 4)) {
                 continue;
             }
 
             try {
                 switch (argCount) {
                     case 0:
-                        if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
+                        if (name.startsWith(IntrospectorSupport.GET_PREFIX) && (nameLen > 3)) {
                             // Simple getter
                             pd = new PropertyDescriptor(this.beanClass, name.substring(3), method, null);
                         } else if ((resultType == boolean.class) && name.startsWith(IntrospectorSupport.IS_PREFIX)) {

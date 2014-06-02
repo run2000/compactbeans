@@ -30,6 +30,7 @@ with compact profile environments.
 
 Drop in to many server-side situations where bean-like properties and events
 are used. Examples:
+
   * JSP
   * Log4j
 
@@ -67,15 +68,19 @@ are omitted.
      - descriptors appear immutable from outside the java.beans.* package
 
 Beans static class is included, in abbreviated form.
+
   * No reference to BeanContext or AppletInitializer, so no overloads of
     instantiate() method.
   * No implementation of "guiAccessible" or "designTime" properties.
 
 No classes intended for design-time GUIs.
+
   * EventHandler omitted
   * Visibility interface omitted
+  * Customizer interface omitted
 
 No XMLEncoder, XMLDecoder
+
   * Reference to compact profile 2 stuff, namely SAX
   * Unused in examples encountered so far
 
