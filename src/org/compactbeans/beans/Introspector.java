@@ -290,7 +290,7 @@ public final class Introspector {
             try {
                 switch (argCount) {
                     case 0:
-                        if (name.startsWith(IntrospectorSupport.GET_PREFIX) && (nameLen > 3)) {
+                        if ((resultType != void.class) && name.startsWith(IntrospectorSupport.GET_PREFIX) && (nameLen > 3)) {
                             // Simple getter
                             pd = new PropertyDescriptor(this.beanClass, name.substring(3), method, null);
                         } else if ((resultType == boolean.class) && name.startsWith(IntrospectorSupport.IS_PREFIX)) {
@@ -299,17 +299,19 @@ public final class Introspector {
                         }
                         break;
                     case 1:
-                        if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
+                        if (void.class == resultType) {
+                            if(name.startsWith(IntrospectorSupport.SET_PREFIX)) {
+                                // Simple setter
+                                pd = new PropertyDescriptor(this.beanClass, name.substring(3), null, method);
+//                              if (throwsException(method, PropertyVetoException.class)) {
+//                                  pd.setConstrained(true);
+//                              }
+                            }
+                        } else if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
                             Class<?>[] parameterTypes = method.getParameterTypes();
                             if((parameterTypes.length > 0) && (int.class == parameterTypes[0])) {
                                 pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, method, null);
                             }
-                        } else if ((void.class == resultType) && name.startsWith(IntrospectorSupport.SET_PREFIX)) {
-                            // Simple setter
-                            pd = new PropertyDescriptor(this.beanClass, name.substring(3), null, method);
-//                          if (throwsException(method, PropertyVetoException.class)) {
-//                              pd.setConstrained(true);
-//                          }
                         }
                         break;
                     case 2:
