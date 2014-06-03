@@ -52,6 +52,7 @@
             <include name="src/**" />
             <include name="dist/**" />
             <include name="docs/**" />
+            <include name="*.properties" />
             <include name="*.xml" />
             <include name="*.md" />
             <include name="LICENSE" />
