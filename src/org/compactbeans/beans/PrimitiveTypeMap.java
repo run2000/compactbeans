@@ -34,6 +34,7 @@ import java.util.Map;
  * @since 1.7
  *
  * @author Sergey A. Malenkov
+ * @jdksource com.sun.beans.finder.PrimitiveTypeMap
  */
 final class PrimitiveTypeMap {
 

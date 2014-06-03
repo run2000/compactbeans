@@ -39,6 +39,7 @@ import java.util.WeakHashMap;
  * @since 1.7
  *
  * @author Sergey A. Malenkov
+ * @jdksource com.sun.beans.WeakCache
  */
 final class WeakCache<K, V> {
     private final Map<K, Reference<V>> map = new WeakHashMap<K, Reference<V>>();

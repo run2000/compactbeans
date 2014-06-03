@@ -41,6 +41,7 @@ import java.util.HashMap;
  *
  * @author Eamonn McManus
  * @author Sergey Malenkov
+ * @jdksource com.sun.beans.TypeResolver
  */
 final class TypeResolver {
 

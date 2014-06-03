@@ -31,6 +31,7 @@ package org.compactbeans.beans;
  * @since 1.7
  *
  * @author Sergey A. Malenkov
+ * @jdksource com.sun.beans.finder.ClassFinder
  */
 final class ClassFinder {
 

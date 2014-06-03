@@ -29,6 +29,8 @@ import java.lang.reflect.Type;
 
 /**
  * Implementation of GenericArrayType interface for core reflection.
+ *
+ * @jdksource sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl
  */
 final class GenericArrayTypeImpl
         implements GenericArrayType {

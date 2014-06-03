@@ -27,6 +27,9 @@ package org.compactbeans.beans;
 
 import java.lang.reflect.Proxy;
 
+/**
+ * @jdksource sun.reflect.misc.ReflectUtil
+ */
 final class ReflectUtil {
 
     private ReflectUtil() {

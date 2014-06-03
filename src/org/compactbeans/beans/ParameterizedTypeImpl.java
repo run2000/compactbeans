@@ -32,7 +32,11 @@ import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 
 
-/** Implementing class for ParameterizedType interface. */
+/**
+ * Implementing class for ParameterizedType interface.
+ *
+ * @jdksource sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
+ */
 
 final class ParameterizedTypeImpl implements ParameterizedType {
     private Type[] actualTypeArguments;

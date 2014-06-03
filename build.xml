@@ -6,7 +6,7 @@
     <property name="build" location="build"/>
     <property name="doc" location="docs"/>
     <property name="dist" location="dist"/>
-    <property name="version" value="0.6"/>
+    <property name="version" value="0.7"/>
 
     <target name="init">
         <!-- Create the time stamp -->
@@ -30,6 +30,7 @@
         <mkdir dir="${doc}/api" />
         <javadoc sourcepath="${src}" destdir="${doc}/api"
                  windowtitle="CompactBeans API ${version}">
+            <tag name="jdksource" scope="types" description="OpenJDK Source:"/>
         </javadoc>
     </target>
 

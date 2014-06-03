@@ -48,14 +48,19 @@ Code that pre-supposes a GUI or an IDE is omitted.
   * No reference to the java.awt.* packages.
      - No icons
 
+No classes intended for design-time GUIs.
+
+  * Customizer interface omitted
+  * EventHandler omitted
+  * PropertyEditor interface omitted
+  * Visibility interface omitted
+
 Most things that requires a specific reference to the java.beans.* package
 are omitted.
 
   * No BeanInfo classes, beyond the GenericBeanInfo returned by the
     introspector.
      - due to java.beans.BeanInfo dependency
-  * No Property editors
-     - due to java.beans.PropertyEditor dependency.
   * No introspection of explicit bean info.
      - due to java.beans.BeanInfo dependency
   * Any feature that requires explicit bean info to be exposed is omitted.
@@ -72,12 +77,6 @@ Beans static class is included, in abbreviated form.
   * No reference to BeanContext or AppletInitializer, so no overloads of
     instantiate() method.
   * No implementation of "guiAccessible" or "designTime" properties.
-
-No classes intended for design-time GUIs.
-
-  * EventHandler omitted
-  * Visibility interface omitted
-  * Customizer interface omitted
 
 No XMLEncoder, XMLDecoder
 
@@ -110,6 +109,7 @@ methods inside Descriptor classes are now package-internal or private where
 possible.
 
 Rely less heavily on inheritance, where possible.
+
   * FeatureDescriptor made an interface.
   * Added a DescriptorType to FeatureDescriptor for each feature descriptor
     type.

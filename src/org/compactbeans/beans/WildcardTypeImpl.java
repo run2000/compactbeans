@@ -44,6 +44,7 @@ import java.util.Arrays;
  *
  * @author Eamonn McManus
  * @author Sergey Malenkov
+ * @jdksource com.sun.beans.WildcardTypeImpl
  */
 final class WildcardTypeImpl implements WildcardType {
     private final Type[] upperBounds;
