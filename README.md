@@ -3,6 +3,8 @@ Overview
 
 This is a separated-out implementation of the java.beans.Introspector and
 associated Descriptor classes, targeted at Java 1.8SE Compact Profile 1.
+The intended platform is a small server-like device capable of running
+JavaSE embedded, such as a Raspberry Pi.
 
 The code is based on the openjdk7u60 source bundle, downloaded from the
 Mercurial repository at http://hg.openjdk.java.net/jdk7u/jdk7u60
@@ -58,13 +60,9 @@ No classes intended for design-time GUIs.
 Most things that requires a specific reference to the java.beans.* package
 are omitted.
 
-  * No BeanInfo classes, beyond the GenericBeanInfo returned by the
-    introspector.
-     - due to java.beans.BeanInfo dependency
-  * No introspection of explicit bean info.
-     - due to java.beans.BeanInfo dependency
   * Any feature that requires explicit bean info to be exposed is omitted.
      - no ParameterDescriptor
+     - no AdditionalBeanInfo
   * Remove constructors and methods that are not required by the introspector
      - descriptors appear immutable from outside the java.beans.* package
 
@@ -79,9 +77,9 @@ No XMLEncoder, XMLDecoder
   * Reference to compact profile 2 stuff, namely SAX
   * Unused in examples encountered so far
 
-
 Property Change Events
 ----------------------
+
 These are included in the source, including:
 
   * IndexedPropertyChangeEvent
@@ -99,6 +97,7 @@ infrastructure for these situations.
 
 Vetoable Changes
 ----------------
+
 These are included in the source, including:
 
   * PropertyVetoException

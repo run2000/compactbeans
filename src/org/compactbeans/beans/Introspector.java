@@ -164,38 +164,32 @@ public final class Introspector {
 
         BeanDescriptor bd = introspector.getTargetBeanDescriptor();
 
-        MDStore methods = introspector.getTargetMethodInfo();
-        Collection methodColl = methods.getMethods();
+        MDStore mdStore = introspector.getTargetMethodInfo();
+        Collection methodColl = mdStore.getMethods();
 
         // Allocate and populate the result array.
         MethodDescriptor mds[] = new MethodDescriptor[methodColl.size()];
         mds = (MethodDescriptor[]) methodColl.toArray(mds);
 
-        ESDStore events = introspector.getTargetEventInfo();
-
+        ESDStore esdStore = introspector.getTargetEventInfo();
         EventSetDescriptor esds[];
-        int defaultEventIndex = -1;
+        int defaultEventIndex;
 
-        if (events.isEmpty()) {
+        if (esdStore.isEmpty()) {
             esds = EMPTY_EVENTSETDESCRIPTORS;
+            defaultEventIndex = -1;
         } else {
             // Allocate and populate the result array.
-            Collection eventColl = events.getEventSets();
-            String defaultEventName = events.getDefaultEventName();
+            Collection eventColl = esdStore.getEventSets();
             esds = new EventSetDescriptor[eventColl.size()];
             esds = (EventSetDescriptor[])eventColl.toArray(esds);
 
             // Set the default index.
-            if (defaultEventName != null) {
-                for (int i = 0; i < esds.length; i++) {
-                    if (defaultEventName.equals(esds[i].getName())) {
-                        defaultEventIndex = i;
-                    }
-                }
-            }
+            String defaultEventName = esdStore.getDefaultEventName();
+            defaultEventIndex = findFeatureIndex(esds, defaultEventName);
         }
 
-        PDStore pdStore = introspector.getTargetPropertyInfo(events.isPropertyChangeSource());
+        PDStore pdStore = introspector.getTargetPropertyInfo(esdStore.isPropertyChangeSource());
         Map properties = IntrospectorSupport.processPropertyDescriptors(pdStore.getPropertyDescriptors());
 
         // Allocate and populate the result array.
@@ -204,15 +198,7 @@ public final class Introspector {
 
         // Set the default index.
         String defaultPropertyName = pdStore.getDefaultPropertyName();
-        int defaultPropertyIndex = -1;
-
-        if (defaultPropertyName != null) {
-            for (int i = 0; i < pds.length; i++) {
-                if (defaultPropertyName.equals(pds[i].getName())) {
-                    defaultPropertyIndex = i;
-                }
-            }
-        }
+        int defaultPropertyIndex = findFeatureIndex(pds, defaultPropertyName);
 
         beanInfo = new GenericBeanInfo(bd, esds, defaultEventIndex, pds,
                 defaultPropertyIndex, mds);
@@ -320,6 +306,20 @@ public final class Introspector {
      */
     private static BeanInfo findExplicitBeanInfo(Class beanClass) {
         return ThreadGroupContext.getContext().getBeanInfoFinder().find(beanClass);
+    }
+
+    private static int findFeatureIndex(FeatureDescriptor fds[], String name) {
+        int index = -1;
+
+        if (name != null) {
+            for (int i = 0; i < fds.length; i++) {
+                if (name.equals(fds[i].getName())) {
+                    index = i;
+                }
+            }
+        }
+
+        return index;
     }
 
     //======================================================================
