@@ -27,8 +27,7 @@ package org.compactbeans.beans;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.EventListener;
-import java.util.EventObject;
+import java.util.*;
 
 /**
  * Support methods, including the caches, for the Introspector.
@@ -169,6 +168,270 @@ final class IntrospectorSupport {
     //======================================================================
     // Package private support methods.
     //======================================================================
+
+    /**
+     * Populates the property descriptor table by merging the
+     * lists of Property descriptors.
+     */
+    static Map processPropertyDescriptors(Collection propertyDescriptors) {
+        List list;
+        PropertyDescriptor pd, gpd, spd;
+        IndexedPropertyDescriptor ipd, igpd, ispd;
+
+        // properties maps from String names to PropertyDescriptors
+        // Map implicitly ordered by property name
+        Map properties = new TreeMap();
+
+        Iterator it = propertyDescriptors.iterator();
+        while (it.hasNext()) {
+            pd = null; gpd = null; spd = null;
+            ipd = null; igpd = null; ispd = null;
+
+            list = (List) it.next();
+
+            // First pass. Find the latest getter method. Merge properties
+            // of previous getter methods.
+            for (int i = 0; i < list.size(); i++) {
+                pd = (PropertyDescriptor) list.get(i);
+                if (pd instanceof IndexedPropertyDescriptor) {
+                    ipd = (IndexedPropertyDescriptor) pd;
+                    if (ipd.getIndexedReadMethod() != null) {
+                        if (igpd != null) {
+                            igpd = new IndexedPropertyDescriptor(igpd, ipd);
+                        } else {
+                            igpd = ipd;
+                        }
+                    }
+                } else {
+                    if (pd.getReadMethod() != null) {
+                        if (gpd != null) {
+                            // Don't replace the existing read
+                            // method if it starts with "is"
+                            Method method = gpd.getReadMethod();
+                            if (!method.getName().startsWith(IntrospectorSupport.IS_PREFIX)) {
+                                gpd = new PropertyDescriptor(gpd, pd);
+                            }
+                        } else {
+                            gpd = pd;
+                        }
+                    }
+                }
+            }
+
+            // Second pass. Find the latest setter method which
+            // has the same type as the getter method.
+            for (int i = 0; i < list.size(); i++) {
+                pd = (PropertyDescriptor) list.get(i);
+                if (pd instanceof IndexedPropertyDescriptor) {
+                    ipd = (IndexedPropertyDescriptor) pd;
+                    if (ipd.getIndexedWriteMethod() != null) {
+                        if (igpd != null) {
+                            if (igpd.getIndexedPropertyType()
+                                    == ipd.getIndexedPropertyType()) {
+                                if (ispd != null) {
+                                    ispd = new IndexedPropertyDescriptor(ispd, ipd);
+                                } else {
+                                    ispd = ipd;
+                                }
+                            }
+                        } else {
+                            if (ispd != null) {
+                                ispd = new IndexedPropertyDescriptor(ispd, ipd);
+                            } else {
+                                ispd = ipd;
+                            }
+                        }
+                    }
+                } else {
+                    if (pd.getWriteMethod() != null) {
+                        if (gpd != null) {
+                            if (gpd.getPropertyType() == pd.getPropertyType()) {
+                                if (spd != null) {
+                                    spd = new PropertyDescriptor(spd, pd);
+                                } else {
+                                    spd = pd;
+                                }
+                            }
+                        } else {
+                            if (spd != null) {
+                                spd = new PropertyDescriptor(spd, pd);
+                            } else {
+                                spd = pd;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // At this stage we should have either PDs or IPDs for the
+            // representative getters and setters. The order in which the
+            // property descriptors are determined represent the
+            // precedence of the property ordering.
+            pd = null; ipd = null;
+
+            if ((igpd != null) && (ispd != null)) {
+                // Complete indexed properties set
+                // Merge any classic property descriptors
+                if (gpd != null) {
+                    PropertyDescriptor tpd = mergePropertyDescriptorWithIndexed(igpd, gpd);
+                    if (tpd instanceof IndexedPropertyDescriptor) {
+                        igpd = (IndexedPropertyDescriptor) tpd;
+                    }
+                }
+                if (spd != null) {
+                    PropertyDescriptor tpd = mergePropertyDescriptorWithIndexed(ispd, spd);
+                    if (tpd instanceof IndexedPropertyDescriptor) {
+                        ispd = (IndexedPropertyDescriptor) tpd;
+                    }
+                }
+                if (igpd == ispd) {
+                    pd = igpd;
+                } else {
+                    pd = mergeIndexedPropertyDescriptors(igpd, ispd);
+                }
+            } else if ((gpd != null) && (spd != null)) {
+                // Complete simple properties set
+                if (gpd == spd) {
+                    pd = gpd;
+                } else {
+                    pd = mergePropertyDescriptors(gpd, spd);
+                }
+            } else if (ispd != null) {
+                // indexed setter
+                pd = ispd;
+                // Merge any classic property descriptors
+                if (spd != null) {
+                    pd = mergePropertyDescriptorWithIndexed(ispd, spd);
+                }
+                if (gpd != null) {
+                    pd = mergePropertyDescriptorWithIndexed(ispd, gpd);
+                }
+            } else if (igpd != null) {
+                // indexed getter
+                pd = igpd;
+                // Merge any classic property descriptors
+                if (gpd != null) {
+                    pd = mergePropertyDescriptorWithIndexed(igpd, gpd);
+                }
+                if (spd != null) {
+                    pd = mergePropertyDescriptorWithIndexed(igpd, spd);
+                }
+            } else if (spd != null) {
+                // simple setter
+                pd = spd;
+            } else if (gpd != null) {
+                // simple getter
+                pd = gpd;
+            }
+
+            // Very special case to ensure that an IndexedPropertyDescriptor
+            // doesn't contain less information than the enclosed
+            // PropertyDescriptor. If it does, then recreate as a
+            // PropertyDescriptor. See 4168833
+            if (pd instanceof IndexedPropertyDescriptor) {
+                ipd = (IndexedPropertyDescriptor) pd;
+                if ((ipd.getIndexedReadMethod() == null) && (ipd.getIndexedWriteMethod() == null)) {
+                    pd = new PropertyDescriptor(ipd);
+                }
+            }
+
+            // Find the first property descriptor
+            // which does not have getter and setter methods.
+            // See regression bug 4984912.
+            if ((pd == null) && (!list.isEmpty())) {
+                pd = (PropertyDescriptor) list.get(0);
+            }
+
+            if (pd != null) {
+                properties.put(pd.getName(), pd);
+            }
+        }
+
+        return properties;
+    }
+
+    /**
+     * Adds the property descriptor to the indexed property descriptor
+     * only if the types are the same.
+     *
+     * <p>The most specific property descriptor will take precedence.</p>
+     */
+    private static PropertyDescriptor mergePropertyDescriptorWithIndexed(
+            IndexedPropertyDescriptor ipd, PropertyDescriptor pd) {
+        PropertyDescriptor result = null;
+
+        Class propType = pd.getPropertyType();
+        Class ipropType = ipd.getIndexedPropertyType();
+
+        if (propType.isArray() && (propType.getComponentType() == ipropType)) {
+            if (pd.getClass0().isAssignableFrom(ipd.getClass0())) {
+                result = new IndexedPropertyDescriptor(pd, ipd);
+            } else {
+                result = new IndexedPropertyDescriptor(ipd, pd);
+            }
+        } else {
+            // Cannot merge the pd because of type mismatch
+            // Return the most specific pd
+            if (pd.getClass0().isAssignableFrom(ipd.getClass0())) {
+                result = ipd;
+            } else {
+                result = pd;
+                // Try to add methods which may have been lost in the type change
+                // See 4168833
+                Method write = result.getWriteMethod();
+                Method read = result.getReadMethod();
+
+                if ((read == null) && (write != null)) {
+                    read = IntrospectorSupport.findMethod(result.getClass0(),
+                            IntrospectorSupport.GET_PREFIX + NameGenerator.capitalize(result.getName()), 0);
+                    if (read != null) {
+                        try {
+                            result.setReadMethod(read);
+                        } catch (IntrospectionException ex) {
+                            // no consequences for failure.
+                        }
+                    }
+                }
+                if ((write == null) && (read != null)) {
+                    write = IntrospectorSupport.findMethod(result.getClass0(),
+                            IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(result.getName()), 1,
+                            new Class[]{read.getReturnType()});
+                    if (write != null) {
+                        try {
+                            result.setWriteMethod(write);
+                        } catch (IntrospectionException ex) {
+                            // no consequences for failure.
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Handle regular property descriptor merge.
+     */
+    private static PropertyDescriptor mergePropertyDescriptors(
+            PropertyDescriptor pd1, PropertyDescriptor pd2) {
+        if (pd1.getClass0().isAssignableFrom(pd2.getClass0())) {
+            return new PropertyDescriptor(pd1, pd2);
+        } else {
+            return new PropertyDescriptor(pd2, pd1);
+        }
+    }
+
+    /**
+     * Handle regular indexed property descriptor merge.
+     */
+    private static PropertyDescriptor mergeIndexedPropertyDescriptors(
+            IndexedPropertyDescriptor ipd1, IndexedPropertyDescriptor ipd2) {
+        if (ipd1.getClass0().isAssignableFrom(ipd2.getClass0())) {
+            return new IndexedPropertyDescriptor(ipd1, ipd2);
+        } else {
+            return new IndexedPropertyDescriptor(ipd2, ipd1);
+        }
+    }
 
     /**
      * Internal support for finding a target methodName with a given

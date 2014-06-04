@@ -37,16 +37,20 @@ final class GenericBeanInfo implements BeanInfo {
 
     private final BeanDescriptor beanDescriptor;
     private final EventSetDescriptor[] events;
+    private final int defaultEvent;
     private final PropertyDescriptor[] properties;
+    private final int defaultProperty;
     private final MethodDescriptor[] methods;
 
     public GenericBeanInfo(BeanDescriptor beanDescriptor,
-                           EventSetDescriptor[] events,
-                           PropertyDescriptor[] properties,
+                           EventSetDescriptor[] events, int defaultEvent,
+                           PropertyDescriptor[] properties, int defaultProperty,
                            MethodDescriptor[] methods) {
         this.beanDescriptor = beanDescriptor;
         this.events = events;
+        this.defaultEvent = defaultEvent;
         this.properties = properties;
+        this.defaultProperty = defaultProperty;
         this.methods = methods;
     }
 
@@ -63,7 +67,7 @@ final class GenericBeanInfo implements BeanInfo {
     }
 
     public int getDefaultPropertyIndex() {
-        return -1;
+        return defaultProperty;
     }
 
     public MethodDescriptor[] getMethodDescriptors() {
@@ -71,7 +75,7 @@ final class GenericBeanInfo implements BeanInfo {
     }
 
     public int getDefaultEventIndex() {
-        return -1;
+        return defaultEvent;
     }
 
     @Override

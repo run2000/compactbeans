@@ -54,6 +54,7 @@ final class ThreadGroupContext {
     }
 
     private Map<Class<?>, BeanInfo> beanInfoCache;
+    private BeanInfoFinder beanInfoFinder;
 
     private ThreadGroupContext() {
     }
@@ -81,5 +82,12 @@ final class ThreadGroupContext {
         if (this.beanInfoCache != null) {
             this.beanInfoCache.clear();
         }
+    }
+
+    synchronized BeanInfoFinder getBeanInfoFinder() {
+        if (this.beanInfoFinder == null) {
+            this.beanInfoFinder = new BeanInfoFinder();
+        }
+        return this.beanInfoFinder;
     }
 }
