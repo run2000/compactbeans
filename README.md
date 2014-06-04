@@ -65,10 +65,6 @@ are omitted.
      - due to java.beans.BeanInfo dependency
   * Any feature that requires explicit bean info to be exposed is omitted.
      - no ParameterDescriptor
-  * No VetoableChangeListeners
-     - due to java.beans.VetoableChangeListener dependency
-     - no constrained properties
-     - can still listen for other events
   * Remove constructors and methods that are not required by the introspector
      - descriptors appear immutable from outside the java.beans.* package
 
@@ -100,6 +96,18 @@ to take advantage of these classes and interfaces.
 As it turns out, many libraries use properties and property change events
 internally, so it becomes useful to have the property change event
 infrastructure for these situations.
+
+Vetoable Changes
+----------------
+These are included in the source, including:
+
+  * PropertyVetoException
+  * VetoableChangeListener
+  * VetoableChangeListenerProxy
+  * VetoableChangeSupport
+
+Recompiling the source of any implementation classes will be necessary
+to take advantage of these classes and interfaces.
 
 Other assumptions
 -----------------

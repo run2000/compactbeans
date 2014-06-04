@@ -80,6 +80,11 @@ public final class PropertyChangeSupport implements Serializable {
     private PropertyChangeListenerMap map = new PropertyChangeListenerMap();
 
     /**
+     * The object to be provided as the "source" for any generated events.
+     */
+    private Object source;
+
+    /**
      * Constructs a <code>PropertyChangeSupport</code> object.
      *
      * @param sourceBean  The bean to be given as the source for any events.
@@ -474,11 +479,6 @@ public final class PropertyChangeSupport implements Serializable {
             }
         }
     }
-
-    /**
-     * The object to be provided as the "source" for any generated events.
-     */
-    private Object source;
 
     /**
      * @serialField children                                   Hashtable

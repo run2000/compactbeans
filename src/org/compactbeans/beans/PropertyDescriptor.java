@@ -40,6 +40,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
     private Reference<Method> writeMethodRef;
 
     private boolean bound;
+    private boolean constrained;
 
     // The base name of the method name which will be prefixed with the
     // read and write method. If name == "foo" then the baseName is "Foo"
@@ -154,6 +155,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
         }
 
         bound = x.bound | y.bound;
+        constrained = x.constrained | y.constrained;
     }
 
     /**
@@ -193,6 +195,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
         readMethodName = old.readMethodName;
         writeMethodName = old.writeMethodName;
         bound = old.bound;
+        constrained = old.constrained;
     }
 
     void updateGenericsFor(Class<?> type) {
@@ -398,6 +401,26 @@ public class PropertyDescriptor implements FeatureDescriptor {
         this.bound = bound;
     }
 
+    /**
+     * Attempted updates to "Constrained" properties will cause a "VetoableChange"
+     * event to get fired when the property is changed.
+     *
+     * @return True if this is a constrained property.
+     */
+    public boolean isConstrained() {
+        return constrained;
+    }
+
+    /**
+     * Attempted updates to "Constrained" properties will cause a "VetoableChange"
+     * event to get fired when the property is changed.
+     *
+     * @param constrained True if this is a constrained property.
+     */
+    public void setConstrained(boolean constrained) {
+        this.constrained = constrained;
+    }
+
     // Calculate once since capitalize() is expensive.
     String getBaseName() {
         if (baseName == null) {
@@ -454,40 +477,6 @@ public class PropertyDescriptor implements FeatureDescriptor {
     }
 
     /**
-     * Compares this <code>PropertyDescriptor</code> against the specified object.
-     * Returns true if the objects are the same. Two <code>PropertyDescriptor</code>s
-     * are the same if the read, write, property types, property editor and
-     * flags  are equivalent.
-     *
-     * @since 1.4
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if ((obj != null) && (obj instanceof PropertyDescriptor)) {
-            PropertyDescriptor other = (PropertyDescriptor) obj;
-            Method otherReadMethod = other.getReadMethod();
-            Method otherWriteMethod = other.getWriteMethod();
-
-            if (!IntrospectorSupport.compareMethods(getReadMethod(), otherReadMethod)) {
-                return false;
-            }
-
-            if (!IntrospectorSupport.compareMethods(getWriteMethod(), otherWriteMethod)) {
-                return false;
-            }
-
-            return (getPropertyType() == other.getPropertyType()) &&
-                    (bound == other.isBound()) &&
-                    (writeMethodName == other.writeMethodName) &&
-                    (readMethodName == other.readMethodName);
-        }
-        return false;
-    }
-
-    /**
      * Returns the property type that corresponds to the read and write method.
      * The type precedence is given to the readMethod.
      *
@@ -530,6 +519,41 @@ public class PropertyDescriptor implements FeatureDescriptor {
 
 
     /**
+     * Compares this <code>PropertyDescriptor</code> against the specified object.
+     * Returns true if the objects are the same. Two <code>PropertyDescriptor</code>s
+     * are the same if the read, write, property types, property editor and
+     * flags  are equivalent.
+     *
+     * @since 1.4
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj != null) && (obj instanceof PropertyDescriptor)) {
+            PropertyDescriptor other = (PropertyDescriptor) obj;
+            Method otherReadMethod = other.getReadMethod();
+            Method otherWriteMethod = other.getWriteMethod();
+
+            if (!IntrospectorSupport.compareMethods(getReadMethod(), otherReadMethod)) {
+                return false;
+            }
+
+            if (!IntrospectorSupport.compareMethods(getWriteMethod(), otherWriteMethod)) {
+                return false;
+            }
+
+            return (getPropertyType() == other.getPropertyType()) &&
+                    (bound == other.isBound()) &&
+                    (constrained == other.isConstrained()) &&
+                    (writeMethodName == other.writeMethodName) &&
+                    (readMethodName == other.readMethodName);
+        }
+        return false;
+    }
+
+    /**
      * Returns a hash code value for the object.
      * See {@link java.lang.Object#hashCode} for a complete description.
      *
@@ -552,6 +576,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
                 readMethodName.hashCode());
         result = 37 * result + getName().hashCode();
         result = 37 * result + ((bound) ? 1 : 0);
+        result = 37 * result + ((constrained) ? 1 : 0);
 
         return result;
     }
@@ -568,7 +593,10 @@ public class PropertyDescriptor implements FeatureDescriptor {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append("[name=").append(this.name);
         if (this.bound) {
-            sb.append("; ").append("bound");
+            sb.append("; bound");
+        }
+        if (this.constrained) {
+            sb.append("; constrained");
         }
         appendTo(sb, "propertyType", this.propertyTypeRef);
         appendTo(sb, "readMethod", this.readMethodRef);

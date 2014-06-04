@@ -303,9 +303,9 @@ public final class Introspector {
                             if(name.startsWith(IntrospectorSupport.SET_PREFIX)) {
                                 // Simple setter
                                 pd = new PropertyDescriptor(this.beanClass, name.substring(3), null, method);
-//                              if (throwsException(method, PropertyVetoException.class)) {
-//                                  pd.setConstrained(true);
-//                              }
+                              if (IntrospectorSupport.throwsException(method, PropertyVetoException.class)) {
+                                  pd.setConstrained(true);
+                              }
                             }
                         } else if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
                             Class<?>[] parameterTypes = method.getParameterTypes();
@@ -319,9 +319,9 @@ public final class Introspector {
                             Class<?>[] parameterTypes = method.getParameterTypes();
                             if((parameterTypes.length > 0) && (int.class == parameterTypes[0])) {
                                 pd = new IndexedPropertyDescriptor(this.beanClass, name.substring(3), null, null, null, method);
-//                              if (throwsException(method, PropertyVetoException.class)) {
-//                                  pd.setConstrained(true);
-//                              }
+                              if (IntrospectorSupport.throwsException(method, PropertyVetoException.class)) {
+                                  pd.setConstrained(true);
+                              }
                             }
                         }
                         break;
