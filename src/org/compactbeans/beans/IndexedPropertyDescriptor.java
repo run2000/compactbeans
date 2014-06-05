@@ -76,6 +76,47 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     }
 
     /**
+     * This constructor takes the name of a simple property, and method
+     * names for reading and writing the property, both indexed
+     * and non-indexed.
+     *
+     * @param propertyName The programmatic name of the property.
+     * @param beanClass  The Class object for the target bean.
+     * @param readMethodName The name of the method used for reading the property
+     *           values as an array.  May be <code>null</code> if the property
+     *           is write-only or must be indexed.
+     * @param writeMethodName The name of the method used for writing the property
+     *           values as an array.  May be <code>null</code> if the property
+     *           is read-only or must be indexed.
+     * @param indexedReadMethodName The name of the method used for reading
+     *          an indexed property value.
+     *          May be <code>null</code> if the property is write-only.
+     * @param indexedWriteMethodName The name of the method used for writing
+     *          an indexed property value.
+     *          May be <code>null</code> if the property is read-only.
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass,
+                String readMethodName, String writeMethodName,
+                String indexedReadMethodName, String indexedWriteMethodName)
+                throws IntrospectionException {
+        super(propertyName, beanClass, readMethodName, writeMethodName);
+
+        this.indexedReadMethodName = indexedReadMethodName;
+        if (indexedReadMethodName != null && getIndexedReadMethod() == null) {
+            throw new IntrospectionException("Method not found: " + indexedReadMethodName);
+        }
+
+        this.indexedWriteMethodName = indexedWriteMethodName;
+        if (indexedWriteMethodName != null && getIndexedWriteMethod() == null) {
+            throw new IntrospectionException("Method not found: " + indexedWriteMethodName);
+        }
+        // Implemented only for type checking.
+        findIndexedPropertyType(getIndexedReadMethod(), getIndexedWriteMethod());
+    }
+
+    /**
      * Creates <code>PropertyDescriptor</code> for the specified bean
      * with the specified name and methods to read/write the property value.
      *

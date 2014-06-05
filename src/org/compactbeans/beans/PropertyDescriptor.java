@@ -181,6 +181,50 @@ public class PropertyDescriptor implements FeatureDescriptor {
         this.baseName = base;
     }
 
+    /**
+     * This constructor takes the name of a simple property, and method
+     * names for reading and writing the property.
+     *
+     * @param propertyName The programmatic name of the property.
+     * @param beanClass The Class object for the target bean.  For
+     *          example sun.beans.OurButton.class.
+     * @param readMethodName The name of the method used for reading the property
+     *           value.  May be <code>null</code> if the property is write-only.
+     * @param writeMethodName The name of the method used for writing the property
+     *           value.  May be </code>null<code> if the property is read-only.
+     * @exception IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public PropertyDescriptor(String propertyName, Class<?> beanClass,
+                String readMethodName, String writeMethodName)
+                throws IntrospectionException {
+        if (beanClass == null) {
+            throw new IntrospectionException("Target Bean class is null");
+        }
+        if (propertyName == null || propertyName.length() == 0) {
+            throw new IntrospectionException("bad property name");
+        }
+        if ("".equals(readMethodName) || "".equals(writeMethodName)) {
+            throw new IntrospectionException("read or write method name should not be the empty string");
+        }
+        name = propertyName;
+        setClass0(beanClass);
+
+        this.readMethodName = readMethodName;
+        if (readMethodName != null && getReadMethod() == null) {
+            throw new IntrospectionException("Method not found: " + readMethodName);
+        }
+        this.writeMethodName = writeMethodName;
+        if (writeMethodName != null && getWriteMethod() == null) {
+            throw new IntrospectionException("Method not found: " + writeMethodName);
+        }
+        // If this class or one of its base classes allow PropertyChangeListener,
+        // then we assume that any properties we discover are "bound".
+        // See Introspector.getTargetPropertyInfo() method.
+        Class[] args = { PropertyChangeListener.class };
+        this.bound = null != IntrospectorSupport.findMethod(beanClass, "addPropertyChangeListener", args.length, args);
+    }
+
     /*
      * Package-private copy constructor.
      * This must isolate the new object from any changes to the old object.

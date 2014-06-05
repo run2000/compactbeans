@@ -197,6 +197,36 @@ public final class EventSetDescriptor implements FeatureDescriptor {
         setListenerType(listenerType);
     }
 
+    /**
+     * Creates an <code>EventSetDescriptor</code> from scratch using
+     * <code>java.lang.reflect.MethodDescriptor</code> and
+     * <code>java.lang.Class</code> objects.
+     *
+     * @param eventSetName The programmatic name of the event set.
+     * @param listenerType The Class for the listener interface.
+     * @param listenerMethodDescriptors  An array of MethodDescriptor objects
+     *           describing each of the event handling methods in the
+     *           target listener.
+     * @param addListenerMethod  The method on the event source
+     *          that can be used to register an event listener object.
+     * @param removeListenerMethod  The method on the event source
+     *          that can be used to de-register an event listener object.
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public EventSetDescriptor(String eventSetName,
+                Class<?> listenerType,
+                MethodDescriptor listenerMethodDescriptors[],
+                Method addListenerMethod,
+                Method removeListenerMethod)
+                throws IntrospectionException {
+        this.name = eventSetName;
+        this.listenerMethodDescriptors = listenerMethodDescriptors;
+        setAddListenerMethod(addListenerMethod);
+        setRemoveListenerMethod(removeListenerMethod);
+        setListenerType(listenerType);
+    }
+
     private static Method getMethod(Class cls, String name, int args)
             throws IntrospectionException {
         if (name == null) {
