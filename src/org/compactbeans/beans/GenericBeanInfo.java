@@ -78,6 +78,10 @@ final class GenericBeanInfo implements BeanInfo {
         return defaultEvent;
     }
 
+    public BeanInfo[] getAdditionalBeanInfo() {
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("GenericBeanInfo{");

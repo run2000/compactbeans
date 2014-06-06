@@ -27,18 +27,18 @@ of OpenJDK.
 API compatibility as much as possible. In the simplest case, a package
 import rename is all that is required.
 
-Stripped down code base to essentials for smaller footprint, as consistent
+Stripped down code base to runtime only for smaller footprint, as consistent
 with compact profile environments.
+
+Try and deal with mutability concerns in the FeatureDescriptor classes, so that
+any mutation of descriptor data is isolated from objects in the BeanInfo
+cache.
 
 Drop in to many server-side situations where bean-like properties and events
 are used. Examples:
 
   * JSP
   * Log4j
-
-As it turns out, many of these libraries also use properties and property
-change events internally, so it becomes useful to have the property
-change event infrastructure for these situations.
 
 Working assumptions
 -------------------
@@ -57,20 +57,21 @@ No classes intended for design-time GUIs.
   * PropertyEditor interface omitted
   * Visibility interface omitted
 
-Most things that requires a specific reference to the java.beans.* package
-are omitted.
-
-  * Any feature that requires explicit bean info to be exposed is omitted.
-     - no ParameterDescriptor
-     - no AdditionalBeanInfo
-  * Remove constructors and methods that are not required by the introspector
-     - descriptors appear immutable from outside the java.beans.* package
-
 Beans static class is included, in abbreviated form.
 
   * No reference to BeanContext or AppletInitializer, so no overloads of
     instantiate() method.
   * No implementation of "guiAccessible" or "designTime" properties.
+
+Address mutability concerns:
+
+  * Remove or reduce visibility of setter methods that are not required
+    by the introspector
+     - descriptors appear immutable from outside the beans.* package
+  * Add DescriptorData class for attributes that may need manipulation
+    outside the beans.* package
+     - composed into the FeatureDescriptor classes with read-only facade
+     - copy on write style encouraged outside the beans.* package
 
 No XMLEncoder, XMLDecoder
 
@@ -118,6 +119,9 @@ possible.
 Rely less heavily on inheritance, where possible.
 
   * FeatureDescriptor made an interface.
+  * Added a DescriptorData class to all the FeatureDescriptor implementations
+     - contains mutable information previously held directly in
+       FeatureDescriptor
   * Added a DescriptorType to FeatureDescriptor for each feature descriptor
     type.
      - The avoids requiring instanceof tests to distinguish descriptors

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 1997, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,59 +25,49 @@
 
 package org.compactbeans.beans;
 
-import java.lang.ref.Reference;
 import java.util.Enumeration;
 
 /**
- * A BeanDescriptor provides global information about a "bean",
- * including its Java class, its programmatic name, etc.
+ * The ParameterDescriptor class allows bean implementors to provide
+ * additional information on each of their parameters, beyond the
+ * low level type information provided by the java.lang.reflect.Method
+ * class.
  * <p>
- * This is one of the kinds of descriptor returned by a <code>BeanInfo</code>
- * object, which also returns descriptors for properties, method, and events.</p>
+ * Currently all our state comes from the DescriptorData mixin class.</p>
  */
 
-public final class BeanDescriptor implements FeatureDescriptor {
-
-    private final Reference<Class> beanClassRef;
+public final class ParameterDescriptor implements FeatureDescriptor {
     private final String name;
     private final DescriptorData descriptorData;
 
     /**
-     * Create a BeanDescriptor for a bean.
+     * Public constructor that takes a name.
      *
-     * @param beanClass the <code>Class</code> object of the Java class
-     *          that implements the bean.  For example sun.beans.OurButton.class
+     * @param name the name of the parameter
      */
-    public BeanDescriptor(Class<?> beanClass) {
-        this(beanClass, null);
+    public ParameterDescriptor(String name) {
+        this.name = name;
+        this.descriptorData = null;
     }
 
     /**
-     * Create a BeanDescriptor for a bean with the given descriptor data.
+     * Public constructor that takes a name and descriptor data.
      *
-     * @param beanClass the <code>Class</code> object of the Java class
-     *          that implements the bean.  For example sun.beans.OurButton.class
-     * @param descriptorData the descriptor data for this bean descriptor,
+     * @param name the name of the parameter
+     * @param descriptorData the descriptor data for this parameter descriptor,
      *                       possibly <code>null</code>
      */
-    public BeanDescriptor(Class<?> beanClass, DescriptorData descriptorData) {
-        this.beanClassRef = RefUtil.createWeakReference((Class)beanClass);
-
-        String name = beanClass.getName();
-        if(name.lastIndexOf('.') >= 0) {
-            name = name.substring(name.lastIndexOf('.') + 1);
-        }
+    public ParameterDescriptor(String name, DescriptorData descriptorData) {
         this.name = name;
         this.descriptorData = descriptorData;
     }
 
-    /*
-     * Package-private dup constructor
+    /**
+     * Package private dup constructor.
      * This must isolate the new object from any changes to the old object.
      */
-    BeanDescriptor(BeanDescriptor old) {
+    ParameterDescriptor(ParameterDescriptor old) {
         name = old.name;
-        beanClassRef = old.beanClassRef;
         descriptorData = old.getDescriptorData();
     }
 
@@ -85,29 +75,14 @@ public final class BeanDescriptor implements FeatureDescriptor {
      * Duplicate constructor, with new <code>DescriptorData</code>.
      * This must isolate the new object from any changes to the old object.
      *
-     * @param old the bean descriptor to be copied
+     * @param old the method descriptor to be copied
      * @param newData the new DescriptorData to be composed in
      */
-    public BeanDescriptor(BeanDescriptor old, DescriptorData newData) {
+    public ParameterDescriptor(ParameterDescriptor old, DescriptorData newData) {
         name = old.name;
-        beanClassRef = old.beanClassRef;
         descriptorData = newData;
     }
 
-    /**
-     * Gets the bean's <code>Class</code> object.
-     *
-     * @return The <code>Class</code> object for the bean
-     */
-    public Class getBeanClass() {
-        return RefUtil.getObject(this.beanClassRef);
-    }
-
-    /**
-     * Gets the programmatic name of this feature.
-     *
-     * @return The programmatic name of the bean
-     */
     public String getName() {
         return name;
     }
@@ -115,11 +90,11 @@ public final class BeanDescriptor implements FeatureDescriptor {
     /**
      * Gets the descriptor type for this object.
      *
-     * @return <code>DescriptorType.BEAN</code> to indicate this is a
-     * BeanDescriptor object
+     * @return <code>DescriptorType.PARAMETER</code> to indicate this is a
+     * ParameterDescriptor object
      */
     public DescriptorType getDescriptorType() {
-        return DescriptorType.BEAN;
+        return DescriptorType.PARAMETER;
     }
 
     public String getDisplayName() {
@@ -165,16 +140,9 @@ public final class BeanDescriptor implements FeatureDescriptor {
      *
      * @since 1.7
      */
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
-        sb.append("[name=").append(this.name);
-        if (this.beanClassRef != null) {
-            Object value = this.beanClassRef.get();
-            if (value != null) {
-                sb.append("; beanClass=").append(value);
-            }
-        }
-        return sb.append("]").toString();
+        sb.append("[name=").append(this.name).append(']');
+        return sb.toString();
     }
 }

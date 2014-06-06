@@ -72,9 +72,9 @@ public final class Beans {
      * @param     beanName    the name of the bean within the class-loader.
      *                        For example "sun.beanbox.foobah"
      *
-     * @exception ClassNotFoundException if the class of a serialized
+     * @throws ClassNotFoundException if the class of a serialized
      *              object could not be found
-     * @exception IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
 
     public static Object instantiate(ClassLoader cls, String beanName) throws IOException, ClassNotFoundException {

@@ -30,7 +30,7 @@ package org.compactbeans.beans;
  * <code>BeanInfo</code> classes.
  * <p>
  * It defaults to providing "noop" information, and can be selectively
- * overridden to provide more explicit information on chosen topics.
+ * overridden to provide more explicit information on chosen topics.</p>
  */
 
 public class SimpleBeanInfo implements BeanInfo {
@@ -80,6 +80,15 @@ public class SimpleBeanInfo implements BeanInfo {
      * if you wish to provide explicit method info.
      */
     public MethodDescriptor[] getMethodDescriptors() {
+        return null;
+    }
+
+    /**
+     * Claim there are no other relevant BeanInfo objects.  You
+     * may override this if you want to (for example) return a
+     * BeanInfo for a base class.
+     */
+    public BeanInfo[] getAdditionalBeanInfo() {
         return null;
     }
 }

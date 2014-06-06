@@ -57,7 +57,13 @@ import java.util.*;
  */
 public final class Introspector {
 
+    // Flags that can be used to control getBeanInfo:
+    public final static int USE_ALL_BEANINFO           = 1;
+    public final static int IGNORE_IMMEDIATE_BEANINFO  = 2;
+    public final static int IGNORE_ALL_BEANINFO        = 3;
+
     private final static EventSetDescriptor[] EMPTY_EVENTSETDESCRIPTORS = new EventSetDescriptor[0];
+    private final static BeanInfo[] EMPTY_BEANINFO = new BeanInfo[0];
 
     //======================================================================
     // 				Public methods
@@ -78,7 +84,32 @@ public final class Introspector {
      */
     public static BeanInfo getBeanInfo(Class<?> beanClass)
             throws IntrospectionException {
-        return getBeanInfo(beanClass, null, ReflectUtil.isPackageAccessible(beanClass));
+        return getBeanInfo(beanClass, null, USE_ALL_BEANINFO, ReflectUtil.isPackageAccessible(beanClass));
+    }
+
+    /**
+     * Introspect on a Java bean and learn about all its properties, exposed
+     * methods, and events, subject to some control flags.
+     * <p>
+     * If the BeanInfo class for a Java Bean has been previously Introspected
+     * based on the same arguments then the BeanInfo class is retrieved
+     * from the BeanInfo cache.
+     *
+     * @param beanClass  The bean class to be analyzed.
+     * @param flags  Flags to control the introspection.
+     * @return  A BeanInfo object describing the target bean.
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public static BeanInfo getBeanInfo(Class<?> beanClass, int flags)
+            throws IntrospectionException {
+
+        if((flags < USE_ALL_BEANINFO) || (flags > IGNORE_ALL_BEANINFO)) {
+            throw new IntrospectionException("Invalid flag for getBeanInfo");
+        }
+
+        boolean useBeanInfoCache = (flags == USE_ALL_BEANINFO);
+        return getBeanInfo(beanClass, null, flags, useBeanInfoCache);
     }
 
     /**
@@ -99,10 +130,10 @@ public final class Introspector {
      */
     public static BeanInfo getBeanInfo(Class<?> beanClass, Class<?> stopClass)
             throws IntrospectionException {
-        boolean useAllInfo = (stopClass == null);
+        boolean useBeanInfoCache = (stopClass == null);
 
         // Check stopClass is a superClass of startClass.
-        if (!useAllInfo) {
+        if (!useBeanInfoCache) {
             boolean isSuper = false;
             for (Class c = beanClass.getSuperclass(); c != null; c = c.getSuperclass()) {
                 if (c == stopClass) {
@@ -116,7 +147,61 @@ public final class Introspector {
             }
         }
 
-        return getBeanInfo(beanClass, stopClass, useAllInfo);
+        return getBeanInfo(beanClass, stopClass, USE_ALL_BEANINFO, useBeanInfoCache);
+    }
+
+    /**
+     * Introspect on a Java Bean and learn about all its properties, exposed
+     * methods, and events.
+     *
+     * <p>If the <code>BeanInfo</code> class for a Java Bean has been previously
+     * Introspected then the <code>BeanInfo</code> class is retrieved from
+     * the <code>BeanInfo</code> cache.</p>
+     *
+     * <p>Flags to control the introspection are as follows.</p>
+     * <dl>
+     * <dt><code>flags == USE_ALL_BEANINFO</code></dt>
+     * <dd>use all of the BeanInfo classes we can discover.</dd>
+     * <dt><code>flags == IGNORE_IMMEDIATE_BEANINFO</code></dt>
+     * <dd>ignore any BeanInfo associated with the specified beanClass.</dd>
+     * <dt><code>flags == IGNORE_ALL_BEANINFO</code></dt>
+     * <dd>ignore all BeanInfo associated with the specified beanClass or
+     * any of its parent classes.</dd>
+     * </dl>
+     *
+     * @param beanClass The bean class to be analyzed.
+     * @param stopClass The base class at which to stop the analysis.  Any
+     *    methods/properties/events in the stopClass or in its base classes
+     *    will be ignored in the analysis.
+     * @param flags flags to control the introspection of explicit bean info.
+     * @return A <code>BeanInfo</code> object describing the target bean.
+     * @throws IntrospectionException if an exception occurs during
+     *                                introspection.
+     */
+    public static BeanInfo getBeanInfo(Class<?> beanClass, Class<?> stopClass,
+                                       int flags) throws IntrospectionException {
+        if((flags < USE_ALL_BEANINFO) || (flags > IGNORE_ALL_BEANINFO)) {
+            throw new IntrospectionException("Invalid flag for getBeanInfo");
+        }
+
+        boolean useBeanInfoCache = (stopClass == null) && (flags == USE_ALL_BEANINFO);
+
+        // Check stopClass is a superClass of startClass.
+        if (stopClass != null) {
+            boolean isSuper = false;
+            for (Class c = beanClass.getSuperclass(); c != null; c = c.getSuperclass()) {
+                if (c == stopClass) {
+                    isSuper = true;
+                    break;
+                }
+            }
+            if (!isSuper) {
+                throw new IntrospectionException(stopClass.getName() + " not superclass of " +
+                                        beanClass.getName());
+            }
+        }
+
+        return getBeanInfo(beanClass, stopClass, flags, useBeanInfoCache);
     }
 
     /**
@@ -134,6 +219,8 @@ public final class Introspector {
      *
      * @param beanClass the bean class to be analyzed
      * @param stopClass the parent class at which to stop the analysis
+     * @param flags the flags for controlling how explicit bean info is
+     *              included in the result
      * @param useBeanInfoCache <code>true</code> to indicate the
      *     <code>BeanInfo</code> cache should be used where possible, otherwise
      *     <code>false</code> to avoid the <code>BeanInfo</code> cache
@@ -141,7 +228,7 @@ public final class Introspector {
      * @throws IntrospectionException if an exception occurs during introspection
      */
     private static BeanInfo getBeanInfo(Class<?> beanClass, Class<?> stopClass,
-            boolean useBeanInfoCache) throws IntrospectionException {
+            int flags, boolean useBeanInfoCache) throws IntrospectionException {
         BeanInfo superBeanInfo;
         Class superClass = beanClass.getSuperclass();
         BeanInfo beanInfo;
@@ -154,13 +241,18 @@ public final class Introspector {
         }
 
         if ((superClass != null) && (superClass != stopClass)) {
-            boolean newUseBeanInfoCache = useBeanInfoCache || (stopClass == null);
-            superBeanInfo = getBeanInfo(superClass, stopClass, newUseBeanInfoCache);
+            int newFlags = flags;
+            if (newFlags == IGNORE_IMMEDIATE_BEANINFO) {
+                newFlags = USE_ALL_BEANINFO;
+            }
+            boolean newUseBeanInfoCache = useBeanInfoCache || ((stopClass == null) && (newFlags == USE_ALL_BEANINFO));
+
+            superBeanInfo = getBeanInfo(superClass, stopClass, newFlags, newUseBeanInfoCache);
         } else {
             superBeanInfo = null;
         }
 
-        Introspector introspector = new Introspector(beanClass, superBeanInfo);
+        Introspector introspector = new Introspector(beanClass, superBeanInfo, flags == USE_ALL_BEANINFO);
 
         BeanDescriptor bd = introspector.getTargetBeanDescriptor();
 
@@ -234,7 +326,7 @@ public final class Introspector {
      * method is called. This could result in a SecurityException.
      *
      * @param path  Array of package names.
-     * @exception  SecurityException  if a security manager exists and its
+     * @throws SecurityException  if a security manager exists and its
      *             <code>checkPropertiesAccess</code> method doesn't allow setting
      *              of system properties.
      * @see SecurityManager#checkPropertiesAccess
@@ -288,11 +380,21 @@ public final class Introspector {
     private final Class beanClass;
     private final BeanInfo superBeanInfo;
     private final BeanInfo explicitBeanInfo;
+    private final BeanInfo additionalBeanInfo[];
 
-    private Introspector(Class beanClass, BeanInfo superBeanInfo) {
+    private Introspector(Class beanClass, BeanInfo superBeanInfo, boolean useBeanInfo) {
         this.beanClass = beanClass;
         this.superBeanInfo = superBeanInfo;
-        this.explicitBeanInfo = findExplicitBeanInfo(beanClass);
+        if(useBeanInfo) {
+            this.explicitBeanInfo = findExplicitBeanInfo(beanClass);
+        } else {
+            this.explicitBeanInfo = null;
+        }
+        BeanInfo moreBeanInfo[] = null;
+        if (explicitBeanInfo != null) {
+            moreBeanInfo = explicitBeanInfo.getAdditionalBeanInfo();
+        }
+        additionalBeanInfo = (moreBeanInfo == null) ? EMPTY_BEANINFO : moreBeanInfo;
     }
 
     /**
@@ -347,27 +449,29 @@ public final class Introspector {
         // explicit information.
         PropertyDescriptor[] explicitProperties = null;
         if (explicitBeanInfo != null) {
-            PropertyDescriptor[] descriptors = explicitBeanInfo.getPropertyDescriptors();
+            explicitProperties = explicitBeanInfo.getPropertyDescriptors();
             int index = explicitBeanInfo.getDefaultPropertyIndex();
-            if ((0 <= index) && (index < descriptors.length)) {
-                pdStore.setDefaultPropertyName(descriptors[index].getName());
+            if ((index >= 0) && (index < explicitProperties.length)) {
+                pdStore.setDefaultPropertyName(explicitProperties[index].getName());
             }
-            explicitProperties = descriptors;
         }
 
         if ((explicitProperties == null) && (superBeanInfo != null)) {
             // We have no explicit BeanInfo properties.  Check with our parent.
             PropertyDescriptor supers[] = superBeanInfo.getPropertyDescriptors();
-            for (int i = 0; i < supers.length; i++) {
-                pdStore.addPropertyDescriptor(beanClass, supers[i]);
+            pdStore.addProperties(beanClass, supers);
+        }
+
+        for (int i = 0; i < additionalBeanInfo.length; i++) {
+            if(additionalBeanInfo[i] != null) {
+                PropertyDescriptor[] additional = additionalBeanInfo[i].getPropertyDescriptors();
+                pdStore.addProperties(beanClass, additional);
             }
         }
 
         if (explicitProperties != null) {
             // Add the explicit BeanInfo data to our results.
-            for (PropertyDescriptor descriptor : explicitProperties) {
-                pdStore.addPropertyDescriptor(beanClass, descriptor);
-            }
+            pdStore.addProperties(beanClass, explicitProperties);
 
         } else {
 
@@ -454,7 +558,7 @@ public final class Introspector {
                     if (propertyChangeSource) {
                         pd.setBound(true);
                     }
-                    pdStore.addPropertyDescriptor(beanClass, pd);
+                    pdStore.addProperty(beanClass, pd);
                 }
             }
         }
@@ -471,7 +575,7 @@ public final class Introspector {
      * events fired by the target bean.
      */
     private ESDStore getTargetEventInfo() throws IntrospectionException {
-        ESDStore events = new ESDStore();
+        ESDStore esdStore = new ESDStore();
 
         // Check if the bean has its own BeanInfo that will provide
         // explicit information.
@@ -479,24 +583,25 @@ public final class Introspector {
         if (explicitBeanInfo != null) {
             explicitEvents = explicitBeanInfo.getEventSetDescriptors();
             int ix = explicitBeanInfo.getDefaultEventIndex();
-            if (ix >= 0 && ix < explicitEvents.length) {
-                events.setDefaultEventName(explicitEvents[ix].getName());
+            if ((ix >= 0) && (ix < explicitEvents.length)) {
+                esdStore.setDefaultEventName(explicitEvents[ix].getName());
             }
         }
 
         if ((explicitEvents == null) && (superBeanInfo != null)) {
             // We have no explicit BeanInfo events.  Check with our parent.
             EventSetDescriptor supers[] = superBeanInfo.getEventSetDescriptors();
-            for (int j = 0 ; j < supers.length; j++) {
-                events.addEvent(supers[j]);
-            }
+            esdStore.addEvents(supers);
+        }
+
+        for (int i = 0; i < additionalBeanInfo.length; i++) {
+            EventSetDescriptor additional[] = additionalBeanInfo[i].getEventSetDescriptors();
+            esdStore.addEvents(additional);
         }
 
         if (explicitEvents != null) {
             // Add the explicit explicitBeanInfo data to our results.
-            for (int i = 0 ; i < explicitEvents.length; i++) {
-                events.addEvent(explicitEvents[i]);
-            }
+            esdStore.addEvents(explicitEvents);
 
         } else {
             // Apply some reflection to the current class.
@@ -521,45 +626,42 @@ public final class Introspector {
                     continue;
                 }
                 String name = method.getName();
+                int argCount = method.getParameterCount();
 
                 if (name.startsWith(IntrospectorSupport.ADD_PREFIX)) {
                     Class<?> returnType = method.getReturnType();
-                    if (returnType == void.class) {
-                        if (method.getParameterCount() == 1) {
-                            Type[] parameterTypes = method.getGenericParameterTypes();
-                            Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
-                            if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
-                                String listenerName = name.substring(3);
-                                if (listenerName.length() > 0 &&
-                                        type.getName().endsWith(listenerName)) {
-                                    if (adds == null) {
-                                        adds = new HashMap();
-                                    }
-                                    adds.put(listenerName, method);
+                    if ((returnType == void.class) && (argCount == 1)) {
+                        Type[] parameterTypes = method.getGenericParameterTypes();
+                        Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
+                        if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
+                            String listenerName = name.substring(3);
+                            if (listenerName.length() > 0 &&
+                                    type.getName().endsWith(listenerName)) {
+                                if (adds == null) {
+                                    adds = new HashMap();
                                 }
+                                adds.put(listenerName, method);
                             }
                         }
                     }
                 } else if (name.startsWith(IntrospectorSupport.REMOVE_PREFIX)) {
                     Class<?> returnType = method.getReturnType();
-                    if (returnType == void.class) {
-                        if (method.getParameterCount() == 1) {
-                            Type[] parameterTypes = method.getGenericParameterTypes();
-                            Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
-                            if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
-                                String listenerName = name.substring(6);
-                                if (listenerName.length() > 0 &&
-                                        type.getName().endsWith(listenerName)) {
-                                    if (removes == null) {
-                                        removes = new HashMap();
-                                    }
-                                    removes.put(listenerName, method);
+                    if ((returnType == void.class) && (argCount == 1)) {
+                        Type[] parameterTypes = method.getGenericParameterTypes();
+                        Class<?> type = TypeResolver.erase(TypeResolver.resolveInClass(beanClass, parameterTypes[0]));
+                        if (IntrospectorSupport.isSubclass(type, IntrospectorSupport.eventListenerType)) {
+                            String listenerName = name.substring(6);
+                            if (listenerName.length() > 0 &&
+                                    type.getName().endsWith(listenerName)) {
+                                if (removes == null) {
+                                    removes = new HashMap();
                                 }
+                                removes.put(listenerName, method);
                             }
                         }
                     }
                 } else if (name.startsWith(IntrospectorSupport.GET_PREFIX)) {
-                    if (method.getParameterCount() == 0) {
+                    if (argCount == 0) {
                         Class<?> returnType = IntrospectorSupport.getReturnType(beanClass, method);
                         if (returnType.isArray()) {
                             Class<?> type = returnType.getComponentType();
@@ -622,12 +724,12 @@ public final class Introspector {
                             java.util.TooManyListenersException.class)) {
                         esd.setUnicast(true);
                     }
-                    events.addEvent(esd);
+                    esdStore.addEvent(esd);
                 }
             } // if (adds != null ...
         }
 
-        return events;
+        return esdStore;
     }
 
     //======================================================================
@@ -640,7 +742,7 @@ public final class Introspector {
      */
     private MDStore getTargetMethodInfo() {
         // Methods maps from Method objects to MethodDescriptors
-        MDStore methods = new MDStore();
+        MDStore mdStore = new MDStore();
 
         // Check if the bean has its own BeanInfo that will provide
         // explicit information.
@@ -652,16 +754,17 @@ public final class Introspector {
         if ((explicitMethods == null) && (superBeanInfo != null)) {
             // We have no explicit BeanInfo methods.  Check with our parent.
             MethodDescriptor supers[] = superBeanInfo.getMethodDescriptors();
-            for (int i = 0; i < supers.length; i++) {
-                methods.addMethod(supers[i]);
-            }
+            mdStore.addMethods(supers);
+        }
+
+        for (int i = 0; i < additionalBeanInfo.length; i++) {
+            MethodDescriptor additional[] = additionalBeanInfo[i].getMethodDescriptors();
+            mdStore.addMethods(additional);
         }
 
         if (explicitMethods != null) {
             // Add the explicit explicitBeanInfo data to our results.
-            for (int i = 0 ; i < explicitMethods.length; i++) {
-                methods.addMethod(explicitMethods[i]);
-            }
+            mdStore.addMethods(explicitMethods);
 
         } else {
             // Apply some reflection to the current class.
@@ -674,12 +777,12 @@ public final class Introspector {
                 Method method = methodList[i];
                 if (method != null) {
                     MethodDescriptor md = new MethodDescriptor(method);
-                    methods.addMethod(md);
+                    mdStore.addMethod(md);
                 }
             }
         }
 
-        return methods;
+        return mdStore;
     }
 
 
@@ -696,10 +799,18 @@ public final class Introspector {
         private final HashMap pdStore = new HashMap(); /*<String propName, List<PropertyDescriptor>>*/
         private String defaultPropertyName;
 
+        public void addProperties(Class beanClass, PropertyDescriptor pds[]) {
+            if(pds != null) {
+                for(int i = 0; i < pds.length; i++) {
+                    addProperty(beanClass, pds[i]);
+                }
+            }
+        }
+
         /**
          * Adds the property descriptor to the list store.
          */
-        public void addPropertyDescriptor(Class beanClass, PropertyDescriptor pd) {
+        public void addProperty(Class beanClass, PropertyDescriptor pd) {
             String propName = pd.getName();
             List list = (List) pdStore.get(propName);
             if (list == null) {
@@ -761,6 +872,14 @@ public final class Introspector {
         private String defaultEventName;
         private boolean propertyChangeSource = false;
 
+        public void addEvents(EventSetDescriptor esds[]) {
+            if(esds != null) {
+                for(int i = 0; i < esds.length; i++) {
+                    addEvent(esds[i]);
+                }
+            }
+        }
+
         private void addEvent(EventSetDescriptor esd) {
             String key = esd.getName();
             if ("propertyChange".equals(esd.getName())) {
@@ -798,6 +917,14 @@ public final class Introspector {
 
     private static final class MDStore {
         private final Map methods = new HashMap(60);/*<String methodName, MethodDescriptor>*/
+
+        public void addMethods(MethodDescriptor mds[]) {
+            if(mds != null) {
+                for(int i = 0; i < mds.length; i++) {
+                    addMethod(mds[i]);
+                }
+            }
+        }
 
         public void addMethod(MethodDescriptor md) {
             // We have to be careful here to distinguish method by both name

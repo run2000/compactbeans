@@ -36,5 +36,7 @@ public enum DescriptorType {
     /** This is a <code>PropertyDescriptor</code> object */
     PROPERTY,
     /** This is an <code>IndexedPropertyDescriptor</code> object */
-    INDEXED_PROPERTY
+    INDEXED_PROPERTY,
+    /** This is a <code>ParameterDescriptor</code> object */
+    PARAMETER
 }

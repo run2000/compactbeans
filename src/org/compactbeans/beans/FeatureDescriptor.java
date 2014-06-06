@@ -25,6 +25,8 @@
 
 package org.compactbeans.beans;
 
+import java.util.Enumeration;
+
 /**
  * The FeatureDescriptor interface is the common interface for
  * <code>PropertyDescriptor</code>, <code>EventSetDescriptor</code>,
@@ -50,4 +52,82 @@ public interface FeatureDescriptor {
      */
     DescriptorType getDescriptorType();
 
+    /**
+     * Gets the localized display name of this feature. By convention, this
+     * will be the same as the programmatic name of the corresponding feature.
+     *
+     * @return The localized display name for the property/method/event.
+     */
+    public String getDisplayName();
+
+    /**
+     * The "expert" flag is used to distinguish between those features that are
+     * intended for expert users from those that are intended for normal users.
+     *
+     * @return <code>True</code> if this feature is intended for use
+     * by experts only.
+     */
+    public boolean isExpert();
+
+    /**
+     * The "hidden" flag is used to identify features that are intended only
+     * for tool use, and which should not be exposed to humans.
+     *
+     * @return <code>True</code> if this feature should be hidden from
+     * human users.
+     */
+    public boolean isHidden();
+
+    /**
+     * The "preferred" flag is used to identify features that are particularly
+     * important for presenting to humans.
+     *
+     * @return <code>True</code> if this feature should be preferentially
+     * shown to human users.
+     */
+    public boolean isPreferred();
+
+    /**
+     * Gets the short description of this feature.
+     *
+     * @return  A localized short description associated with this
+     *   property/method/event.  This defaults to be the display name.
+     */
+    public String getShortDescription();
+
+    /**
+     * Determine whether this descriptor data has any attributes.
+     * Use this to short-circuit any internal table creation.
+     *
+     * @return <code>true</code> if there are any named attributes
+     * in this feature, otherwise <code>false</code>
+     */
+    public boolean hasAttributes();
+
+    /**
+     * Retrieve a named attribute with this feature.
+     *
+     * @param attributeName  The locale-independent name of the attribute
+     * @return  The value of the attribute.  May be <code>null</code> if
+     *     the attribute is unknown.
+     */
+    public Object getValue(String attributeName);
+
+    /**
+     * Gets an enumeration of the locale-independent names of this
+     * feature.
+     *
+     * @return  An enumeration of the locale-independent names of any
+     *    attributes that have been registered.
+     */
+    public Enumeration<String> attributeNames();
+
+    /**
+     * Return a copy (clone) of the descriptor data in this feature.
+     * If none is present, <code>null</code> will be returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
+    public DescriptorData getDescriptorData();
 }

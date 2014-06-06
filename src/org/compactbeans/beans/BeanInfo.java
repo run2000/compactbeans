@@ -99,4 +99,22 @@ public interface BeanInfo {
      */
     MethodDescriptor[] getMethodDescriptors();
 
+    /**
+     * This method allows a BeanInfo object to return an arbitrary collection
+     * of other BeanInfo objects that provide additional information on the
+     * current bean.
+     * <p>
+     * If there are conflicts or overlaps between the information provided
+     * by different BeanInfo objects, then the current BeanInfo takes precedence
+     * over the getAdditionalBeanInfo objects, and later elements in the array
+     * take precedence over earlier ones.</p>
+     * <p>
+     * Additional bean info is not recursive. If a BeanInfo returned from this
+     * method itself has additional bean info, it will be ignored by the
+     * Introspector.</p>
+     *
+     * @return an array of BeanInfo objects.  May return <code>null</code>.
+     */
+    BeanInfo[] getAdditionalBeanInfo();
+
 }
