@@ -27,8 +27,10 @@
  * This is a separated-out implementation of the java.beans.Introspector and
  * associated Descriptor classes, targeted at JavaSE 1.8 Compact Profile 1.
  * <p>
- * The code is based on the openjdk7u40 source bundle, downloaded from
- * <a href="https://jdk7.java.net/source.html">https://jdk7.java.net/source.html</a></p>
+ * The code is based on the openjdk7u60 source bundle, downloaded from the 
+ * Mercurial repository at 
+ * <a href="http://hg.openjdk.java.net/jdk7u/jdk7u60">http://hg.openjdk.java.net/jdk7u/jdk7u60</a>.
+ * </p>
  * <p>
  * The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
  * with the "Classpath" exception as described in the LICENSE file.</p>
