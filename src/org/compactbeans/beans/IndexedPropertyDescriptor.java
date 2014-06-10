@@ -48,6 +48,58 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     private String indexedWriteMethodName;
 
     /**
+     * This constructor constructs an IndexedPropertyDescriptor for a property
+     * that follows the standard Java conventions by having getFoo and setFoo
+     * accessor methods, for both indexed access and array access.
+     * <p>
+     * Thus if the argument name is "fred", it will assume that there
+     * is an indexed reader method "getFred", a non-indexed (array) reader
+     * method also called "getFred", an indexed writer method "setFred",
+     * and finally a non-indexed writer method "setFred".</p>
+     *
+     * @param propertyName The programmatic name of the property.
+     * @param beanClass The Class object for the target bean.
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass)
+            throws IntrospectionException {
+        this(propertyName, beanClass,
+                IntrospectorSupport.GET_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.GET_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName));
+    }
+
+    /**
+     * This constructor constructs an IndexedPropertyDescriptor for a property
+     * that follows the standard Java conventions by having getFoo and setFoo
+     * accessor methods, for both indexed access and array access.
+     * <p>
+     * Thus if the argument name is "fred", it will assume that there
+     * is an indexed reader method "getFred", a non-indexed (array) reader
+     * method also called "getFred", an indexed writer method "setFred",
+     * and finally a non-indexed writer method "setFred".</p>
+     *
+     * @param propertyName The programmatic name of the property.
+     * @param beanClass The Class object for the target bean.
+     * @param descriptorData the descriptor data for this indexed property descriptor,
+     *                       possibly <code>null</code>
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public IndexedPropertyDescriptor(String propertyName, Class<?> beanClass,
+                                     DescriptorData descriptorData)
+            throws IntrospectionException {
+        this(propertyName, beanClass,
+                IntrospectorSupport.GET_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.GET_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName),
+                descriptorData);
+    }
+
+    /**
      * This constructor takes the name of a simple property, and
      * <code>Method</code> objects for reading and writing the property.
      *
