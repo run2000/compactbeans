@@ -54,6 +54,53 @@ public class PropertyDescriptor implements FeatureDescriptor {
     private final DescriptorData descriptorData;
 
     /**
+     * Constructs a PropertyDescriptor for a property that follows
+     * the standard Java convention by having getFoo and setFoo
+     * accessor methods.  Thus if the argument name is "fred", it will
+     * assume that the writer method is "setFred" and the reader method
+     * is "getFred" (or "isFred" for a boolean property).  Note that the
+     * property name should start with a lower case character, which will
+     * be capitalized in the method names.
+     *
+     * @param propertyName The programmatic name of the property.
+     * @param beanClass The Class object for the target bean.  For
+     *          example sun.beans.OurButton.class.
+     * @exception IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public PropertyDescriptor(String propertyName, Class<?> beanClass)
+            throws IntrospectionException {
+        this(propertyName, beanClass,
+                IntrospectorSupport.IS_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName));
+    }
+
+    /**
+     * Constructs a PropertyDescriptor for a property that follows
+     * the standard Java convention by having getFoo and setFoo
+     * accessor methods.  Thus if the argument name is "fred", it will
+     * assume that the writer method is "setFred" and the reader method
+     * is "getFred" (or "isFred" for a boolean property).  Note that the
+     * property name should start with a lower case character, which will
+     * be capitalized in the method names.
+     *
+     * @param propertyName The programmatic name of the property.
+     * @param beanClass The Class object for the target bean.  For
+     *          example sun.beans.OurButton.class.
+     * @param descriptorData the descriptor data for this property descriptor,
+     *                       possibly <code>null</code>
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public PropertyDescriptor(String propertyName, Class<?> beanClass,
+            DescriptorData descriptorData) throws IntrospectionException {
+        this(propertyName, beanClass,
+                IntrospectorSupport.IS_PREFIX + NameGenerator.capitalize(propertyName),
+                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName),
+                descriptorData);
+    }
+
+    /**
      * This constructor takes the name of a simple property, and
      * <code>Method</code> objects for reading and writing the property.
      *

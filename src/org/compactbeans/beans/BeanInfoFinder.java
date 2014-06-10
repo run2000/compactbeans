@@ -144,7 +144,7 @@ final class BeanInfoFinder {
         try {
             Class<?> infoType = ClassFinder.findClass(name, type.getClassLoader());
             if (BeanInfo.class.isAssignableFrom(infoType)) {
-                return (BeanInfo) type.newInstance();
+                return (BeanInfo) infoType.newInstance();
             }
         }
         catch (Exception exception) {
