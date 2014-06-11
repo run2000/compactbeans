@@ -30,8 +30,8 @@ package org.compactbeans.beans.test;
  * @author Sergey Malenkov
  */
 
-import java.beans.Introspector;
-import java.beans.SimpleBeanInfo;
+import org.compactbeans.beans.Introspector;
+import org.compactbeans.beans.SimpleBeanInfo;
 
 public class Test6963811 implements Runnable {
     private final long time;

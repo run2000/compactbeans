@@ -429,7 +429,14 @@ public final class Introspector {
     //======================================================================
 
     private BeanDescriptor getTargetBeanDescriptor() {
-        // Fabricate a default BeanDescriptor.
+        // Use explicit info, if available,
+        if (explicitBeanInfo != null) {
+            BeanDescriptor bd = explicitBeanInfo.getBeanDescriptor();
+            if (bd != null) {
+                return bd;
+            }
+        }
+        // OK, fabricate a default BeanDescriptor.
         return new BeanDescriptor(this.beanClass);
     }
 

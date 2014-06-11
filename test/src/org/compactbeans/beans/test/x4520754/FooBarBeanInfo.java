@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 1998, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2007, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
+ * published by the Free Software Foundation.
  *
  * This code is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -23,16 +21,18 @@
  * questions.
  */
 
-/**
- * This is a separated-out implementation of the java.beans.Introspector and
- * associated Descriptor classes, targeted at JavaSE 1.8 Compact Profile 1.
- * <p>
- * The code is based on the openjdk7u60 source bundle, downloaded from the 
- * Mercurial repository at 
- * <a href="http://hg.openjdk.java.net/jdk7u/jdk7u60">http://hg.openjdk.java.net/jdk7u/jdk7u60</a>.
- * </p>
- * <p>
- * The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
- * with the "Classpath" exception as described in the LICENSE file.</p>
- */
-package org.compactbeans.beans;
+package org.compactbeans.beans.test.x4520754;
+
+import org.compactbeans.beans.BeanDescriptor;
+import org.compactbeans.beans.DescriptorData;
+import org.compactbeans.beans.SimpleBeanInfo;
+
+public class FooBarBeanInfo extends SimpleBeanInfo {
+    public BeanDescriptor getBeanDescriptor() {
+        DescriptorData dd = new DescriptorData();
+        BeanDescriptor bd = new BeanDescriptor(FooBar.class, dd);
+        // set a value to ensure that it's unique
+        dd.setValue("test", Boolean.TRUE);
+        return bd;
+    }
+}

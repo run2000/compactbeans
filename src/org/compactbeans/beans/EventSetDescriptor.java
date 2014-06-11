@@ -56,6 +56,86 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     private final DescriptorData descriptorData;
 
     /**
+     * Creates an <code>EventSetDescriptor</code> assuming that you are
+     * following the most simple standard design pattern where a named
+     * event &quot;fred&quot; is
+     * <ol>
+     * <li> delivered as a call on the single method of
+     * interface FredListener,</li>
+     * <li>has a single argument of type FredEvent,
+     * and </li>
+     * <li>where the FredListener may be registered with a call on an
+     * addFredListener method of the source component and removed with a
+     * call on a removeFredListener method.</li>
+     * </ol>
+     *
+     * @param sourceClass  The class firing the event.
+     * @param eventSetName  The programmatic name of the event.  E.g. &quot;fred&quot;.
+     *          Note that this should normally start with a lower-case character.
+     * @param listenerType  The target interface that events
+     *          will get delivered to.
+     * @param listenerMethodName  The method that will get called when the event gets
+     *          delivered to its target listener interface.
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public EventSetDescriptor(Class<?> sourceClass, String eventSetName,
+                              Class<?> listenerType, String listenerMethodName)
+            throws IntrospectionException {
+        this(sourceClass, eventSetName, listenerType, listenerMethodName, null);
+    }
+
+    /**
+     * Creates an <code>EventSetDescriptor</code> assuming that you are
+     * following the most simple standard design pattern where a named
+     * event &quot;fred&quot; is
+     * <ol>
+     * <li> delivered as a call on the single method of
+     * interface FredListener,</li>
+     * <li>has a single argument of type FredEvent,
+     * and </li>
+     * <li>where the FredListener may be registered with a call on an
+     * addFredListener method of the source component and removed with a
+     * call on a removeFredListener method.</li>
+     * </ol>
+     *
+     * @param sourceClass  The class firing the event.
+     * @param eventSetName  The programmatic name of the event.  E.g. &quot;fred&quot;.
+     *          Note that this should normally start with a lower-case character.
+     * @param listenerType  The target interface that events
+     *          will get delivered to.
+     * @param listenerMethodName  The method that will get called when the event gets
+     *          delivered to its target listener interface.
+     * @param descriptorData the descriptor data for this event set descriptor,
+     *                       possibly <code>null</code>
+     * @throws IntrospectionException if an exception occurs during
+     *              introspection.
+     */
+    public EventSetDescriptor(Class<?> sourceClass, String eventSetName,
+                              Class<?> listenerType, String listenerMethodName,
+                              DescriptorData descriptorData)
+            throws IntrospectionException {
+        this(sourceClass, eventSetName, listenerType,
+                new String[] { listenerMethodName },
+                IntrospectorSupport.ADD_PREFIX + IntrospectorSupport.getListenerClassName(listenerType),
+                IntrospectorSupport.REMOVE_PREFIX + IntrospectorSupport.getListenerClassName(listenerType),
+                IntrospectorSupport.GET_PREFIX + IntrospectorSupport.getListenerClassName(listenerType) + "s",
+                descriptorData);
+
+        String eventName = NameGenerator.capitalize(eventSetName) + "Event";
+        Method[] listenerMethods = getListenerMethods();
+        if (listenerMethods.length > 0) {
+            Class[] args = IntrospectorSupport.getParameterTypes(getClass0(), listenerMethods[0]);
+            // Check for EventSet compliance. Special case for vetoableChange. See 4529996
+            if (!"vetoableChange".equals(eventSetName) && !args[0].getName().endsWith(eventName)) {
+                throw new IntrospectionException("Method \"" + listenerMethodName +
+                        "\" should have argument \"" +
+                        eventName + "\"");
+            }
+        }
+    }
+
+    /**
      * Creates an <code>EventSetDescriptor</code> from scratch using
      * string names.
      *

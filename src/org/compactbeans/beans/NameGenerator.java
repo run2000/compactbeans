@@ -57,25 +57,34 @@ public final class NameGenerator {
      * @return The decapitalized version of the string.
      */
     public static String decapitalize(String name) {
-        if (name == null || name.length() == 0) {
+        if ((name == null) || (name.length() == 0)) {
             return name;
         }
-        if (name.length() > 1 && Character.isUpperCase(name.charAt(1)) &&
-                Character.isUpperCase(name.charAt(0))) {
+        char c0 = name.charAt(0);
+        if ((name.length() > 1) && Character.isUpperCase(name.charAt(1)) &&
+                Character.isUpperCase(c0)) {
             return name;
         }
-        char chars[] = name.toCharArray();
-        chars[0] = Character.toLowerCase(chars[0]);
-        return new String(chars);
+        if(Character.isLowerCase(c0)) {
+            return name;
+        }
+        return Character.toLowerCase(c0) + name.substring(1);
     }
 
     /**
      * Returns a String which capitalizes the first letter of the string.
+     *
+     * @param name The string to be capitalized.
+     * @return The capitalized version of the string.
      */
     public static String capitalize(String name) {
-        if (name == null || name.length() == 0) {
+        if ((name == null) || (name.length() == 0)) {
             return name;
         }
-        return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
+        char c0 = name.charAt(0);
+        if(Character.isUpperCase(c0)) {
+            return name;
+        }
+        return Character.toUpperCase(c0) + name.substring(1);
     }
 }

@@ -602,6 +602,11 @@ final class IntrospectorSupport {
         return TypeResolver.erase(TypeResolver.resolveInClass(base, method.getGenericParameterTypes()));
     }
 
+    static String getListenerClassName(Class cls) {
+        String className = cls.getName();
+        return className.substring(className.lastIndexOf('.') + 1);
+    }
+
     static boolean isEventHandler(Class beanClass, Method m) {
         // We assume that a method is an event handler if it has a single
         // argument, whose type inherit from java.util.Event.

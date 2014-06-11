@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 1998, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2006, 2007, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
+ * published by the Free Software Foundation.
  *
  * This code is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -23,16 +21,29 @@
  * questions.
  */
 
-/**
- * This is a separated-out implementation of the java.beans.Introspector and
- * associated Descriptor classes, targeted at JavaSE 1.8 Compact Profile 1.
- * <p>
- * The code is based on the openjdk7u60 source bundle, downloaded from the 
- * Mercurial repository at 
- * <a href="http://hg.openjdk.java.net/jdk7u/jdk7u60">http://hg.openjdk.java.net/jdk7u/jdk7u60</a>.
- * </p>
- * <p>
- * The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
- * with the "Classpath" exception as described in the LICENSE file.</p>
+package org.compactbeans.beans.test;
+
+/*
+ * @test
+ * @bug 4994635
+ * @summary Tests VetoableChangeListenerProxy adding
+ * @author Sergey Malenkov
  */
-package org.compactbeans.beans;
+
+import org.compactbeans.beans.PropertyChangeEvent;
+import org.compactbeans.beans.VetoableChangeListener;
+import org.compactbeans.beans.VetoableChangeListenerProxy;
+import org.compactbeans.beans.VetoableChangeSupport;
+
+public class Test4994635 implements VetoableChangeListener {
+    public static void main(String[] args) {
+        Test4994635 test = new Test4994635();
+        test.vcs.addVetoableChangeListener(
+                new VetoableChangeListenerProxy("property", test));
+    }
+
+    private final VetoableChangeSupport vcs = new VetoableChangeSupport(this);
+
+    public void vetoableChange(PropertyChangeEvent event) {
+    }
+}
