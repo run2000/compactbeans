@@ -705,7 +705,8 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     }
 
     public String getDisplayName() {
-        return (descriptorData == null) ? null : descriptorData.getDisplayName();
+        String displayName = (descriptorData == null) ? null : descriptorData.getDisplayName();
+        return (displayName == null) ? name : displayName;
     }
 
     public boolean isExpert() {
@@ -721,7 +722,8 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     }
 
     public String getShortDescription() {
-        return (descriptorData == null) ? null : descriptorData.getShortDescription();
+        String description = (descriptorData == null) ? null : descriptorData.getShortDescription();
+        return (description == null) ? getDisplayName() : description;
     }
 
     public boolean hasAttributes() {
