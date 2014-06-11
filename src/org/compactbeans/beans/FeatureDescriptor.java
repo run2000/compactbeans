@@ -115,7 +115,8 @@ public interface FeatureDescriptor {
 
     /**
      * Gets an enumeration of the locale-independent names of this
-     * feature.
+     * feature. If there are no attributes, an empty enumeration
+     * will be returned.
      *
      * @return  An enumeration of the locale-independent names of any
      *    attributes that have been registered.
@@ -124,10 +125,22 @@ public interface FeatureDescriptor {
 
     /**
      * Return a copy (clone) of the descriptor data in this feature.
-     * If none is present, <code>null</code> will be returned.
+     * If the descriptor data has not been customized, for instance by a
+     * suitable BeanInfo object, <code>null</code> will be returned.
      *
      * @return a copy of the descriptor data, or <code>null</code>
      * if no descriptor data is present
      */
     public DescriptorData getDescriptorData();
+
+    /**
+     * Determine whether this feature has custom descriptor data.
+     * Typically this would be provided by a corresponding BeanInfo
+     * object.
+     *
+     * @return <code>true</code> if this feature has custom descriptor
+     * data, otherwise <code>false</code>
+     */
+    public boolean hasDescriptorData();
+
 }

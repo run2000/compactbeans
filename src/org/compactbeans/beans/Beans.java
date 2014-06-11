@@ -1,5 +1,3 @@
-package org.compactbeans.beans;
-
 /*
  * Copyright (c) 1996, 2009, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -25,6 +23,8 @@ package org.compactbeans.beans;
  * questions.
  */
 
+package org.compactbeans.beans;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -47,24 +47,24 @@ public final class Beans {
 
     /**
      * <p>
-     * Instantiate a JavaBean.
+     * Instantiate a JavaBean.</p>
      * <p>
      * The bean is created based on a name relative to a class-loader.
-     * This name should be a dot-separated name such as "a.b.c".
+     * This name should be a dot-separated name such as "a.b.c".</p>
      * <p>
      * In Beans 1.0 the given name can indicate either a serialized object
      * or a class.  Other mechanisms may be added in the future.  In
      * beans 1.0 we first try to treat the beanName as a serialized object
-     * name then as a class name.
+     * name then as a class name.</p>
      * <p>
      * When using the beanName as a serialized object name we convert the
      * given beanName to a resource pathname and add a trailing ".ser" suffix.
-     * We then try to load a serialized object from that resource.
+     * We then try to load a serialized object from that resource.</p>
      * <p>
      * For example, given a beanName of "x.y", Beans.instantiate would first
      * try to read a serialized object from the resource "x/y.ser" and if
      * that failed it would try to load the class "x.y" and create an
-     * instance of that class.
+     * instance of that class.</p>
      *
      * @param     cls         the class-loader from which we should create
      *                        the bean.  If this is <code>null</code>,
@@ -175,10 +175,10 @@ public final class Beans {
      * <p>
      * The result may be the same object or a different object.  If
      * the requested target view isn't available then the given
-     * bean is returned.
+     * bean is returned.</p>
      * <p>
      * This method is provided in Beans 1.0 as a hook to allow the
-     * addition of more flexible bean behaviour in the future.
+     * addition of more flexible bean behaviour in the future.</p>
      *
      * @param bean <code>Object</code> from which we want to obtain a view
      * @param targetType The type of view we'd like to get
@@ -196,11 +196,33 @@ public final class Beans {
      *
      * @param bean  Bean from which we want to obtain a view.
      * @param targetType  The type of view we'd like to get.
-     * @return "true" if the given bean supports the given targetType.
-     *
+     * @return <code>true</code> if the given bean supports the given
+     * targetType
      */
     public static boolean isInstanceOf(Object bean, Class<?> targetType) {
         return IntrospectorSupport.isSubclass(bean.getClass(), targetType);
+    }
+
+    /**
+     * Test if we are in design-mode.
+     *
+     * @return <code>false</code> to indicate we're running in
+     * run-time mode
+     */
+    public static boolean isDesignTime() {
+        return false;
+    }
+
+    /**
+     * Determines whether beans can assume a GUI is available.
+     * This will normally return <code>false</code> in a server environment
+     * or if an application is running as part of a batch job.
+     *
+     * @return <code>false</code> to indicate that an interactive GUI
+     * is not available, so beans cannot pop up dialog boxes, etc.
+     */
+    public static boolean isGuiAvailable() {
+        return false;
     }
 
     /**

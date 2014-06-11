@@ -158,6 +158,10 @@ public final class BeanDescriptor implements FeatureDescriptor {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
     }
 
+    public boolean hasDescriptorData() {
+        return (descriptorData != null);
+    }
+
     /**
      * Returns a string representation of the object.
      *

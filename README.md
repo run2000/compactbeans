@@ -55,6 +55,7 @@ No classes intended for design-time GUIs.
   * Customizer interface omitted
   * EventHandler omitted
   * PropertyEditor interface omitted
+     - similarly PropertyEditorManager, PropertyEditorSupport omitted
   * Visibility interface omitted
 
 Beans static class is included, in abbreviated form.
@@ -62,21 +63,27 @@ Beans static class is included, in abbreviated form.
   * No reference to BeanContext or AppletInitializer, so no overloads of
     instantiate() method.
   * No implementation of "guiAccessible" or "designTime" properties.
+     - getters for each are hard-coded to false
+
+No Long-Term Persistence framework.
+
+  * No Encoder, PersistenceDelegate, XMLEncoder, XMLDecoder
+     - reference to compact profile 2 stuff, namely SAX
+     - no DefaultPersistenceDelegate class
+  * No ExceptionListener interface
+  * No Expression, Statement classes
+  * No ConstructorProperties annotation
+  * No Transient annotation
 
 Address mutability concerns:
 
   * Remove or reduce visibility of setter methods that are not required
     by the introspector
-     - descriptors appear immutable from outside the beans.* package
+     - features appear immutable from outside the beans.* package
   * Add DescriptorData class for attributes that may need manipulation
     outside the beans.* package
-     - composed into the FeatureDescriptor classes with read-only facade
+     - composed into the FeatureDescriptor classes with a read-only facade
      - copy on write style encouraged outside the beans.* package
-
-No XMLEncoder, XMLDecoder
-
-  * Reference to compact profile 2 stuff, namely SAX
-  * Unused in examples encountered so far
 
 Property Change Events
 ----------------------
@@ -124,8 +131,7 @@ Rely less heavily on inheritance, where possible.
        FeatureDescriptor
   * Added a DescriptorType to FeatureDescriptor for each feature descriptor
     type.
-     - The avoids requiring instanceof tests to distinguish descriptors
+     - this avoids requiring instanceof tests to distinguish descriptors
        such as PropertyDescriptor and IndexedPropertyDescriptor.
-     - This is the only code that has been added.
   * Similarly, added an isIndexed() method to PropertyChangeEvent and
     IndexedPropertyChangeEvent.

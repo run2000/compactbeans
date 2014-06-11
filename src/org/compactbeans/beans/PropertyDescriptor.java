@@ -65,7 +65,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * @param propertyName The programmatic name of the property.
      * @param beanClass The Class object for the target bean.  For
      *          example sun.beans.OurButton.class.
-     * @exception IntrospectionException if an exception occurs during
+     * @throws IntrospectionException if an exception occurs during
      *              introspection.
      */
     public PropertyDescriptor(String propertyName, Class<?> beanClass)
@@ -743,6 +743,10 @@ public class PropertyDescriptor implements FeatureDescriptor {
 
     public DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
+    }
+
+    public boolean hasDescriptorData() {
+        return (descriptorData != null);
     }
 
     /**
