@@ -609,7 +609,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      *
      * @param constrained True if this is a constrained property.
      */
-    public void setConstrained(boolean constrained) {
+    void setConstrained(boolean constrained) {
         this.constrained = constrained;
     }
 

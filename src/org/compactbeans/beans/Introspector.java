@@ -58,8 +58,23 @@ import java.util.*;
 public final class Introspector {
 
     // Flags that can be used to control getBeanInfo:
+    /**
+     * Constant value to indicate that the <code>Introspector</code> will use
+     * all <code>BeanInfo</code> classes that have been found.
+     * This is the default.
+     */
     public final static int USE_ALL_BEANINFO           = 1;
+    /**
+     * Constant value to indicate that the <code>Introspector</code> will
+     * ignore the <code>BeanInfo</code> class of the current bean class,
+     * but use any <code>BeanInfo</code> classes of the bean superclasses.
+     */
     public final static int IGNORE_IMMEDIATE_BEANINFO  = 2;
+    /**
+     * Constant value to indicate that the <code>Introspector</code> will
+     * ignore all <code>BeanInfo</code> classes, including any bean
+     * superclasses.
+     */
     public final static int IGNORE_ALL_BEANINFO        = 3;
 
     private final static EventSetDescriptor[] EMPTY_EVENTSETDESCRIPTORS = new EventSetDescriptor[0];

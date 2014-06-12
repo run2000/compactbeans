@@ -760,9 +760,10 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     /**
      * Reports if an event set is in the &quot;default&quot; set.
+     * This method always returns <code>true</code>.
      *
-     * @return <code>true</code> if the event set is in
-     * the &quot;default&quot; set. Defaults to <code>true</code>.
+     * @return <code>true</code> to indicate the event set is in
+     * the &quot;default&quot; set.
      */
     public boolean isInDefaultEventSet() {
         return true;
