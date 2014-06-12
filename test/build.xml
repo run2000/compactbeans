@@ -1,9 +1,11 @@
-<project name="CompactBeans" default="test" basedir=".">
-    <description>Ant build file for CompactBeans</description>
+<project name="CompactBeans test suite" default="test" basedir=".">
+    <description>Ant build file for CompactBeans test suite</description>
 
     <!-- set global properties for this build -->
     <property name="src" location="src"/>
     <property name="build" location="build"/>
+    <property name="srcbuild" location="../build"/>
+    <property name="testcp" value="${build};${srcbuild}"/>
 
     <target name="init">
         <!-- Create the time stamp -->
@@ -20,60 +22,89 @@
         </javac>
     </target>
 
-    <target name="test" depends="compile"
-            description="run the tests">
+    <target name="test" depends="compile" description="run the tests">
         <java classname="org.compactbeans.beans.test.Test4067824" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4072197" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4076065" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4092905" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4092906" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4144543" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4168833" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4274639" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4343723" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4353056" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4425885" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.x4520754.Test4520754" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4619536" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4619792" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4896879" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4918902" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4948761" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test4985020" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test4994635" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test5063390" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test5102804" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test6194788" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test6277246" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test6311051" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test6422403" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test6528714" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test6630275" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test6707234" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test6723447" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test6868189" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test6963811" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.x6976577.Test6976577" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.x7122138.Test7122138" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test7148143" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test7186794" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test7189112" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test7192955" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test7193977" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.TestEquals" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.TestListeners" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.TestSerialization" fork="true"
-              failonerror="true" classpath="build;../build" />
+              failonerror="true" classpath="${testcp}" />
     </target>
 
     <target name="clean"

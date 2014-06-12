@@ -602,9 +602,25 @@ final class IntrospectorSupport {
         return TypeResolver.erase(TypeResolver.resolveInClass(base, method.getGenericParameterTypes()));
     }
 
-    static String getListenerClassName(Class cls) {
+    /**
+     * Get the classname portion of the given class, excluding the
+     * package name.
+     *
+     * @param cls the class
+     * @return the class name portion, or <code>null</code> if cls
+     * is <code>null</code>
+     */
+    static String getClassName(Class cls) {
+        if(cls == null) {
+            return null;
+        }
         String className = cls.getName();
-        return className.substring(className.lastIndexOf('.') + 1);
+        int i = className.lastIndexOf('.');
+        if(i > 0) {
+            return className.substring(i + 1);
+        } else {
+            return className;
+        }
     }
 
     static boolean isEventHandler(Class beanClass, Method m) {

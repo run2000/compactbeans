@@ -117,9 +117,9 @@ public final class EventSetDescriptor implements FeatureDescriptor {
             throws IntrospectionException {
         this(sourceClass, eventSetName, listenerType,
                 new String[] { listenerMethodName },
-                IntrospectorSupport.ADD_PREFIX + IntrospectorSupport.getListenerClassName(listenerType),
-                IntrospectorSupport.REMOVE_PREFIX + IntrospectorSupport.getListenerClassName(listenerType),
-                IntrospectorSupport.GET_PREFIX + IntrospectorSupport.getListenerClassName(listenerType) + "s",
+                IntrospectorSupport.ADD_PREFIX + IntrospectorSupport.getClassName(listenerType),
+                IntrospectorSupport.REMOVE_PREFIX + IntrospectorSupport.getClassName(listenerType),
+                IntrospectorSupport.GET_PREFIX + IntrospectorSupport.getClassName(listenerType) + "s",
                 descriptorData);
 
         String eventName = NameGenerator.capitalize(eventSetName) + "Event";
