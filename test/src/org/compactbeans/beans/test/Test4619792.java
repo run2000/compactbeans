@@ -41,12 +41,14 @@ import javax.swing.JToggleButton;
  * The focusable property is new in 1.4 and is a boolean and bound property
  * implemented in Component with isFocusable and setFocusable.
  * For some reason, this property is not picked up
- * by the Introspector all allong the class heirarchy.
+ * by the Introspector all along the class heirarchy.
  * <p/>
  * The MethodDescriptors for a BeanInfo can find
  * the isFocusable()/setFocusable() methods as part of the set.
  * <p/>
  * This has never worked from the earliest days of merlin.
+ *
+ * @nocompact depends on a bunch of awt and swing classes
  */
 public class Test4619792 {
     public static void main(String[] args) throws IntrospectionException {

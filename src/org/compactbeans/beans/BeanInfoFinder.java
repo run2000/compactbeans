@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
  *
  * @author Sergey A. Malenkov
  * @jdksource com.sun.beans.finder.BeanInfoFinder
+ * @jdksource com.sun.beans.finder.InstanceFinder
  */
 final class BeanInfoFinder {
 
@@ -48,7 +49,49 @@ final class BeanInfoFinder {
         this.packages = new String[] { DEFAULT };
     }
 
-    private BeanInfo instantiate(Class<?> type, String prefix, String name) {
+    public String[] getPackages() {
+        return this.packages.clone();
+    }
+
+    public void setPackages(String... packages) {
+        this.packages = (packages != null) && (packages.length > 0)
+                ? packages.clone()
+                : EMPTY;
+    }
+
+    public BeanInfo find(Class<?> type) {
+        if (type == null) {
+            return null;
+        }
+        String name = type.getName() + "BeanInfo";
+        BeanInfo object = instantiate(type, name);
+        if (object != null) {
+            return object;
+        }
+        object = instantiate(type);
+        if (object != null) {
+            return object;
+        }
+        if (this.packages.length > 0) {
+            int index = name.lastIndexOf('.') + 1;
+            if (index > 0) {
+                name = name.substring(index);
+            }
+            for (String prefix : this.packages) {
+                object = instantiate(type, prefix, name);
+                if (object != null) {
+                    return object;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean isValid(Class<?> type, Method method) {
+        return (method != null) && method.getDeclaringClass().isAssignableFrom(type);
+    }
+
+    private static BeanInfo instantiate(Class<?> type, String prefix, String name) {
         if (DEFAULT.equals(prefix)) {
             prefix = DEFAULT_NEW;
         }
@@ -100,47 +143,7 @@ final class BeanInfoFinder {
         return null;
     }
 
-    private static boolean isValid(Class<?> type, Method method) {
-        return (method != null) && method.getDeclaringClass().isAssignableFrom(type);
-    }
-
-    public String[] getPackages() {
-        return this.packages.clone();
-    }
-
-    public void setPackages(String... packages) {
-        this.packages = (packages != null) && (packages.length > 0)
-                ? packages.clone()
-                : EMPTY;
-    }
-
-    public BeanInfo find(Class<?> type) {
-        if (type == null) {
-            return null;
-        }
-        String name = type.getName() + "BeanInfo";
-        BeanInfo object = instantiate(type, name);
-        if (object != null) {
-            return object;
-        }
-        object = instantiate(type);
-        if (object != null) {
-            return object;
-        }
-        int index = name.lastIndexOf('.') + 1;
-        if (index > 0) {
-            name = name.substring(index);
-        }
-        for (String prefix : this.packages) {
-            object = instantiate(type, prefix, name);
-            if (object != null) {
-                return object;
-            }
-        }
-        return null;
-    }
-
-    private BeanInfo instantiate(Class<?> type, String name) {
+    private static BeanInfo instantiate(Class<?> type, String name) {
         try {
             Class<?> infoType = ClassFinder.findClass(name, type.getClassLoader());
             if (BeanInfo.class.isAssignableFrom(infoType)) {
@@ -153,7 +156,7 @@ final class BeanInfoFinder {
         return null;
     }
 
-    private BeanInfo instantiate(Class<?> type) {
+    private static BeanInfo instantiate(Class<?> type) {
         try {
             if (BeanInfo.class.isAssignableFrom(type)) {
                 return (BeanInfo) type.newInstance();

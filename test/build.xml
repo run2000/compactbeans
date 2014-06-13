@@ -2,10 +2,12 @@
     <description>Ant build file for CompactBeans test suite</description>
 
     <!-- set global properties for this build -->
+    <property file="../build.properties" />
     <property name="src" location="src"/>
     <property name="build" location="build"/>
     <property name="srcbuild" location="../build"/>
     <property name="testcp" value="${build};${srcbuild}"/>
+    <property name="dist" location="dist"/>
 
     <target name="init">
         <!-- Create the time stamp -->
@@ -20,6 +22,27 @@
         <javac srcdir="${src}" destdir="${build}" source="1.8" target="1.8"
                 includeAntRuntime="false" classpath="../build">
         </javac>
+    </target>
+
+    <target name="dist" depends="compile" description="create a distributable">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/lib"/>
+
+        <!-- Put everything in ${build} into the dist/lib directory -->
+        <jar jarfile="${dist}/lib/compactbeans-test.jar" basedir="${build}"/>
+
+        <!-- Copy the released jar file -->
+        <copy todir="${dist}/lib">
+            <fileset dir="../dist/lib" includes="compactbeans-${version}.jar" />
+        </copy>
+
+        <!-- Copy in the run script, including the classpath -->
+        <copy todir="${dist}/lib">
+            <fileset dir="scripts" includes="run-tests.sh" />
+            <filterset begintoken="%" endtoken="%">
+                <filter token="TESTPATH" value="compactbeans-${version}.jar:compactbeans-test.jar" />
+            </filterset>
+        </copy>
     </target>
 
     <target name="test" depends="compile" description="run the tests">
@@ -111,6 +134,7 @@
             description="clean up" >
         <!-- Delete the ${build} directory tree -->
         <delete dir="${build}"/>
+        <delete dir="${dist}"/>
         <delete>
             <fileset dir="." includes="*.ser"/>
         </delete>

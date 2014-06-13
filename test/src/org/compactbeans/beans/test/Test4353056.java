@@ -29,7 +29,7 @@ package org.compactbeans.beans.test;
  * @author Mark Davidson
  */
 
-import java.awt.Color;
+import org.compactbeans.beans.test.util.Color;
 
 import org.compactbeans.beans.IndexedPropertyChangeEvent;
 import org.compactbeans.beans.PropertyChangeEvent;
