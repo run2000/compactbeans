@@ -41,6 +41,7 @@
             <fileset dir="scripts" includes="run-tests.sh" />
             <filterset begintoken="%" endtoken="%">
                 <filter token="TESTPATH" value="compactbeans-${version}.jar:compactbeans-test.jar" />
+                <filter token="FULLJRE" value="0" />
             </filterset>
         </copy>
     </target>

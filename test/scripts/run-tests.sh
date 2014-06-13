@@ -5,6 +5,7 @@ JAVA_EXE=~/java/compact1/bin/java
 #JAVA_EXE=~/java/compact3/bin/java
 
 TESTPATH=%TESTPATH%
+FULLJRE=%FULLJRE%
 
 echo "Using java $JAVA_EXE"
 echo "..."
@@ -22,7 +23,10 @@ $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4353056
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4425885
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.x4520754.Test4520754
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4619536
-#$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4619792
+if [ $FULLJRE -gt 0 ]
+then
+    $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4619792
+fi
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4896879
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4918902
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test4948761
