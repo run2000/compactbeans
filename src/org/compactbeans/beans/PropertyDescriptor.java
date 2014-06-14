@@ -80,9 +80,12 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * the standard Java convention by having getFoo and setFoo
      * accessor methods.  Thus if the argument name is "fred", it will
      * assume that the writer method is "setFred" and the reader method
-     * is "getFred" (or "isFred" for a boolean property).  Note that the
-     * property name should start with a lower case character, which will
-     * be capitalized in the method names.
+     * is "getFred" (or "isFred" for a boolean property).
+     * <p>
+     * Note that the property name should start with a lower case
+     * character, which will be capitalized in the method names.</p>
+     * <p>
+     * This also allows descriptor data to be set.</p>
      *
      * @param propertyName The programmatic name of the property.
      * @param beanClass The Class object for the target bean.  For
@@ -120,6 +123,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
     /**
      * This constructor takes the name of a simple property, and
      * <code>Method</code> objects for reading and writing the property.
+     * This also allows descriptor data to be set.
      *
      * @param propertyName The programmatic name of the property.
      * @param readMethod The method used for reading the property value.
@@ -260,6 +264,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
     /**
      * Creates <code>PropertyDescriptor</code> for the specified bean
      * with the specified name and methods to read/write the property value.
+     * This also allows descriptor data to be set.
      *
      * @param bean the type of the target bean
      * @param base the base name of the property (the rest of the method name)
@@ -306,7 +311,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
 
     /**
      * This constructor takes the name of a simple property, and method
-     * names for reading and writing the property.
+     * names for reading and writing the property. This also allows
+     * descriptor data to be set.
      *
      * @param propertyName The programmatic name of the property.
      * @param beanClass The Class object for the target bean.  For
@@ -371,7 +377,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
 
     /**
      * Duplicate constructor, with new <code>DescriptorData</code>.
-     * This must isolate the new object from any changes to the old object.
+     * This isolates the new object from any changes to the old object.
      *
      * @param old the property descriptor to be copied
      * @param newData the new DescriptorData to be composed in

@@ -41,7 +41,7 @@ import java.util.Map.Entry;
  * or for a property specified by name.
  * <p>
  * Here is an example of {@code PropertyChangeSupport} usage that follows
- * the rules and recommendations laid out in the JavaBeans&trade; specification:
+ * the rules and recommendations laid out in the JavaBeans&trade; specification:</p>
  * <pre>
  * public class MyBean {
  *     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -70,11 +70,11 @@ import java.util.Map.Entry;
  * }
  * </pre>
  * <p>
- * A {@code PropertyChangeSupport} instance is thread-safe.
+ * A {@code PropertyChangeSupport} instance is thread-safe.</p>
  * <p>
  * This class is serializable.  When it is serialized it will save
  * (and restore) any listeners that are themselves serializable.  Any
- * non-serializable listeners will be skipped during serialization.
+ * non-serializable listeners will be skipped during serialization.</p>
  */
 public final class PropertyChangeSupport implements Serializable {
     private PropertyChangeListenerMap map = new PropertyChangeListenerMap();
@@ -99,10 +99,12 @@ public final class PropertyChangeSupport implements Serializable {
     /**
      * Add a <code>PropertyChangeListener</code> to the listener list.
      * The listener is registered for all properties.
+     * <p>
      * The same listener object may be added more than once, and will be called
-     * as many times as it is added.
+     * as many times as it is added.</p>
+     * <p>
      * If <code>listener</code> is <code>null</code>, no exception is thrown
-     * and no action is taken.
+     * and no action is taken.</p>
      *
      * @param listener  The PropertyChangeListener to be added
      */
@@ -125,10 +127,11 @@ public final class PropertyChangeSupport implements Serializable {
      * Remove a <code>PropertyChangeListener</code> from the listener list.
      * This removes a PropertyChangeListener that was registered
      * for all properties.
+     * <p>
      * If <code>listener</code> was added more than once to the same event
-     * source, it will be notified one less time after being removed.
-     * If <code>listener</code> is <code>null</code>, or was never added,
-     * no exception is thrown and no action is taken.
+     * source, it will be notified one less time after being removed.</p>
+     * <p>If <code>listener</code> is <code>null</code>, or was never added,
+     * no exception is thrown and no action is taken.</p>
      *
      * @param listener  The PropertyChangeListener to be removed
      */
@@ -186,11 +189,13 @@ public final class PropertyChangeSupport implements Serializable {
      * Add a <code>PropertyChangeListener</code> for a specific property.
      * The listener will be invoked only when a call on firePropertyChange
      * names that specific property.
+     * <p>
      * The same listener object may be added more than once.  For each
      * property,  the listener will be invoked the number of times it was added
-     * for that property.
+     * for that property.</p>
+     * <p>
      * If <code>propertyName</code> or <code>listener</code> is <code>null</code>,
-     * no exception is thrown and no action is taken.
+     * no exception is thrown and no action is taken.</p>
      *
      * @param propertyName  The name of the property to listen on.
      * @param listener  The PropertyChangeListener to be added
@@ -212,10 +217,12 @@ public final class PropertyChangeSupport implements Serializable {
      * If <code>listener</code> was added more than once to the same event
      * source for the specified property, it will be notified one less time
      * after being removed.
+     * <p>
      * If <code>propertyName</code> is <code>null</code>, no exception
-     * is thrown and no action is taken.
+     * is thrown and no action is taken.</p>
+     * <p>
      * If <code>listener</code> is <code>null</code>, or was never added
-     * for the specified property, no exception is thrown and no action is taken.
+     * for the specified property, no exception is thrown and no action is taken.</p>
      *
      * @param propertyName  The name of the property that was listened on.
      * @param listener  The PropertyChangeListener to be removed
@@ -252,7 +259,8 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal and non-null.</p>
+     * No event is fired if old and new values are equal and
+     * non-<code>null</code>.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
      * {@link #firePropertyChange(PropertyChangeEvent)} method.</p>
@@ -312,7 +320,8 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if the given event's old and new values are equal and non-null.
+     * No event is fired if the given event's old and new values are equal
+     * and non-<code>null</code>.</p>
      *
      * @param event  the {@code PropertyChangeEvent} to be fired
      */
@@ -345,7 +354,8 @@ public final class PropertyChangeSupport implements Serializable {
      * that have been registered to track updates of
      * all properties or a property with the specified name.
      * <p>
-     * No event is fired if old and new values are equal and non-null.</p>
+     * No event is fired if old and new values are equal and
+     * non-<code>null</code>.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
      * {@link #firePropertyChange(PropertyChangeEvent)} method.</p>
@@ -409,7 +419,8 @@ public final class PropertyChangeSupport implements Serializable {
     /**
      * Check if there are any listeners for a specific property, including
      * those registered on all properties.  If <code>propertyName</code>
-     * is null, only check for listeners registered on all properties.
+     * is <code>null</code>, only check for listeners registered on all
+     * properties.
      *
      * @param propertyName  the property name.
      * @return true if there are one or more listeners for the given property

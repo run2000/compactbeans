@@ -190,9 +190,9 @@ public final class Beans {
 
     /**
      * Check if a bean can be viewed as a given target type.
-     * The result will be true if the Beans.getInstanceof method
-     * can be used on the given bean to obtain an object that
-     * represents the specified targetType type view.
+     * The result will be true if the {@link Beans#getInstanceOf(Object, Class)
+     * Beans.getInstanceOf} method can be used on the given bean to obtain
+     * an object that represents the specified targetType type view.
      *
      * @param bean  Bean from which we want to obtain a view.
      * @param targetType  The type of view we'd like to get.
@@ -207,7 +207,7 @@ public final class Beans {
      * Test if we are in design-mode.
      *
      * @return <code>false</code> to indicate we're running in
-     * run-time mode
+     * runtime-mode
      */
     public static boolean isDesignTime() {
         return false;

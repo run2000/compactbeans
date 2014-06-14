@@ -25,8 +25,6 @@
 
 package org.compactbeans.beans;
 
-import static java.util.Locale.ENGLISH;
-
 /**
  * A utility class which generates unique names for object instances.
  * The name will be a concatenation of the unqualified class name

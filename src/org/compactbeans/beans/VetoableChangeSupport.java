@@ -37,7 +37,7 @@ import java.util.Map.Entry;
  * or for a property specified by name.
  * <p>
  * Here is an example of {@code VetoableChangeSupport} usage that follows
- * the rules and recommendations laid out in the JavaBeans&trade; specification:
+ * the rules and recommendations laid out in the JavaBeans&trade; specification:</p>
  * <pre>
  * public class MyBean {
  *     private final VetoableChangeSupport vcs = new VetoableChangeSupport(this);
@@ -66,11 +66,11 @@ import java.util.Map.Entry;
  * }
  * </pre>
  * <p>
- * A {@code VetoableChangeSupport} instance is thread-safe.
+ * A {@code VetoableChangeSupport} instance is thread-safe.</p>
  * <p>
  * This class is serializable.  When it is serialized it will save
  * (and restore) any listeners that are themselves serializable.  Any
- * non-serializable listeners will be skipped during serialization.
+ * non-serializable listeners will be skipped during serialization.</p>
  *
  * @see PropertyChangeSupport
  */
@@ -95,12 +95,14 @@ public final class VetoableChangeSupport implements Serializable {
     }
 
     /**
-     * Add a VetoableChangeListener to the listener list.
+     * Add a <code>VetoableChangeListener</code> to the listener list.
      * The listener is registered for all properties.
+     * <p>
      * The same listener object may be added more than once, and will be called
-     * as many times as it is added.
-     * If <code>listener</code> is null, no exception is thrown and no action
-     * is taken.
+     * as many times as it is added.</p>
+     * <p>
+     * If <code>listener</code> is <code>null</code>, no exception is thrown
+     * and no action is taken.</p>
      *
      * @param listener  The VetoableChangeListener to be added
      */
@@ -120,13 +122,15 @@ public final class VetoableChangeSupport implements Serializable {
     }
 
     /**
-     * Remove a VetoableChangeListener from the listener list.
-     * This removes a VetoableChangeListener that was registered
+     * Remove a <code>VetoableChangeListener</code> from the listener list.
+     * This removes a <code>VetoableChangeListener</code> that was registered
      * for all properties.
+     * <p>
      * If <code>listener</code> was added more than once to the same event
-     * source, it will be notified one less time after being removed.
-     * If <code>listener</code> is null, or was never added, no exception is
-     * thrown and no action is taken.
+     * source, it will be notified one less time after being removed.</p>
+     * <p>
+     * If <code>listener</code> is <code>null</code>, or was never added,
+     * no exception is thrown and no action is taken.</p>
      *
      * @param listener  The VetoableChangeListener to be removed
      */
@@ -154,8 +158,8 @@ public final class VetoableChangeSupport implements Serializable {
      * and <code>VetoableChangeListenerProxy</code>s. If the calling
      * method is interested in distinguishing the listeners then it must
      * test each element to see if it's a
-     * <code>VetoableChangeListenerProxy</code>, perform the cast, and examine
-     * the parameter.
+     * <code>VetoableChangeListenerProxy</code>, perform the cast, and
+     * examine the parameter.</p>
      *
      * <pre>
      * VetoableChangeListener[] listeners = bean.getVetoableChangeListeners();
@@ -181,14 +185,16 @@ public final class VetoableChangeSupport implements Serializable {
     }
 
     /**
-     * Add a VetoableChangeListener for a specific property.  The listener
-     * will be invoked only when a call on fireVetoableChange names that
-     * specific property.
+     * Add a <code>VetoableChangeListener</code> for a specific property.
+     * The listener will be invoked only when a call on fireVetoableChange
+     * names that specific property.
+     * <p>
      * The same listener object may be added more than once.  For each
      * property,  the listener will be invoked the number of times it was added
-     * for that property.
-     * If <code>propertyName</code> or <code>listener</code> is null, no
-     * exception is thrown and no action is taken.
+     * for that property.</p>
+     * <p>
+     * If <code>propertyName</code> or <code>listener</code> is <code>null</code>,
+     * no exception is thrown and no action is taken.</p>
      *
      * @param propertyName  The name of the property to listen on.
      * @param listener  The VetoableChangeListener to be added
@@ -206,14 +212,17 @@ public final class VetoableChangeSupport implements Serializable {
     }
 
     /**
-     * Remove a VetoableChangeListener for a specific property.
+     * Remove a <code>VetoableChangeListener</code> for a specific property.
      * If <code>listener</code> was added more than once to the same event
      * source for the specified property, it will be notified one less time
      * after being removed.
-     * If <code>propertyName</code> is null, no exception is thrown and no
-     * action is taken.
-     * If <code>listener</code> is null, or was never added for the specified
-     * property, no exception is thrown and no action is taken.
+     * <p>
+     * If <code>propertyName</code> is <code>null</code>, no exception
+     * is thrown and no action is taken.</p>
+     * <p>
+     * If <code>listener</code> is <code>null</code>, or was never added
+     * for the specified property, no exception is thrown and no action
+     * is taken.</p>
      *
      * @param propertyName  The name of the property that was listened on.
      * @param listener  The VetoableChangeListener to be removed
@@ -236,8 +245,8 @@ public final class VetoableChangeSupport implements Serializable {
      * @param propertyName  The name of the property being listened to
      * @return all the <code>VetoableChangeListeners</code> associated with
      *         the named property.  If no such listeners have been added,
-     *         or if <code>propertyName</code> is null, an empty array is
-     *         returned.
+     *         or if <code>propertyName</code> is <code>null</code>, an
+     *         empty array is returned.
      * @since 1.4
      */
     public VetoableChangeListener[] getVetoableChangeListeners(String propertyName) {
@@ -253,12 +262,13 @@ public final class VetoableChangeSupport implements Serializable {
      * If one of the listeners vetoes the update, this method passes
      * a new "undo" {@code PropertyChangeEvent} that reverts to the old value
      * to all listeners that already confirmed this update
-     * and throws the {@code PropertyVetoException} again.
+     * and throws the {@code PropertyVetoException} again.</p>
      * <p>
-     * No event is fired if old and new values are equal and non-null.
+     * No event is fired if old and new values are equal and
+     * non-<code>null</code>.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #fireVetoableChange(PropertyChangeEvent)} method.
+     * {@link #fireVetoableChange(PropertyChangeEvent)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that is about to change
      * @param oldValue      the old value of the property
@@ -281,12 +291,12 @@ public final class VetoableChangeSupport implements Serializable {
      * If one of the listeners vetoes the update, this method passes
      * a new "undo" {@code PropertyChangeEvent} that reverts to the old value
      * to all listeners that already confirmed this update
-     * and throws the {@code PropertyVetoException} again.
+     * and throws the {@code PropertyVetoException} again.</p>
      * <p>
-     * No event is fired if old and new values are equal.
+     * No event is fired if old and new values are equal.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #fireVetoableChange(String, Object, Object)} method.
+     * {@link #fireVetoableChange(String, Object, Object)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that is about to change
      * @param oldValue      the old value of the property
@@ -309,12 +319,12 @@ public final class VetoableChangeSupport implements Serializable {
      * If one of the listeners vetoes the update, this method passes
      * a new "undo" {@code PropertyChangeEvent} that reverts to the old value
      * to all listeners that already confirmed this update
-     * and throws the {@code PropertyVetoException} again.
+     * and throws the {@code PropertyVetoException} again.</p>
      * <p>
-     * No event is fired if old and new values are equal.
+     * No event is fired if old and new values are equal.</p>
      * <p>
      * This is merely a convenience wrapper around the more general
-     * {@link #fireVetoableChange(String, Object, Object)} method.
+     * {@link #fireVetoableChange(String, Object, Object)} method.</p>
      *
      * @param propertyName  the programmatic name of the property that is about to change
      * @param oldValue      the old value of the property
@@ -337,9 +347,10 @@ public final class VetoableChangeSupport implements Serializable {
      * If one of the listeners vetoes the update, this method passes
      * a new "undo" {@code PropertyChangeEvent} that reverts to the old value
      * to all listeners that already confirmed this update
-     * and throws the {@code PropertyVetoException} again.
+     * and throws the {@code PropertyVetoException} again.</p>
      * <p>
-     * No event is fired if the given event's old and new values are equal and non-null.
+     * No event is fired if the given event's old and new values are equal
+     * and non-<code>null</code>.</p>
      *
      * @param event  the {@code PropertyChangeEvent} to be fired
      * @throws PropertyVetoException if one of listeners vetoes the property update
@@ -395,7 +406,8 @@ public final class VetoableChangeSupport implements Serializable {
     /**
      * Check if there are any listeners for a specific property, including
      * those registered on all properties.  If <code>propertyName</code>
-     * is null, only check for listeners registered on all properties.
+     * is <code>null</code>, only check for listeners registered on all
+     * properties.
      *
      * @param propertyName  the property name.
      * @return true if there are one or more listeners for the given property
@@ -408,7 +420,7 @@ public final class VetoableChangeSupport implements Serializable {
      * @serialData Null terminated list of <code>VetoableChangeListeners</code>.
      * <p>
      * At serialization time we skip non-serializable listeners and
-     * only serialize the serializable listeners.
+     * only serialize the serializable listeners.</p>
      */
     private void writeObject(ObjectOutputStream s) throws IOException {
         Hashtable<String, VetoableChangeSupport> children = null;

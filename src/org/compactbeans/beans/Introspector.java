@@ -38,7 +38,8 @@ import java.util.*;
  * <p>For each of these kinds of information, the Introspector will
  * separately analyze the bean's class and superclasses looking for
  * either explicit or implicit information and use that information to
- * build a BeanInfo object that comprehensively describes the target bean.</p>
+ * build a <code>BeanInfo</code> object that comprehensively describes
+ * the target bean.</p>
  *
  * <p>We use low-level reflection to study the methods of the class and
  * apply standard design patterns to identify property accessors,
@@ -89,7 +90,7 @@ public final class Introspector {
      * methods, and events.
      *
      * <p>If the <code>BeanInfo</code> class for a Java Bean has been previously
-     * Introspected then the <code>BeanInfo</code> class is retrieved from
+     * introspected then the <code>BeanInfo</code> class is retrieved from
      * the <code>BeanInfo</code> cache.</p>
      *
      * @param beanClass The bean class to be analyzed.
@@ -106,9 +107,9 @@ public final class Introspector {
      * Introspect on a Java bean and learn about all its properties, exposed
      * methods, and events, subject to some control flags.
      * <p>
-     * If the BeanInfo class for a Java Bean has been previously Introspected
-     * based on the same arguments then the BeanInfo class is retrieved
-     * from the BeanInfo cache.
+     * If the <code>BeanInfo</code> class for a Java Bean has been previously
+     * introspected based on the same arguments then the <code>BeanInfo</code>
+     * class is retrieved from the <code>BeanInfo</code> cache.
      *
      * @param beanClass  The bean class to be analyzed.
      * @param flags  Flags to control the introspection.
@@ -132,7 +133,7 @@ public final class Introspector {
      * methods, and events.
      *
      * <p>If the <code>BeanInfo</code> class for a Java Bean has been previously
-     * Introspected then the <code>BeanInfo</code> class is retrieved from
+     * introspected then the <code>BeanInfo</code> class is retrieved from
      * the <code>BeanInfo</code> cache.</p>
      *
      * @param beanClass The bean class to be analyzed.
@@ -170,7 +171,7 @@ public final class Introspector {
      * methods, and events.
      *
      * <p>If the <code>BeanInfo</code> class for a Java Bean has been previously
-     * Introspected then the <code>BeanInfo</code> class is retrieved from
+     * introspected then the <code>BeanInfo</code> class is retrieved from
      * the <code>BeanInfo</code> cache.</p>
      *
      * <p>Flags to control the introspection are as follows.</p>
@@ -178,7 +179,8 @@ public final class Introspector {
      * <dt><code>flags == USE_ALL_BEANINFO</code></dt>
      * <dd>use all of the BeanInfo classes we can discover.</dd>
      * <dt><code>flags == IGNORE_IMMEDIATE_BEANINFO</code></dt>
-     * <dd>ignore any BeanInfo associated with the specified beanClass.</dd>
+     * <dd>ignore any BeanInfo associated with the specified beanClass,
+     * but use any <code>BeanInfo</code> classes of the bean superclasses.</dd>
      * <dt><code>flags == IGNORE_ALL_BEANINFO</code></dt>
      * <dd>ignore all BeanInfo associated with the specified beanClass or
      * any of its parent classes.</dd>
@@ -319,7 +321,7 @@ public final class Introspector {
 
     /**
      * Gets the list of package names that will be used for
-     *          finding BeanInfo classes.
+     *          finding <code>BeanInfo</code> classes.
      *
      * @return  The array of package names that will be searched in
      *          order to find BeanInfo classes. The default value
@@ -333,12 +335,12 @@ public final class Introspector {
 
     /**
      * Change the list of package names that will be used for
-     *          finding BeanInfo classes.  The behaviour of
+     *          finding <code>BeanInfo</code> classes.  The behaviour of
      *          this method is undefined if parameter path
-     *          is null.
+     *          is <code>null</code>.
      *
      * <p>First, if there is a security manager, its <code>checkPropertiesAccess</code>
-     * method is called. This could result in a SecurityException.
+     * method is called. This could result in a <code>SecurityException</code>.</p>
      *
      * @param path  Array of package names.
      * @throws SecurityException  if a security manager exists and its

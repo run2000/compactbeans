@@ -30,8 +30,8 @@ import java.util.Enumeration;
 /**
  * The ParameterDescriptor class allows bean implementors to provide
  * additional information on each of their parameters, beyond the
- * low level type information provided by the java.lang.reflect.Method
- * class.
+ * low level type information provided by the
+ * <code>java.lang.reflect.Method</code> class.
  * <p>
  * Currently all our state comes from the DescriptorData mixin class.</p>
  */
@@ -73,7 +73,7 @@ public final class ParameterDescriptor implements FeatureDescriptor {
 
     /**
      * Duplicate constructor, with new <code>DescriptorData</code>.
-     * This must isolate the new object from any changes to the old object.
+     * This isolates the new object from any changes to the old object.
      *
      * @param old the method descriptor to be copied
      * @param newData the new DescriptorData to be composed in

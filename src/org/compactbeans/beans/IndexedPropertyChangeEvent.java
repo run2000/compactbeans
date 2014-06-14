@@ -25,7 +25,7 @@
 package org.compactbeans.beans;
 
 /**
- * An "IndexedPropertyChange" event gets delivered whenever a component that
+ * An IndexedPropertyChange event gets delivered whenever a component that
  * conforms to the JavaBeans&trade; specification (a "bean") changes a bound
  * indexed property. This class is an extension of <code>PropertyChangeEvent</code>
  * but contains the index of the property that has changed.

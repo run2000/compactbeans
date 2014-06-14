@@ -37,7 +37,7 @@ package org.compactbeans.beans;
 public interface BeanInfo {
 
     /**
-     * Gets the beans <code>BeanDescriptor</code>.
+     * Gets the bean's <code>BeanDescriptor</code>.
      *
      * @return  A BeanDescriptor providing overall information about
      * the bean.
@@ -45,7 +45,7 @@ public interface BeanInfo {
     BeanDescriptor getBeanDescriptor();
 
     /**
-     * Gets the beans <code>EventSetDescriptor</code>s.
+     * Gets the bean's <code>EventSetDescriptor</code>s.
      *
      * @return  An array of EventSetDescriptors describing the kinds of
      * events fired by this bean.
@@ -69,9 +69,11 @@ public interface BeanInfo {
      * Gets the beans <code>PropertyDescriptor</code>s.
      * <p>
      * If a property is indexed, then its entry in the result array will
-     * belong to the IndexedPropertyDescriptor subclass of PropertyDescriptor.
-     * A client of getPropertyDescriptors can use <code>getDescriptorType()</code>
-     * to check if a given PropertyDescriptor is an IndexedPropertyDescriptor.</p>
+     * belong to the <code>IndexedPropertyDescriptor</code> subclass of
+     * <code>PropertyDescriptor</code>. A client of getPropertyDescriptors
+     * can use <code>getDescriptorType()</code> to check if a given
+     * <code>PropertyDescriptor</code> is an
+     * <code>IndexedPropertyDescriptor</code>.</p>
      *
      * @return An array of PropertyDescriptors describing the editable
      * properties supported by this bean.

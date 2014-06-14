@@ -26,7 +26,7 @@
 package org.compactbeans.beans;
 
 /**
- * A "PropertyChange" event gets fired whenever a bean changes a "bound"
+ * A PropertyChange event gets fired whenever a bean changes a "bound"
  * property.  You can register a <code>PropertyChangeListener</code> with
  * a source bean so as to be notified of any bound property updates.
  */

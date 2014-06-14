@@ -26,14 +26,14 @@
 package org.compactbeans.beans;
 
 /**
- * A "PropertyChange" event gets delivered whenever a bean changes a "bound"
+ * A PropertyChange event gets delivered whenever a bean changes a "bound"
  * or "constrained" property.  A <code>PropertyChangeEvent</code> object
  * is sent as an argument to the <code>PropertyChangeListener</code>
  * (and <code>VetoableChangeListener</code>) methods.
  * <p>
  * Normally <code>PropertyChangeEvents</code> are accompanied by the name
  * and the old and new value of the changed property.  If the new value is
- * a primitive type (such as int or boolean) it must be boxed as the
+ * a primitive type (such as int or boolean) it is boxed as the
  * corresponding <code>java.lang.*</code> Object type (such as
  * <code>Integer</code> or <code>Boolean</code>).</p>
  * <p>

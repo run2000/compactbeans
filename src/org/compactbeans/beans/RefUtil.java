@@ -30,8 +30,8 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
 /**
- * Wrapping and unwrapping of Reference objects.
- * Factored out from Descriptor classes.
+ * Wrapping and unwrapping of <code>Reference</code> objects.
+ * Factored out from <code>Descriptor</code> classes.
  */
 final class RefUtil {
 

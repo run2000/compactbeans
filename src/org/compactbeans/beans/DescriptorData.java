@@ -32,18 +32,19 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 /**
- * The DescriptorData class is a class composed in for PropertyDescriptor,
- * EventSetDescriptor, and MethodDescriptor, etc.
+ * The DescriptorData class is a class composed in for <code>PropertyDescriptor</code>,
+ * <code>EventSetDescriptor</code>, and <code>MethodDescriptor</code>, etc.
  * <p>
  * It supports some common information that can be set and retrieved for
  * any of the feature descriptors.</p>
  * <p>
  * In addition it provides an extension mechanism so that arbitrary
  * attribute/value pairs can be associated with a design feature.</p>
+ * <p>
+ * Finally, this class may be subclasses to provide additional information.</p>
  */
 public class DescriptorData implements Serializable, Cloneable {
     private static final long serialVersionUID = -6556452834342672815L;
-    private static final String TRANSIENT = "transient";
     protected static final Enumeration<String> EMPTY_KEYS = new EmptyEnumeration<String>();
 
     private boolean expert;
@@ -297,19 +298,6 @@ public class DescriptorData implements Serializable, Cloneable {
         return this.table;
     }
 
-    /**
-     * Indicates whether the feature is transient.
-     *
-     * @return {@code true} if the feature is transient,
-     *         {@code false} otherwise
-     */
-    boolean isTransient() {
-        Object value = getValue(TRANSIENT);
-        return (value instanceof Boolean)
-                ? (Boolean) value
-                : false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -354,8 +342,6 @@ public class DescriptorData implements Serializable, Cloneable {
      * Returns a string representation of the object.
      *
      * @return a string representation of the object
-     *
-     * @since 1.7
      */
     @Override
     public String toString() {

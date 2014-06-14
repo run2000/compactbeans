@@ -126,7 +126,8 @@ public interface FeatureDescriptor {
     /**
      * Return a copy (clone) of the descriptor data in this feature.
      * If the descriptor data has not been customized, for instance by a
-     * suitable BeanInfo object, <code>null</code> will be returned.
+     * suitable <code>BeanInfo</code> object, <code>null</code> will be
+     * returned.
      *
      * @return a copy of the descriptor data, or <code>null</code>
      * if no descriptor data is present
@@ -135,8 +136,8 @@ public interface FeatureDescriptor {
 
     /**
      * Determine whether this feature has custom descriptor data.
-     * Typically this would be provided by a corresponding BeanInfo
-     * object.
+     * Typically this would be provided by a corresponding
+     * <code>BeanInfo</code> object.
      *
      * @return <code>true</code> if this feature has custom descriptor
      * data, otherwise <code>false</code>

@@ -98,6 +98,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
      * addFredListener method of the source component and removed with a
      * call on a removeFredListener method.</li>
      * </ol>
+     * <p>This also allows descriptor data to be set.</p>
      *
      * @param sourceClass  The class firing the event.
      * @param eventSetName  The programmatic name of the event.  E.g. &quot;fred&quot;.
@@ -167,7 +168,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     /**
      * Creates an <code>EventSetDescriptor</code> from scratch using
-     * string names.
+     * string names. This also allows descriptor data to be set.
      *
      * @param sourceClass  The class firing the event.
      * @param eventSetName The programmatic name of the event set.
@@ -234,7 +235,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     /**
      * This constructor creates an EventSetDescriptor from scratch using
-     * string names.
+     * string names. This also allows descriptor data to be set.
      *
      * @param sourceClass  The class firing the event.
      * @param eventSetName The programmatic name of the event set.
@@ -321,7 +322,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     /**
      * Creates an <code>EventSetDescriptor</code> from scratch using
      * <code>java.lang.reflect.Method</code> and <code>java.lang.Class</code>
-     * objects.
+     * objects. This also allows descriptor data to be set.
      *
      * @param eventSetName The programmatic name of the event set.
      * @param listenerType The Class for the listener interface.
@@ -349,7 +350,8 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     /**
      * This constructor creates an EventSetDescriptor from scratch using
-     * java.lang.reflect.Method and java.lang.Class objects.
+     * <code>java.lang.reflect.Method</code> and <code>java.lang.Class</code>
+     * objects.
      *
      * @param eventSetName The programmatic name of the event set.
      * @param listenerType The Class for the listener interface.
@@ -379,7 +381,8 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     /**
      * This constructor creates an EventSetDescriptor from scratch using
-     * java.lang.reflect.Method and java.lang.Class objects.
+     * <code>java.lang.reflect.Method</code> and <code>java.lang.Class</code>
+     * objects. This also allows descriptor data to be set.
      *
      * @param eventSetName The programmatic name of the event set.
      * @param listenerType The Class for the listener interface.
@@ -444,7 +447,8 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     /**
      * Creates an <code>EventSetDescriptor</code> from scratch using
      * <code>java.lang.reflect.MethodDescriptor</code> and
-     * <code>java.lang.Class</code> objects.
+     * <code>java.lang.Class</code> objects. This also allows
+     * descriptor data to be set.
      *
      * @param eventSetName The programmatic name of the event set.
      * @param listenerType The Class for the listener interface.
@@ -557,7 +561,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     /**
      * Duplicate constructor, with new <code>DescriptorData</code>.
-     * This must isolate the new object from any changes to the old object.
+     * This isolates the new object from any changes to the old object.
      *
      * @param old the event set descriptor to be copied
      * @param newData the new DescriptorData to be composed in

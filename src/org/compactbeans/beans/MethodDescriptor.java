@@ -59,7 +59,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
 
     /**
      * Constructs a <code>MethodDescriptor</code> from a
-     * <code>Method</code>.
+     * <code>Method</code>. This also allows descriptor data to be set.
      *
      * @param method The low-level method information.
      * @param descriptorData the descriptor data for this method descriptor,
@@ -88,7 +88,8 @@ public final class MethodDescriptor implements FeatureDescriptor {
     /**
      * Constructs a <code>MethodDescriptor</code> from a
      * <code>Method</code> providing descriptive information for each
-     * of the method's parameters.
+     * of the method's parameters. This also allows descriptor data
+     * to be set.
      *
      * @param method    The low-level method information.
      * @param parameterDescriptors  Descriptive information for each of the
@@ -175,7 +176,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
 
     /**
      * Duplicate constructor, with new <code>DescriptorData</code>.
-     * This must isolate the new object from any changes to the old object.
+     * This isolates the new object from any changes to the old object.
      *
      * @param old the method descriptor to be copied
      * @param newData the new DescriptorData to be composed in

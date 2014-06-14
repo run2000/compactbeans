@@ -78,7 +78,7 @@ public final class BeanDescriptor implements FeatureDescriptor {
 
     /**
      * Duplicate constructor, with new <code>DescriptorData</code>.
-     * This must isolate the new object from any changes to the old object.
+     * This isolates the new object from any changes to the old object.
      *
      * @param old the bean descriptor to be copied
      * @param newData the new DescriptorData to be composed in
