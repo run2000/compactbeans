@@ -25,6 +25,7 @@
 
 package org.compactbeans.beans;
 
+import java.util.Collections;
 import java.util.Enumeration;
 
 /**
@@ -37,8 +38,15 @@ import java.util.Enumeration;
  */
 
 public final class ParameterDescriptor implements FeatureDescriptor {
-    private final String name;
+    private String name;
     private final DescriptorData descriptorData;
+
+    /**
+     * No-arg constructor.
+     */
+    ParameterDescriptor() {
+        this.descriptorData = null;
+    }
 
     /**
      * Public constructor that takes a name.
@@ -48,18 +56,6 @@ public final class ParameterDescriptor implements FeatureDescriptor {
     public ParameterDescriptor(String name) {
         this.name = name;
         this.descriptorData = null;
-    }
-
-    /**
-     * Public constructor that takes a name and descriptor data.
-     *
-     * @param name the name of the parameter
-     * @param descriptorData the descriptor data for this parameter descriptor,
-     *                       possibly <code>null</code>
-     */
-    public ParameterDescriptor(String name, DescriptorData descriptorData) {
-        this.name = name;
-        this.descriptorData = descriptorData;
     }
 
     /**
@@ -78,13 +74,22 @@ public final class ParameterDescriptor implements FeatureDescriptor {
      * @param old the method descriptor to be copied
      * @param newData the new DescriptorData to be composed in
      */
-    public ParameterDescriptor(ParameterDescriptor old, DescriptorData newData) {
+    ParameterDescriptor(ParameterDescriptor old, DescriptorData newData) {
         name = old.name;
         descriptorData = newData;
     }
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * Sets the programmatic name of this feature.
+     *
+     * @param name The programmatic name of the parameter
+     */
+    void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -128,15 +133,20 @@ public final class ParameterDescriptor implements FeatureDescriptor {
     }
 
     public Enumeration<String> attributeNames() {
-        return (descriptorData == null) ? DescriptorData.EMPTY_KEYS : descriptorData.attributeNames();
+        return (descriptorData == null) ? Collections.<String>emptyEnumeration() : descriptorData.attributeNames();
     }
 
-    public DescriptorData getDescriptorData() {
+    /**
+     * Return a copy (clone) of the descriptor data in this feature.
+     * If the descriptor data has not been customized, for instance by a
+     * suitable <code>BeanInfo</code> object, <code>null</code> will be
+     * returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
+    DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
-    }
-
-    public boolean hasDescriptorData() {
-        return (descriptorData != null);
     }
 
     /**

@@ -28,6 +28,7 @@ package org.compactbeans.beans;
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -38,7 +39,7 @@ import java.util.List;
 
 public final class MethodDescriptor implements FeatureDescriptor {
 
-    private final String name;
+    private String name;
     private Reference<Method> methodRef;
     private String[] paramNames;
     private List<Reference<Class>> params;
@@ -54,21 +55,9 @@ public final class MethodDescriptor implements FeatureDescriptor {
      * @param method The low-level method information.
      */
     public MethodDescriptor(Method method) {
-        this(method, null, null);
-    }
-
-    /**
-     * Constructs a <code>MethodDescriptor</code> from a
-     * <code>Method</code>. This also allows descriptor data to be set.
-     *
-     * @param method The low-level method information.
-     * @param descriptorData the descriptor data for this method descriptor,
-     *                       possibly <code>null</code>
-     */
-    public MethodDescriptor(Method method, DescriptorData descriptorData) {
         this.name = method.getName();
         setMethod(method);
-        this.descriptorData = descriptorData;
+        this.descriptorData = null;
     }
 
     /**
@@ -82,28 +71,10 @@ public final class MethodDescriptor implements FeatureDescriptor {
      */
     public MethodDescriptor(Method method,
                 ParameterDescriptor parameterDescriptors[]) {
-        this(method, parameterDescriptors, null);
-    }
-
-    /**
-     * Constructs a <code>MethodDescriptor</code> from a
-     * <code>Method</code> providing descriptive information for each
-     * of the method's parameters. This also allows descriptor data
-     * to be set.
-     *
-     * @param method    The low-level method information.
-     * @param parameterDescriptors  Descriptive information for each of the
-     *                          method's parameters.
-     * @param descriptorData the descriptor data for this method descriptor,
-     *                       possibly <code>null</code>
-     */
-    public MethodDescriptor(Method method,
-                ParameterDescriptor parameterDescriptors[],
-                DescriptorData descriptorData) {
         this.name = method.getName();
         setMethod(method);
         this.parameterDescriptors = parameterDescriptors;
-        this.descriptorData = descriptorData;
+        this.descriptorData = null;
     }
 
     /*
@@ -181,7 +152,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
      * @param old the method descriptor to be copied
      * @param newData the new DescriptorData to be composed in
      */
-    public MethodDescriptor(MethodDescriptor old, DescriptorData newData) {
+    MethodDescriptor(MethodDescriptor old, DescriptorData newData) {
         name = old.name;
         classRef = old.classRef;
 
@@ -299,6 +270,15 @@ public final class MethodDescriptor implements FeatureDescriptor {
     }
 
     /**
+     * Sets the programmatic name of this feature.
+     *
+     * @param name The programmatic name of the method
+     */
+    void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Gets the descriptor type for this object.
      *
      * @return <code>DescriptorType.METHOD</code> to indicate this is a
@@ -343,15 +323,20 @@ public final class MethodDescriptor implements FeatureDescriptor {
     }
 
     public Enumeration<String> attributeNames() {
-        return (descriptorData == null) ? DescriptorData.EMPTY_KEYS : descriptorData.attributeNames();
+        return (descriptorData == null) ? Collections.<String>emptyEnumeration() : descriptorData.attributeNames();
     }
 
-    public DescriptorData getDescriptorData() {
+    /**
+     * Return a copy (clone) of the descriptor data in this feature.
+     * If the descriptor data has not been customized, for instance by a
+     * suitable <code>BeanInfo</code> object, <code>null</code> will be
+     * returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
+    DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
-    }
-
-    public boolean hasDescriptorData() {
-        return (descriptorData != null);
     }
 
     /**

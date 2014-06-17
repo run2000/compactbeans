@@ -116,12 +116,9 @@ public class Test7193977 {
             for (int i = 0; i < pds.length; i++) {
                 PropertyDescriptor pd = pds[i];
                 if (names.contains(pd.getName())) {
-                    data = pd.getDescriptorData();
-                    if(data == null) {
-                        data = new DescriptorData();
-                    }
-                    data.setValue("transient", Boolean.TRUE);
-                    newPds[i] = new PropertyDescriptor(pds[i], data);
+                    PropertyBuilder pb = new PropertyBuilder(pd);
+                    pb.setValue("transient", Boolean.TRUE);
+                    newPds[i] = pb.build();
                 } else {
                     newPds[i] = pds[i];
                 }

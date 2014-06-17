@@ -342,14 +342,14 @@ public final class Introspector {
      * <p>First, if there is a security manager, its <code>checkPropertiesAccess</code>
      * method is called. This could result in a <code>SecurityException</code>.</p>
      *
-     * @param path  Array of package names.
+     * @param path  a parameter array of package names.
      * @throws SecurityException  if a security manager exists and its
      *             <code>checkPropertiesAccess</code> method doesn't allow setting
      *              of system properties.
      * @see SecurityManager#checkPropertiesAccess
      */
 
-    public static void setBeanInfoSearchPath(String[] path) {
+    public static void setBeanInfoSearchPath(String... path) {
         SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
             sm.checkPropertiesAccess();

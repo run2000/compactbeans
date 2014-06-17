@@ -96,7 +96,7 @@ public interface FeatureDescriptor {
     public String getShortDescription();
 
     /**
-     * Determine whether this descriptor data has any attributes.
+     * Determine whether this feature descriptor has any attributes.
      * Use this to short-circuit any internal table creation.
      *
      * @return <code>true</code> if there are any named attributes
@@ -122,26 +122,5 @@ public interface FeatureDescriptor {
      *    attributes that have been registered.
      */
     public Enumeration<String> attributeNames();
-
-    /**
-     * Return a copy (clone) of the descriptor data in this feature.
-     * If the descriptor data has not been customized, for instance by a
-     * suitable <code>BeanInfo</code> object, <code>null</code> will be
-     * returned.
-     *
-     * @return a copy of the descriptor data, or <code>null</code>
-     * if no descriptor data is present
-     */
-    public DescriptorData getDescriptorData();
-
-    /**
-     * Determine whether this feature has custom descriptor data.
-     * Typically this would be provided by a corresponding
-     * <code>BeanInfo</code> object.
-     *
-     * @return <code>true</code> if this feature has custom descriptor
-     * data, otherwise <code>false</code>
-     */
-    public boolean hasDescriptorData();
 
 }

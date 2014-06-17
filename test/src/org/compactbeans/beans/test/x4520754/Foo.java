@@ -23,19 +23,18 @@
 
 package org.compactbeans.beans.test.x4520754;
 
+import org.compactbeans.beans.BeanBuilder;
 import org.compactbeans.beans.BeanDescriptor;
-import org.compactbeans.beans.DescriptorData;
 import org.compactbeans.beans.SimpleBeanInfo;
 
 // The foo bean is it's own beaninfo
 public class Foo extends SimpleBeanInfo {
     public BeanDescriptor getBeanDescriptor() {
-        DescriptorData dd = new DescriptorData();
-        BeanDescriptor bd = new BeanDescriptor(Foo.class, dd);
+        BeanBuilder bb = new BeanBuilder(Foo.class);
 
         // set a value to ensure that it's unique
-        dd.setValue("test", Boolean.TRUE);
-        return bd;
+        bb.setValue("test", Boolean.TRUE);
+        return bb.build();
     }
 
     private int x;

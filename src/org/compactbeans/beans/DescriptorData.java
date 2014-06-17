@@ -26,10 +26,8 @@
 package org.compactbeans.beans;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 
 /**
  * The DescriptorData class is a class composed in for <code>PropertyDescriptor</code>,
@@ -45,7 +43,6 @@ import java.util.NoSuchElementException;
  */
 public class DescriptorData implements Serializable, Cloneable {
     private static final long serialVersionUID = -6556452834342672815L;
-    protected static final Enumeration<String> EMPTY_KEYS = new EmptyEnumeration<String>();
 
     private boolean expert;
     private boolean hidden;
@@ -269,18 +266,33 @@ public class DescriptorData implements Serializable, Cloneable {
      */
     public Enumeration<String> attributeNames() {
         if(this.table == null) {
-            return EMPTY_KEYS;
+            return Collections.<String>emptyEnumeration();
         }
         return getTable().keys();
     }
 
     /**
+     * Gets an Iterable&lt;String&gt; of the locale-independent names of this
+     * feature.
+     *
+     * @return  An Iterable&lt;String&gt; of the locale-independent names
+     * of any attributes that have been registered with setValue.
+     */
+    public Iterable<String> getAttributeNames() {
+        if(this.table == null) {
+            return Collections.<String>emptyList();
+        } else {
+            return Collections.unmodifiableMap(this.table).keySet();
+        }
+    }
+
+    /**
      * Copies all values from the specified attribute table.
-     * If some attribute is exist its value should be overridden.
+     * If any attribute already exists its value will be overridden.
      *
      * @param table  the attribute table with new values
      */
-    private void addTable(Hashtable<String, Object> table) {
+    public void addTable(Map<String, Object> table) {
         if ((table != null) && !table.isEmpty()) {
             getTable().putAll(table);
         }
@@ -364,7 +376,7 @@ public class DescriptorData implements Serializable, Cloneable {
         return sb.append(']').toString();
     }
 
-    void appendTo(StringBuilder sb) {
+    protected void appendTo(StringBuilder sb) {
     }
 
     static void appendTo(StringBuilder sb, String name, Object value) {
@@ -376,19 +388,6 @@ public class DescriptorData implements Serializable, Cloneable {
     static void appendTo(StringBuilder sb, String name, boolean value) {
         if (value) {
             sb.append(name).append("; ");
-        }
-    }
-
-    private static final class EmptyEnumeration<T> implements Enumeration<T> {
-
-        @Override
-        public boolean hasMoreElements() {
-            return false;
-        }
-
-        @Override
-        public T nextElement() {
-            throw new NoSuchElementException();
         }
     }
 }

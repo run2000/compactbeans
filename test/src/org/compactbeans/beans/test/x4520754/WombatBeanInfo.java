@@ -23,16 +23,16 @@
 
 package org.compactbeans.beans.test.x4520754;
 
+import org.compactbeans.beans.BeanBuilder;
 import org.compactbeans.beans.BeanDescriptor;
-import org.compactbeans.beans.DescriptorData;
 import org.compactbeans.beans.SimpleBeanInfo;
 
 public class WombatBeanInfo extends SimpleBeanInfo {
     public BeanDescriptor getBeanDescriptor() {
-        DescriptorData dd = new DescriptorData();
-        BeanDescriptor bd = new BeanDescriptor(Wombat.class, dd);
+        BeanBuilder bb = new BeanBuilder(Wombat.class);
+
         // set a value to ensure that it's unique
-        dd.setValue("test", Boolean.TRUE);
-        return bd;
+        bb.setValue("test", Boolean.TRUE);
+        return bb.build();
     }
 }

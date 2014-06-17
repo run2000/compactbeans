@@ -26,6 +26,7 @@
 package org.compactbeans.beans;
 
 import java.lang.ref.Reference;
+import java.util.Collections;
 import java.util.Enumeration;
 
 /**
@@ -39,7 +40,7 @@ import java.util.Enumeration;
 public final class BeanDescriptor implements FeatureDescriptor {
 
     private final Reference<Class> beanClassRef;
-    private final String name;
+    private String name;
     private final DescriptorData descriptorData;
 
     /**
@@ -49,21 +50,9 @@ public final class BeanDescriptor implements FeatureDescriptor {
      *          that implements the bean.  For example sun.beans.OurButton.class
      */
     public BeanDescriptor(Class<?> beanClass) {
-        this(beanClass, null);
-    }
-
-    /**
-     * Create a BeanDescriptor for a bean with the given descriptor data.
-     *
-     * @param beanClass the <code>Class</code> object of the Java class
-     *          that implements the bean.  For example sun.beans.OurButton.class
-     * @param descriptorData the descriptor data for this bean descriptor,
-     *                       possibly <code>null</code>
-     */
-    public BeanDescriptor(Class<?> beanClass, DescriptorData descriptorData) {
         this.beanClassRef = RefUtil.createWeakReference((Class)beanClass);
         this.name = IntrospectorSupport.getClassName(beanClass);
-        this.descriptorData = descriptorData;
+        this.descriptorData = null;
     }
 
     /*
@@ -83,7 +72,7 @@ public final class BeanDescriptor implements FeatureDescriptor {
      * @param old the bean descriptor to be copied
      * @param newData the new DescriptorData to be composed in
      */
-    public BeanDescriptor(BeanDescriptor old, DescriptorData newData) {
+    BeanDescriptor(BeanDescriptor old, DescriptorData newData) {
         name = old.name;
         beanClassRef = old.beanClassRef;
         descriptorData = newData;
@@ -105,6 +94,15 @@ public final class BeanDescriptor implements FeatureDescriptor {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Sets the programmatic name of this feature.
+     *
+     * @param name  The programmatic name of the bean
+     */
+    void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -148,15 +146,20 @@ public final class BeanDescriptor implements FeatureDescriptor {
     }
 
     public Enumeration<String> attributeNames() {
-        return (descriptorData == null) ? DescriptorData.EMPTY_KEYS : descriptorData.attributeNames();
+        return (descriptorData == null) ? Collections.<String>emptyEnumeration() : descriptorData.attributeNames();
     }
 
-    public DescriptorData getDescriptorData() {
+    /**
+     * Return a copy (clone) of the descriptor data in this feature.
+     * If the descriptor data has not been customized, for instance by a
+     * suitable <code>BeanInfo</code> object, <code>null</code> will be
+     * returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
+    DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
-    }
-
-    public boolean hasDescriptorData() {
-        return (descriptorData != null);
     }
 
     /**

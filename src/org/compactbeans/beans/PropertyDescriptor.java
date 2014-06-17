@@ -27,6 +27,7 @@ package org.compactbeans.beans;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Enumeration;
 
 /**
@@ -35,7 +36,7 @@ import java.util.Enumeration;
  */
 public class PropertyDescriptor implements FeatureDescriptor {
 
-    private final String name;
+    private String name;
     private Reference<Class> propertyTypeRef;
     private Reference<Method> readMethodRef;
     private Reference<Method> writeMethodRef;
@@ -76,34 +77,6 @@ public class PropertyDescriptor implements FeatureDescriptor {
     }
 
     /**
-     * Constructs a PropertyDescriptor for a property that follows
-     * the standard Java convention by having getFoo and setFoo
-     * accessor methods.  Thus if the argument name is "fred", it will
-     * assume that the writer method is "setFred" and the reader method
-     * is "getFred" (or "isFred" for a boolean property).
-     * <p>
-     * Note that the property name should start with a lower case
-     * character, which will be capitalized in the method names.</p>
-     * <p>
-     * This also allows descriptor data to be set.</p>
-     *
-     * @param propertyName The programmatic name of the property.
-     * @param beanClass The Class object for the target bean.  For
-     *          example sun.beans.OurButton.class.
-     * @param descriptorData the descriptor data for this property descriptor,
-     *                       possibly <code>null</code>
-     * @throws IntrospectionException if an exception occurs during
-     *              introspection.
-     */
-    public PropertyDescriptor(String propertyName, Class<?> beanClass,
-            DescriptorData descriptorData) throws IntrospectionException {
-        this(propertyName, beanClass,
-                IntrospectorSupport.IS_PREFIX + NameGenerator.capitalize(propertyName),
-                IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(propertyName),
-                descriptorData);
-    }
-
-    /**
      * This constructor takes the name of a simple property, and
      * <code>Method</code> objects for reading and writing the property.
      *
@@ -117,34 +90,13 @@ public class PropertyDescriptor implements FeatureDescriptor {
      */
     public PropertyDescriptor(String propertyName, Method readMethod, Method writeMethod)
             throws IntrospectionException {
-        this(propertyName, readMethod, writeMethod, null);
-    }
-
-    /**
-     * This constructor takes the name of a simple property, and
-     * <code>Method</code> objects for reading and writing the property.
-     * This also allows descriptor data to be set.
-     *
-     * @param propertyName The programmatic name of the property.
-     * @param readMethod The method used for reading the property value.
-     *          May be <code>null</code> if the property is write-only.
-     * @param writeMethod The method used for writing the property value.
-     *          May be <code>null</code> if the property is read-only.
-     * @param descriptorData the descriptor data for this property descriptor,
-     *                       possibly <code>null</code>
-     * @throws IntrospectionException if an exception occurs during
-     *              introspection.
-     */
-    public PropertyDescriptor(String propertyName, Method readMethod, Method writeMethod,
-                              DescriptorData descriptorData)
-            throws IntrospectionException {
         if ((propertyName == null) || (propertyName.length() == 0)) {
             throw new IntrospectionException("bad property name");
         }
         name = propertyName;
         setReadMethod(readMethod);
         setWriteMethod(writeMethod);
-        this.descriptorData = descriptorData;
+        this.descriptorData = null;
     }
 
     /**
@@ -258,26 +210,6 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * @since 1.7
      */
     PropertyDescriptor(Class<?> bean, String base, Method read, Method write) throws IntrospectionException {
-        this(bean, base, read, write, null);
-    }
-
-    /**
-     * Creates <code>PropertyDescriptor</code> for the specified bean
-     * with the specified name and methods to read/write the property value.
-     * This also allows descriptor data to be set.
-     *
-     * @param bean the type of the target bean
-     * @param base the base name of the property (the rest of the method name)
-     * @param read the method used for reading the property value
-     * @param write the method used for writing the property value
-     * @param descriptorData the descriptor data for this property descriptor,
-     *                       possibly <code>null</code>
-     * @throws IntrospectionException if an exception occurs during introspection
-     *
-     * @since 1.7
-     */
-    PropertyDescriptor(Class<?> bean, String base, Method read, Method write,
-                       DescriptorData descriptorData) throws IntrospectionException {
         if (bean == null) {
             throw new IntrospectionException("Target Bean class is null");
         }
@@ -286,7 +218,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
         setReadMethod(read);
         setWriteMethod(write);
         this.baseName = base;
-        this.descriptorData = descriptorData;
+        this.descriptorData = null;
     }
 
     /**
@@ -306,29 +238,6 @@ public class PropertyDescriptor implements FeatureDescriptor {
     public PropertyDescriptor(String propertyName, Class<?> beanClass,
                 String readMethodName, String writeMethodName)
                 throws IntrospectionException {
-        this(propertyName, beanClass, readMethodName, writeMethodName, null);
-    }
-
-    /**
-     * This constructor takes the name of a simple property, and method
-     * names for reading and writing the property. This also allows
-     * descriptor data to be set.
-     *
-     * @param propertyName The programmatic name of the property.
-     * @param beanClass The Class object for the target bean.  For
-     *          example sun.beans.OurButton.class.
-     * @param readMethodName The name of the method used for reading the property
-     *           value.  May be <code>null</code> if the property is write-only.
-     * @param writeMethodName The name of the method used for writing the property
-     *           value.  May be <code>null</code> if the property is read-only.
-     * @param descriptorData the descriptor data for this property descriptor,
-     *                       possibly <code>null</code>
-     * @throws IntrospectionException if an exception occurs during
-     *              introspection.
-     */
-    public PropertyDescriptor(String propertyName, Class<?> beanClass,
-                String readMethodName, String writeMethodName,
-                DescriptorData descriptorData) throws IntrospectionException {
         if (beanClass == null) {
             throw new IntrospectionException("Target Bean class is null");
         }
@@ -353,8 +262,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
         // then we assume that any properties we discover are "bound".
         // See Introspector.getTargetPropertyInfo() method.
         Class[] args = { PropertyChangeListener.class };
-        this.bound = null != IntrospectorSupport.findMethod(beanClass, "addPropertyChangeListener", args.length, args);
-        this.descriptorData = descriptorData;
+        this.bound = (null != IntrospectorSupport.findMethod(beanClass, "addPropertyChangeListener", args.length, args));
+        this.descriptorData = null;
     }
 
     /*
@@ -382,7 +291,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * @param old the property descriptor to be copied
      * @param newData the new DescriptorData to be composed in
      */
-    public PropertyDescriptor(PropertyDescriptor old, DescriptorData newData) {
+    PropertyDescriptor(PropertyDescriptor old, DescriptorData newData) {
         name = old.name;
         baseName = old.baseName;
         classRef = old.classRef;
@@ -637,6 +546,15 @@ public class PropertyDescriptor implements FeatureDescriptor {
     }
 
     /**
+     * Sets the programmatic name of this feature.
+     *
+     * @param name The programmatic name of the property
+     */
+    void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Gets the descriptor type for this object.
      *
      * @return <code>DescriptorType.PROPERTY</code> to indicate this is a
@@ -746,15 +664,20 @@ public class PropertyDescriptor implements FeatureDescriptor {
     }
 
     public Enumeration<String> attributeNames() {
-        return (descriptorData == null) ? DescriptorData.EMPTY_KEYS : descriptorData.attributeNames();
+        return (descriptorData == null) ? Collections.<String>emptyEnumeration() : descriptorData.attributeNames();
     }
 
-    public DescriptorData getDescriptorData() {
+    /**
+     * Return a copy (clone) of the descriptor data in this feature.
+     * If the descriptor data has not been customized, for instance by a
+     * suitable <code>BeanInfo</code> object, <code>null</code> will be
+     * returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
+    DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
-    }
-
-    public boolean hasDescriptorData() {
-        return (descriptorData != null);
     }
 
     /**
