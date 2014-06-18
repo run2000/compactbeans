@@ -29,7 +29,8 @@
             description="build the javadoc">
         <mkdir dir="${doc}/api" />
         <javadoc sourcepath="${src}" destdir="${doc}/api"
-                 windowtitle="CompactBeans API ${version}">
+                 windowtitle="CompactBeans API ${version}"
+                 author="false" version="false">
             <tag name="jdksource" scope="types" description="OpenJDK Source:"/>
         </javadoc>
     </target>
