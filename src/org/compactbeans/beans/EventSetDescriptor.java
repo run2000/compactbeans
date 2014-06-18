@@ -699,7 +699,9 @@ public final class EventSetDescriptor implements FeatureDescriptor {
         if (this.unicast) {
             sb.append("; ").append("unicast");
         }
-        sb.append("; ").append("inDefaultEventSet");
+        if(this.inDefaultEventSet) {
+            sb.append("; ").append("inDefaultEventSet");
+        }
         if (this.listenerTypeRef != null) {
             appendTo(sb, "listenerType", this.listenerTypeRef.get());
         }

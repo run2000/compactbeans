@@ -380,6 +380,12 @@ public class DescriptorData implements Serializable, Cloneable {
         return sb.append(']').toString();
     }
 
+    /**
+     * Hook for subclasses wanting to append additional information to
+     * toString().
+     *
+     * @param sb the string builder to which to append
+     */
     protected void appendTo(StringBuilder sb) {
     }
 

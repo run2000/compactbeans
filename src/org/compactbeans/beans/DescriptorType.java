@@ -23,8 +23,8 @@
 package org.compactbeans.beans;
 
 /**
- * Simple enum for identifying feature descriptor types without requiring
- * <code>instanceof</code> tests.
+ * Simple enum for identifying feature descriptor or builder types
+ * without requiring <code>instanceof</code> tests.
  */
 public enum DescriptorType {
     /** This is a <code>BeanDescriptor</code> or <code>BeanBuilder</code> object */
