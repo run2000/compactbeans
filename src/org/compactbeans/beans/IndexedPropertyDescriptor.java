@@ -254,12 +254,11 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
 
     /**
      * Gets the method that should be used to read an indexed
-     * property value.
+     * property value. May return <code>null</code> if the property
+     * isn't indexed or is write-only.
      *
      * @return The method that should be used to read an indexed
      * property value.
-     * May return <code>null</code> if the property isn't indexed
-     * or is write-only.
      */
     public synchronized Method getIndexedReadMethod() {
         Method indexedReadMethod = getIndexedReadMethod0();
@@ -321,11 +320,11 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
 
     /**
      * Gets the method that should be used to write an indexed property value.
+     * May return <code>null</code> if the property isn't indexed
+     * or is read-only.
      *
      * @return The method that should be used to write an indexed
      * property value.
-     * May return <code>null</code> if the property isn't indexed
-     * or is read-only.
      */
     public synchronized Method getIndexedWriteMethod() {
         Method indexedWriteMethod = getIndexedWriteMethod0();

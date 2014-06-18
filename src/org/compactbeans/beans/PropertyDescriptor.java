@@ -512,7 +512,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Attempted updates to "Constrained" properties will cause a "VetoableChange"
      * event to get fired when the property is changed.
      *
-     * @return True if this is a constrained property.
+     * @return <code>True</code> if this is a constrained property.
      */
     public boolean isConstrained() {
         return constrained;
@@ -522,7 +522,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Attempted updates to "Constrained" properties will cause a "VetoableChange"
      * event to get fired when the property is changed.
      *
-     * @param constrained True if this is a constrained property.
+     * @param constrained <code>True</code> if this is a constrained property.
      */
     void setConstrained(boolean constrained) {
         this.constrained = constrained;

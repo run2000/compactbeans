@@ -36,7 +36,7 @@ import java.util.Map;
  * @version 16/06/2014, 6:45 PM
  */
 public final class ParameterBuilder implements FeatureBuilder<ParameterDescriptor> {
-    private ParameterDescriptor protoFeature;
+    private final ParameterDescriptor protoFeature;
     private DescriptorData protoDescriptor;
 
     /**
@@ -92,8 +92,23 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * Gets the programmatic name of this feature.
+     *
+     * @return The programmatic name of the parameter
+     */
     public String getName() {
         return protoFeature.getName();
+    }
+
+    /**
+     * Gets the descriptor type for this object.
+     *
+     * @return <code>DescriptorType.PARAMETER</code> to indicate this is a
+     * ParameterBuilder object
+     */
+    public DescriptorType getDescriptorType() {
+        return DescriptorType.PARAMETER;
     }
 
     /**
@@ -109,6 +124,12 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * Gets the localized display name of this feature. By convention, this
+     * will be the same as the programmatic name of the corresponding feature.
+     *
+     * @return The localized display name for the parameter.
+     */
     public String getDisplayName() {
         return (protoDescriptor == null) ? null : protoDescriptor.getDisplayName();
     }
@@ -127,6 +148,13 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * The "expert" flag is used to distinguish between those features that are
+     * intended for expert users from those that are intended for normal users.
+     *
+     * @return <code>True</code> if this feature is intended for use
+     * by experts only.
+     */
     public boolean isExpert() {
         return (protoDescriptor != null) && protoDescriptor.isExpert();
     }
@@ -145,6 +173,13 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * The "hidden" flag is used to identify features that are intended only
+     * for tool use, and which should not be exposed to humans.
+     *
+     * @return <code>True</code> if this feature should be hidden from
+     * human users.
+     */
     public boolean isHidden() {
         return (protoDescriptor != null) && protoDescriptor.isHidden();
     }
@@ -164,6 +199,13 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * The "preferred" flag is used to identify features that are particularly
+     * important for presenting to humans.
+     *
+     * @return <code>True</code> if this feature should be preferentially
+     * shown to human users.
+     */
     public boolean isPreferred() {
         return (protoDescriptor != null) && protoDescriptor.isPreferred();
     }
@@ -183,10 +225,24 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * Gets the short description of this feature. When the descriptor
+     * is built, this will default to be the display name.
+     *
+     * @return  A localized short description associated with this
+     * bean/property/method/event.
+     */
     public String getShortDescription() {
         return (protoDescriptor == null) ? null : protoDescriptor.getShortDescription();
     }
 
+    /**
+     * Determine whether this feature builder has any attributes.
+     * Use this to short-circuit any internal table creation.
+     *
+     * @return <code>true</code> if there are any named attributes
+     * in the feature, otherwise <code>false</code>
+     */
     public boolean hasAttributes() {
         return (protoDescriptor != null) && protoDescriptor.hasAttributes();
     }
@@ -205,10 +261,24 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * Retrieve a named attribute with this feature.
+     *
+     * @param attributeName  The locale-independent name of the attribute
+     * @return  The value of the attribute.  May be <code>null</code> if
+     *     the attribute is unknown.
+     */
     public Object getValue(String attributeName) {
         return (protoDescriptor == null) ? null : protoDescriptor.getValue(attributeName);
     }
 
+    /**
+     * Gets an Iterable&lt;String&gt; of the locale-independent names of the
+     * feature. If there are no attributes, an empty iterable will be returned.
+     *
+     * @return  An Iterable&lt;String&gt; of the locale-independent names
+     * of any attributes that have been registered.
+     */
     public Iterable<String> getAttributeNames() {
         return (protoDescriptor == null) ? Collections.<String>emptyList() : protoDescriptor.getAttributeNames();
     }
@@ -230,7 +300,10 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
     }
 
     /**
-     * Copies all descriptor data from this given object.
+     * Copies all descriptor data from this given object, replacing
+     * any existing data already in the builder. This replaces <em>all</em>
+     * data in the attribute table with the new table in the supplied
+     * descriptor data.
      *
      * @param descriptorData the descriptor data to be copied
      */
@@ -241,6 +314,14 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
         return this;
     }
 
+    /**
+     * Return a copy (clone) of the descriptor data in this feature builder.
+     * If the descriptor data has not been customized, for instance by
+     * suitable setters being called, <code>null</code> will be returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
     public DescriptorData getDescriptorData() {
         return (protoDescriptor == null) ? null : (DescriptorData) protoDescriptor.clone();
     }

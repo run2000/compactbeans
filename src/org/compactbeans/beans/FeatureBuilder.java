@@ -51,6 +51,14 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
     String getName();
 
     /**
+     * Gets the descriptor type for this object.
+     *
+     * @return one of the <code>DescriptorType</code> types to indicate
+     * the object type of the implementation class
+     */
+    DescriptorType getDescriptorType();
+
+    /**
      * Sets the localized display name of this feature.
      *
      * @param displayName The localized display name for the
@@ -182,7 +190,10 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
     FeatureBuilder addTable(Map<String, Object> table);
 
     /**
-     * Copies all descriptor data from this given object.
+     * Copies all descriptor data from this given object, replacing
+     * any existing data already in the builder. This replaces <em>all</em>
+     * data in the attribute table with the new table in the supplied
+     * descriptor data.
      *
      * @param descriptorData the descriptor data to be copied
      */

@@ -27,16 +27,16 @@ package org.compactbeans.beans;
  * <code>instanceof</code> tests.
  */
 public enum DescriptorType {
-    /** This is a <code>BeanDescriptor</code> object */
+    /** This is a <code>BeanDescriptor</code> or <code>BeanBuilder</code> object */
     BEAN,
-    /** This is a <code>MethodDescriptor</code> object */
+    /** This is a <code>MethodDescriptor</code> or <code>MethodBuilder</code> object */
     METHOD,
-    /** This is an <code>EventSetDescriptor</code> object */
+    /** This is an <code>EventSetDescriptor</code> or <code>EventSetBuilder</code> object */
     EVENT_SET,
-    /** This is a <code>PropertyDescriptor</code> object */
+    /** This is a <code>PropertyDescriptor</code> or <code>PropertyBuilder</code> object */
     PROPERTY,
-    /** This is an <code>IndexedPropertyDescriptor</code> object */
+    /** This is an <code>IndexedPropertyDescriptor</code> or <code>IndexedPropertyBuilder</code> object */
     INDEXED_PROPERTY,
-    /** This is a <code>ParameterDescriptor</code> object */
+    /** This is a <code>ParameterDescriptor</code> or <code>ParameterBuilder</code> object */
     PARAMETER
 }

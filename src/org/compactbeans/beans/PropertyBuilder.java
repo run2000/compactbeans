@@ -37,7 +37,7 @@ import java.util.Map;
  * @version 16/06/2014, 6:50 PM
  */
 public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor> {
-    private PropertyDescriptor protoFeature;
+    private final PropertyDescriptor protoFeature;
     private DescriptorData protoDescriptor;
 
     /**
@@ -136,8 +136,23 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Gets the programmatic name of this feature.
+     *
+     * @return The programmatic name of the property
+     */
     public String getName() {
         return protoFeature.getName();
+    }
+
+    /**
+     * Gets the descriptor type for this object.
+     *
+     * @return <code>DescriptorType.PROPERTY</code> to indicate this is a
+     * PropertyBuilder object
+     */
+    public DescriptorType getDescriptorType() {
+        return DescriptorType.PROPERTY;
     }
 
     /**
@@ -154,6 +169,12 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Gets the localized display name of this feature. By convention, this
+     * will be the same as the programmatic name of the corresponding feature.
+     *
+     * @return The localized display name for the property.
+     */
     public String getDisplayName() {
         return (protoDescriptor == null) ? null : protoDescriptor.getDisplayName();
     }
@@ -162,13 +183,19 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * Updates to "bound" properties will cause a "PropertyChange" event to
      * get fired when the property is changed.
      *
-     * @param bound True if this is a bound property.
+     * @param bound <code>True</code> if this is a bound property.
      */
     public PropertyBuilder setBound(boolean bound) {
         protoFeature.setBound(bound);
         return this;
     }
 
+    /**
+     * Updates to "bound" properties will cause a "PropertyChange" event to
+     * get fired when the property is changed.
+     *
+     * @return <code>true</code> if this is a bound property.
+     */
     public boolean isBound() {
         return protoFeature.isBound();
     }
@@ -177,13 +204,19 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * Attempted updates to "Constrained" properties will cause a "VetoableChange"
      * event to get fired when the property is changed.
      *
-     * @param constrained True if this is a constrained property.
+     * @param constrained <code>True</code> if this is a constrained property.
      */
     public PropertyBuilder setConstrained(boolean constrained) {
         protoFeature.setConstrained(constrained);
         return this;
     }
 
+    /**
+     * Attempted updates to "Constrained" properties will cause a "VetoableChange"
+     * event to get fired when the property is changed.
+     *
+     * @return <code>True</code> if this is a constrained property.
+     */
     public boolean isConstrained() {
         return protoFeature.isConstrained();
     }
@@ -198,6 +231,12 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Gets the method that should be used to read the property value.
+     *
+     * @return The method that should be used to read the property value.
+     * May return <code>null</code> if the property can't be read.
+     */
     public Method getReadMethod() {
         return protoFeature.getReadMethod();
     }
@@ -212,6 +251,12 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Gets the method that should be used to write the property value.
+     *
+     * @return The method that should be used to write the property value.
+     * May return <code>null</code> if the property can't be written.
+     */
     public Method getWriteMethod() {
         return protoFeature.getWriteMethod();
     }
@@ -230,6 +275,13 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * The "expert" flag is used to distinguish between those features that are
+     * intended for expert users from those that are intended for normal users.
+     *
+     * @return <code>True</code> if this feature is intended for use
+     * by experts only.
+     */
     public boolean isExpert() {
         return (protoDescriptor != null) && protoDescriptor.isExpert();
     }
@@ -248,6 +300,13 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * The "hidden" flag is used to identify features that are intended only
+     * for tool use, and which should not be exposed to humans.
+     *
+     * @return <code>True</code> if this feature should be hidden from
+     * human users.
+     */
     public boolean isHidden() {
         return (protoDescriptor != null) && protoDescriptor.isHidden();
     }
@@ -267,6 +326,13 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * The "preferred" flag is used to identify features that are particularly
+     * important for presenting to humans.
+     *
+     * @return <code>True</code> if this feature should be preferentially
+     * shown to human users.
+     */
     public boolean isPreferred() {
         return (protoDescriptor != null) && protoDescriptor.isPreferred();
     }
@@ -286,10 +352,23 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Gets the short description of this feature. When the descriptor
+     * is built, this will default to be the display name.
+     *
+     * @return  A localized short description associated with this property.
+     */
     public String getShortDescription() {
         return (protoDescriptor == null) ? null : protoDescriptor.getShortDescription();
     }
 
+    /**
+     * Determine whether this feature builder has any attributes.
+     * Use this to short-circuit any internal table creation.
+     *
+     * @return <code>true</code> if there are any named attributes
+     * in the feature, otherwise <code>false</code>
+     */
     public boolean hasAttributes() {
         return (protoDescriptor != null) && protoDescriptor.hasAttributes();
     }
@@ -308,10 +387,24 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Retrieve a named attribute with this feature.
+     *
+     * @param attributeName  The locale-independent name of the attribute
+     * @return  The value of the attribute.  May be <code>null</code> if
+     *     the attribute is unknown.
+     */
     public Object getValue(String attributeName) {
         return (protoDescriptor == null) ? null : protoDescriptor.getValue(attributeName);
     }
 
+    /**
+     * Gets an Iterable&lt;String&gt; of the locale-independent names of the
+     * feature. If there are no attributes, an empty iterable will be returned.
+     *
+     * @return  An Iterable&lt;String&gt; of the locale-independent names
+     * of any attributes that have been registered.
+     */
     public Iterable<String> getAttributeNames() {
         return (protoDescriptor == null) ? Collections.<String>emptyList() : protoDescriptor.getAttributeNames();
     }
@@ -333,7 +426,10 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
     }
 
     /**
-     * Copies all descriptor data from this given object.
+     * Copies all descriptor data from this given object, replacing
+     * any existing data already in the builder. This replaces <em>all</em>
+     * data in the attribute table with the new table in the supplied
+     * descriptor data.
      *
      * @param descriptorData the descriptor data to be copied
      */
@@ -344,6 +440,14 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
         return this;
     }
 
+    /**
+     * Return a copy (clone) of the descriptor data in this feature builder.
+     * If the descriptor data has not been customized, for instance by
+     * suitable setters being called, <code>null</code> will be returned.
+     *
+     * @return a copy of the descriptor data, or <code>null</code>
+     * if no descriptor data is present
+     */
     public DescriptorData getDescriptorData() {
         return (protoDescriptor == null) ? null : (DescriptorData) protoDescriptor.clone();
     }

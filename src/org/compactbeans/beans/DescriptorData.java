@@ -30,16 +30,18 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * The DescriptorData class is a class composed in for <code>PropertyDescriptor</code>,
- * <code>EventSetDescriptor</code>, and <code>MethodDescriptor</code>, etc.
- * <p>
- * It supports some common information that can be set and retrieved for
- * any of the feature descriptors.</p>
+ * The DescriptorData class provides some common information that can be
+ * set and retrieved for any of the feature descriptors.</p>
  * <p>
  * In addition it provides an extension mechanism so that arbitrary
  * attribute/value pairs can be associated with a design feature.</p>
  * <p>
- * Finally, this class may be subclasses to provide additional information.</p>
+ * Finally, this class may be subclassed to provide additional information.</p>
+ * <p>
+ * The most common way to use this class is to get or set descriptor data
+ * using one of the {@link FeatureBuilder} objects. This will then be copied
+ * into the resulting {@link FeatureDescriptor} objects.
+ * </p>
  */
 public class DescriptorData implements Serializable, Cloneable {
     private static final long serialVersionUID = -6556452834342672815L;
@@ -259,7 +261,8 @@ public class DescriptorData implements Serializable, Cloneable {
 
     /**
      * Gets an enumeration of the locale-independent names of this
-     * feature.
+     * feature. This is for compatibility with the JavaBean
+     * {@link FeatureDescriptor} classes.
      *
      * @return  An enumeration of the locale-independent names of any
      *    attributes that have been registered with setValue.
@@ -273,7 +276,8 @@ public class DescriptorData implements Serializable, Cloneable {
 
     /**
      * Gets an Iterable&lt;String&gt; of the locale-independent names of this
-     * feature.
+     * feature. This allows Java foreach loops to operate over attribute
+     * names.
      *
      * @return  An Iterable&lt;String&gt; of the locale-independent names
      * of any attributes that have been registered with setValue.

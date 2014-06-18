@@ -48,7 +48,7 @@ public interface FeatureDescriptor {
      * Gets the descriptor type for this object.
      *
      * @return one of the <code>DescriptorType</code> types to indicate
-     * the object type the implementation class
+     * the object type of the implementation class
      */
     DescriptorType getDescriptorType();
 
