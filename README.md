@@ -80,9 +80,9 @@ Address mutability concerns:
   * Remove or reduce visibility of setter methods that are not required
     by the introspector
      - features appear immutable from outside the beans.* package
-  * Add DescriptorData class for attributes that may need manipulation
-    outside the beans.* package
-     - composed into the FeatureDescriptor classes with a read-only facade
+  * Add FeatureBuilder classes for creating new descriptors from scratch
+     - a safe area for mutability before building the final immutable
+       descriptor object
      - copy on write style encouraged outside the beans.* package
 
 Property Change Events
