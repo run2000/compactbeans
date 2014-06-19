@@ -40,6 +40,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * Sets the programmatic name of this feature.
      *
      * @param name The programmatic name of the bean/property/method/event
+     * @return this builder
      */
     FeatureBuilder setName(String name);
 
@@ -63,6 +64,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param displayName The localized display name for the
      *                    bean/property/method/event.
+     * @return this builder
      */
     FeatureBuilder setDisplayName(String displayName);
 
@@ -80,6 +82,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param expert <code>True</code> if this feature is intended for use
      * by experts only.
+     * @return this builder
      */
     FeatureBuilder setExpert(boolean expert);
 
@@ -98,6 +101,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param hidden  <code>True</code> if this feature should be hidden
      * from human users.
+     * @return this builder
      */
     FeatureBuilder setHidden(boolean hidden);
 
@@ -116,6 +120,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param preferred  <code>True</code> if this feature should be
      * preferentially shown to human users.
+     * @return this builder
      */
     FeatureBuilder setPreferred(boolean preferred);
 
@@ -134,6 +139,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param text  A (localized) short description to be associated with
      * this property/method/event.
+     * @return this builder
      */
     FeatureBuilder setShortDescription(String text);
 
@@ -160,6 +166,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param attributeName  The locale-independent name of the attribute
      * @param value  The value.
+     * @return this builder
      */
     FeatureBuilder setValue(String attributeName, Object value);
 
@@ -186,6 +193,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * If any attribute already exists its value will be overridden.
      *
      * @param table  the attribute table with new values
+     * @return this builder
      */
     FeatureBuilder addTable(Map<String, Object> table);
 
@@ -196,6 +204,7 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * descriptor data.
      *
      * @param descriptorData the descriptor data to be copied
+     * @return this builder
      */
     FeatureBuilder setDescriptorData(DescriptorData descriptorData);
 
