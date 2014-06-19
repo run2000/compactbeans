@@ -78,7 +78,7 @@ final class ReflectUtil {
      * available and the caller attempts to load a class on behalf of
      * the true caller (application).
      */
-    public static boolean isPackageAccessible(Class clazz) {
+    public static boolean isPackageAccessible(Class<?> clazz) {
         try {
             checkPackageAccess(clazz);
         } catch (SecurityException e) {

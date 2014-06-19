@@ -47,7 +47,7 @@ import java.util.*;
 final class IntrospectorSupport {
 
     // Static Cache to speed up introspection.
-    private static WeakCache<Class<?>, Method[]> declaredMethodCache =
+    private static final WeakCache<Class<?>, Method[]> declaredMethodCache =
             new WeakCache<Class<?>, Method[]>();
 
     static final String ADD_PREFIX = "add";
@@ -56,7 +56,7 @@ final class IntrospectorSupport {
     static final String SET_PREFIX = "set";
     static final String IS_PREFIX = "is";
 
-    static final Class eventListenerType = EventListener.class;
+    static final Class<?> eventListenerType = EventListener.class;
 
     private IntrospectorSupport() {
     }
@@ -143,7 +143,7 @@ final class IntrospectorSupport {
     /*
      * Internal method to return *public* methods within a class.
      */
-    static Method[] getPublicDeclaredMethods(Class clz) {
+    static Method[] getPublicDeclaredMethods(Class<?> clz) {
         // Looking up Class.getDeclaredMethods is relatively expensive,
         // so we cache the results.
         if (!ReflectUtil.isPackageAccessible(clz)) {
@@ -173,26 +173,26 @@ final class IntrospectorSupport {
      * Populates the property descriptor table by merging the
      * lists of Property descriptors.
      */
-    static Map processPropertyDescriptors(Collection propertyDescriptors) {
-        List list;
+    static Map<String, PropertyDescriptor> processPropertyDescriptors(Collection<List<PropertyDescriptor>> propertyDescriptors) {
+        List<PropertyDescriptor> list;
         PropertyDescriptor pd, gpd, spd;
         IndexedPropertyDescriptor ipd, igpd, ispd;
 
         // properties maps from String names to PropertyDescriptors
         // Map implicitly ordered by property name
-        Map properties = new TreeMap();
+        Map<String, PropertyDescriptor> properties = new TreeMap<String, PropertyDescriptor>();
 
-        Iterator it = propertyDescriptors.iterator();
+        Iterator<List<PropertyDescriptor>> it = propertyDescriptors.iterator();
         while (it.hasNext()) {
             pd = null; gpd = null; spd = null;
             ipd = null; igpd = null; ispd = null;
 
-            list = (List) it.next();
+            list = it.next();
 
             // First pass. Find the latest getter method. Merge properties
             // of previous getter methods.
             for (int i = 0; i < list.size(); i++) {
-                pd = (PropertyDescriptor) list.get(i);
+                pd = list.get(i);
                 if (pd instanceof IndexedPropertyDescriptor) {
                     ipd = (IndexedPropertyDescriptor) pd;
                     if (ipd.getIndexedReadMethod() != null) {
@@ -221,7 +221,7 @@ final class IntrospectorSupport {
             // Second pass. Find the latest setter method which
             // has the same type as the getter method.
             for (int i = 0; i < list.size(); i++) {
-                pd = (PropertyDescriptor) list.get(i);
+                pd = list.get(i);
                 if (pd instanceof IndexedPropertyDescriptor) {
                     ipd = (IndexedPropertyDescriptor) pd;
                     if (ipd.getIndexedWriteMethod() != null) {
@@ -339,7 +339,7 @@ final class IntrospectorSupport {
             // which does not have getter and setter methods.
             // See regression bug 4984912.
             if ((pd == null) && (!list.isEmpty())) {
-                pd = (PropertyDescriptor) list.get(0);
+                pd = list.get(0);
             }
 
             if (pd != null) {
@@ -360,8 +360,8 @@ final class IntrospectorSupport {
             IndexedPropertyDescriptor ipd, PropertyDescriptor pd) {
         PropertyDescriptor result = null;
 
-        Class propType = pd.getPropertyType();
-        Class ipropType = ipd.getIndexedPropertyType();
+        Class<?> propType = pd.getPropertyType();
+        Class<?> ipropType = ipd.getIndexedPropertyType();
 
         if (propType.isArray() && (propType.getComponentType() == ipropType)) {
             if (pd.getClass0().isAssignableFrom(ipd.getClass0())) {
@@ -395,7 +395,7 @@ final class IntrospectorSupport {
                 if ((write == null) && (read != null)) {
                     write = IntrospectorSupport.findMethod(result.getClass0(),
                             IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(result.getName()), 1,
-                            new Class[]{read.getReturnType()});
+                            new Class<?>[]{read.getReturnType()});
                     if (write != null) {
                         try {
                             result.setWriteMethod(write);
@@ -437,14 +437,14 @@ final class IntrospectorSupport {
      * Internal support for finding a target methodName with a given
      * parameter list on a given class.
      */
-    private static Method internalFindMethod(Class start, String methodName,
-                                             int argCount, Class args[]) {
+    private static Method internalFindMethod(Class<?> start, String methodName,
+                                             int argCount, Class<?> args[]) {
         // For overridden methods we need to find the most derived version.
         // So we start with the given class and walk up the superclass chain.
 
         Method method = null;
 
-        for (Class cl = start; cl != null; cl = cl.getSuperclass()) {
+        for (Class<?> cl = start; cl != null; cl = cl.getSuperclass()) {
             Method methods[] = getPublicDeclaredMethods(cl);
             for (int i = 0; i < methods.length; i++) {
                 method = methods[i];
@@ -480,7 +480,7 @@ final class IntrospectorSupport {
         // Now check any inherited interfaces.  This is necessary both when
         // the argument class is itself an interface, and when the argument
         // class is an abstract class.
-        Class ifcs[] = start.getInterfaces();
+        Class<?> ifcs[] = start.getInterfaces();
         for (int i = 0; i < ifcs.length; i++) {
             // Note: The original implementation had both methods calling
             // the 3 arg method. This is preserved but perhaps it should
@@ -496,7 +496,7 @@ final class IntrospectorSupport {
     /**
      * Find a target methodName on a given class.
      */
-    static Method findMethod(Class cls, String methodName, int argCount) {
+    static Method findMethod(Class<?> cls, String methodName, int argCount) {
         if (methodName == null) {
             return null;
         }
@@ -515,8 +515,8 @@ final class IntrospectorSupport {
      * @param args Array of argument types for the method.
      * @return the method or null if not found
      */
-    static Method findMethod(Class cls, String methodName, int argCount,
-                             Class args[]) {
+    static Method findMethod(Class<?> cls, String methodName, int argCount,
+                             Class<?> args[]) {
         if (methodName == null) {
             return null;
         }
@@ -527,9 +527,10 @@ final class IntrospectorSupport {
      * Return true if class a is either equivalent to class b, or
      * if class a is a subclass of class b, i.e. if a either "extends"
      * or "implements" b.
-     * Note tht either or both "Class" objects may represent interfaces.
+     * <p>
+     * Note tht either or both "Class" objects may represent interfaces.</p>
      */
-    static boolean isSubclass(Class a, Class b) {
+    static boolean isSubclass(Class<?> a, Class<?> b) {
         // We rely on the fact that for any given java class or
         // primitive type there is a unique Class object, so
         // we can use object equivalence in the comparisons.
@@ -539,12 +540,12 @@ final class IntrospectorSupport {
         if ((a == null) || (b == null)) {
             return false;
         }
-        for (Class x = a; x != null; x = x.getSuperclass()) {
+        for (Class<?> x = a; x != null; x = x.getSuperclass()) {
             if (x == b) {
                 return true;
             }
             if (b.isInterface()) {
-                Class interfaces[] = x.getInterfaces();
+                Class<?> interfaces[] = x.getInterfaces();
                 for (int i = 0; i < interfaces.length; i++) {
                     if (isSubclass(interfaces[i], b)) {
                         return true;
@@ -558,8 +559,8 @@ final class IntrospectorSupport {
     /**
      * Return true iff the given method throws the given exception.
      */
-    static boolean throwsException(Method method, Class exception) {
-        Class exs[] = method.getExceptionTypes();
+    static boolean throwsException(Method method, Class<?> exception) {
+        Class<?> exs[] = method.getExceptionTypes();
         for (int i = 0; i < exs.length; i++) {
             if (exs[i] == exception) {
                 return true;
@@ -578,7 +579,7 @@ final class IntrospectorSupport {
      * @see Method#getGenericReturnType
      * @see Method#getReturnType
      */
-    static Class getReturnType(Class base, Method method) {
+    static Class<?> getReturnType(Class<?> base, Method method) {
         if (base == null) {
             base = method.getDeclaringClass();
         }
@@ -595,7 +596,7 @@ final class IntrospectorSupport {
      * @see Method#getGenericParameterTypes
      * @see Method#getParameterTypes
      */
-    static Class[] getParameterTypes(Class base, Method method) {
+    static Class<?>[] getParameterTypes(Class<?> base, Method method) {
         if (base == null) {
             base = method.getDeclaringClass();
         }
@@ -610,7 +611,7 @@ final class IntrospectorSupport {
      * @return the class name portion, or <code>null</code> if cls
      * is <code>null</code>
      */
-    static String getClassName(Class cls) {
+    static String getClassName(Class<?> cls) {
         if(cls == null) {
             return null;
         }
@@ -623,7 +624,7 @@ final class IntrospectorSupport {
         }
     }
 
-    static boolean isEventHandler(Class beanClass, Method m) {
+    static boolean isEventHandler(Class<?> beanClass, Method m) {
         // We assume that a method is an event handler if it has a single
         // argument, whose type inherit from java.util.Event.
         Type argTypes[] = m.getGenericParameterTypes();

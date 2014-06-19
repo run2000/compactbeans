@@ -40,7 +40,7 @@ import java.lang.reflect.Method;
 
 public final class IndexedPropertyDescriptor extends PropertyDescriptor {
 
-    private Reference<Class> indexedPropertyTypeRef;
+    private Reference<Class<?>> indexedPropertyTypeRef;
     private Reference<Method> indexedReadMethodRef;
     private Reference<Method> indexedWriteMethodRef;
 
@@ -263,7 +263,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     public synchronized Method getIndexedReadMethod() {
         Method indexedReadMethod = getIndexedReadMethod0();
         if (indexedReadMethod == null) {
-            Class cls = getClass0();
+            Class<?> cls = getClass0();
             if ((cls == null) ||
                     ((indexedReadMethodName == null) && (indexedReadMethodRef == null))) {
                 // the Indexed readMethod was explicitly set to null.
@@ -271,7 +271,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             }
             String nextMethodName = IntrospectorSupport.GET_PREFIX + getBaseName();
             if (indexedReadMethodName == null) {
-                Class type = getIndexedPropertyType0();
+                Class<?> type = getIndexedPropertyType0();
                 if ((type == boolean.class) || (type == null)) {
                     indexedReadMethodName = IntrospectorSupport.IS_PREFIX + getBaseName();
                 } else {
@@ -279,7 +279,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
                 }
             }
 
-            Class[] args = {int.class};
+            Class<?>[] args = {int.class};
             indexedReadMethod = IntrospectorSupport.findMethod(cls, indexedReadMethodName, 1, args);
             if ((indexedReadMethod == null) && !indexedReadMethodName.equals(nextMethodName)) {
                 // no "is" method, so look for a "get" method.
@@ -329,7 +329,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
     public synchronized Method getIndexedWriteMethod() {
         Method indexedWriteMethod = getIndexedWriteMethod0();
         if (indexedWriteMethod == null) {
-            Class cls = getClass0();
+            Class<?> cls = getClass0();
             if ((cls == null) ||
                     ((indexedWriteMethodName == null) && (indexedWriteMethodRef == null))) {
                 // the Indexed writeMethod was explicitly set to null.
@@ -339,14 +339,14 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             // We need the indexed type to ensure that we get the correct method.
             // Cannot use the getIndexedPropertyType method since that could
             // result in an infinite loop.
-            Class type = getIndexedPropertyType0();
+            Class<?> type = getIndexedPropertyType0();
             if (type == null) {
                 try {
                     type = findIndexedPropertyType(getIndexedReadMethod(), null);
                     setIndexedPropertyType(type);
                 } catch (IntrospectionException ex) {
                     // Set iprop type to be the classic type
-                    Class propType = getPropertyType();
+                    Class<?> propType = getPropertyType();
                     if (propType.isArray()) {
                         type = propType.getComponentType();
                     }
@@ -357,7 +357,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
                 indexedWriteMethodName = IntrospectorSupport.SET_PREFIX + getBaseName();
             }
 
-            Class[] args = (type == null) ? null : new Class[] { int.class, type };
+            Class<?>[] args = (type == null) ? null : new Class<?>[] { int.class, type };
             indexedWriteMethod = IntrospectorSupport.findMethod(cls, indexedWriteMethodName, 2, args);
             if (indexedWriteMethod != null) {
                 if (!indexedWriteMethod.getReturnType().equals(void.class)) {
@@ -378,7 +378,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             throws IntrospectionException {
 
         // If the indexed property type has not been set, then set it.
-        Class type = findIndexedPropertyType(getIndexedReadMethod(),
+        Class<?> type = findIndexedPropertyType(getIndexedReadMethod(),
                 writeMethod);
         setIndexedPropertyType(type);
         setIndexedWriteMethod0(writeMethod);
@@ -403,7 +403,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
      * if the type cannot be determined.
      */
     public synchronized Class<?> getIndexedPropertyType() {
-        Class type = getIndexedPropertyType0();
+        Class<?> type = getIndexedPropertyType0();
         if (type == null) {
             try {
                 type = findIndexedPropertyType(getIndexedReadMethod(),
@@ -418,11 +418,11 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
 
     // Private methods which set get/set the Reference objects
 
-    private void setIndexedPropertyType(Class type) {
+    private void setIndexedPropertyType(Class<?> type) {
         indexedPropertyTypeRef = RefUtil.createWeakReference(type);
     }
 
-    private Class getIndexedPropertyType0() {
+    private Class<?> getIndexedPropertyType0() {
         return RefUtil.getObject(indexedPropertyTypeRef);
     }
 
@@ -434,13 +434,13 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
         return RefUtil.getObject(indexedWriteMethodRef);
     }
 
-    private Class findIndexedPropertyType(Method indexedReadMethod,
+    private Class<?> findIndexedPropertyType(Method indexedReadMethod,
                                           Method indexedWriteMethod)
             throws IntrospectionException {
-        Class indexedPropertyType = null;
+        Class<?> indexedPropertyType = null;
 
         if (indexedReadMethod != null) {
-            Class params[] = IntrospectorSupport.getParameterTypes(getClass0(), indexedReadMethod);
+            Class<?> params[] = IntrospectorSupport.getParameterTypes(getClass0(), indexedReadMethod);
             if (params.length != 1) {
                 throw new IntrospectionException("bad indexed read method arg count");
             }
@@ -453,7 +453,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             }
         }
         if (indexedWriteMethod != null) {
-            Class params[] = indexedWriteMethod.getParameterTypes();
+            Class<?> params[] = indexedWriteMethod.getParameterTypes();
             if (params.length != 2) {
                 throw new IntrospectionException("bad indexed write method arg count");
             }
@@ -467,7 +467,7 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             }
             indexedPropertyType = params[1];
         }
-        Class propertyType = getPropertyType();
+        Class<?> propertyType = getPropertyType();
         if ((propertyType != null) && (!propertyType.isArray() ||
                 (propertyType.getComponentType() != indexedPropertyType))) {
             throw new IntrospectionException("type mismatch between indexed and non-indexed methods: "

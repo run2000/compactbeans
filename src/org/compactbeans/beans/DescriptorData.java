@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 
 /**
  * The DescriptorData class provides some common information that can be
- * set and retrieved for any of the feature descriptors.</p>
+ * set and retrieved for any of the feature descriptors.
  * <p>
  * In addition it provides an extension mechanism so that arbitrary
  * attribute/value pairs can be associated with a design feature.</p>

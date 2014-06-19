@@ -47,9 +47,9 @@ public final class EventSetDescriptor implements FeatureDescriptor {
     private MethodDescriptor getMethodDescriptor;
 
     private Reference<Method[]> listenerMethodsRef;
-    private Reference<Class> listenerTypeRef;
+    private Reference<Class<?>> listenerTypeRef;
 
-    private Reference<Class> classRef;
+    private Reference<Class<?>> classRef;
 
     private String name;
     private boolean unicast;
@@ -93,7 +93,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
         String eventName = NameGenerator.capitalize(eventSetName) + "Event";
         Method[] listenerMethods = getListenerMethods();
         if (listenerMethods.length > 0) {
-            Class[] args = IntrospectorSupport.getParameterTypes(getClass0(), listenerMethods[0]);
+            Class<?>[] args = IntrospectorSupport.getParameterTypes(getClass0(), listenerMethods[0]);
             // Check for EventSet compliance. Special case for vetoableChange. See 4529996
             if (!"vetoableChange".equals(eventSetName) && !args[0].getName().endsWith(eventName)) {
                 throw new IntrospectionException("Method \"" + listenerMethodName +
@@ -418,7 +418,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
         descriptorData = newData;
     }
 
-    private static Method getMethod(Class cls, String name, int args)
+    private static Method getMethod(Class<?> cls, String name, int args)
             throws IntrospectionException {
         if (name == null) {
             return null;
@@ -469,7 +469,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
         return RefUtil.getObject(this.listenerTypeRef);
     }
 
-    private void setListenerType(Class cls) {
+    private void setListenerType(Class<?> cls) {
         this.listenerTypeRef = RefUtil.createWeakReference(cls);
     }
 
@@ -624,11 +624,11 @@ public final class EventSetDescriptor implements FeatureDescriptor {
 
     // Package private methods for recreating the weak/soft referent
 
-    private void setClass0(Class cls) {
+    private void setClass0(Class<?> cls) {
         this.classRef = RefUtil.createWeakReference(cls);
     }
 
-    Class getClass0() {
+    Class<?> getClass0() {
         return RefUtil.getObject(this.classRef);
     }
 
@@ -681,7 +681,7 @@ public final class EventSetDescriptor implements FeatureDescriptor {
      * @return a copy of the descriptor data, or <code>null</code>
      * if no descriptor data is present
      */
-    DescriptorData getDescriptorData() {
+    public DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
     }
 

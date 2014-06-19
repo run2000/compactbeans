@@ -145,7 +145,7 @@ public final class ParameterDescriptor implements FeatureDescriptor {
      * @return a copy of the descriptor data, or <code>null</code>
      * if no descriptor data is present
      */
-    DescriptorData getDescriptorData() {
+    public DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
     }
 

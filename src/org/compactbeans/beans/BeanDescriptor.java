@@ -39,7 +39,7 @@ import java.util.Enumeration;
 
 public final class BeanDescriptor implements FeatureDescriptor {
 
-    private final Reference<Class> beanClassRef;
+    private final Reference<Class<?>> beanClassRef;
     private String name;
     private final DescriptorData descriptorData;
 
@@ -50,7 +50,7 @@ public final class BeanDescriptor implements FeatureDescriptor {
      *          that implements the bean.  For example sun.beans.OurButton.class
      */
     public BeanDescriptor(Class<?> beanClass) {
-        this.beanClassRef = RefUtil.createWeakReference((Class)beanClass);
+        this.beanClassRef = RefUtil.createWeakReference(beanClass);
         this.name = IntrospectorSupport.getClassName(beanClass);
         this.descriptorData = null;
     }
@@ -83,7 +83,7 @@ public final class BeanDescriptor implements FeatureDescriptor {
      *
      * @return The <code>Class</code> object for the bean
      */
-    public Class getBeanClass() {
+    public Class<?> getBeanClass() {
         return RefUtil.getObject(this.beanClassRef);
     }
 
@@ -158,7 +158,7 @@ public final class BeanDescriptor implements FeatureDescriptor {
      * @return a copy of the descriptor data, or <code>null</code>
      * if no descriptor data is present
      */
-    DescriptorData getDescriptorData() {
+    public DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
     }
 

@@ -42,8 +42,8 @@ public final class MethodDescriptor implements FeatureDescriptor {
     private String name;
     private Reference<Method> methodRef;
     private String[] paramNames;
-    private List<Reference<Class>> params;
-    private Reference<Class> classRef;
+    private List<Reference<Class<?>>> params;
+    private Reference<Class<?>> classRef;
     private ParameterDescriptor parameterDescriptors[];
 
     private final DescriptorData descriptorData;
@@ -178,10 +178,10 @@ public final class MethodDescriptor implements FeatureDescriptor {
     public synchronized Method getMethod() {
         Method method = getMethod0();
         if (method == null) {
-            Class cls = getClass0();
+            Class<?> cls = getClass0();
             String name = getName();
             if ((cls != null) && (name != null)) {
-                Class[] params = getParams();
+                Class<?>[] params = getParams();
                 if (params == null) {
                     for (int i = 0; i < 3; i++) {
                         // Find methods for up to 2 params. We are guessing here.
@@ -206,18 +206,18 @@ public final class MethodDescriptor implements FeatureDescriptor {
             return;
         }
         if (getClass0() == null) {
-            classRef = RefUtil.createWeakReference((Class)method.getDeclaringClass());
+            classRef = RefUtil.createWeakReference(method.getDeclaringClass());
         }
         setParams(IntrospectorSupport.getParameterTypes(getClass0(), method));
         this.methodRef = RefUtil.createSoftReference(method);
     }
 
-    private synchronized void setParams(Class[] param) {
+    private synchronized void setParams(Class<?>[] param) {
         if (param == null) {
             return;
         }
         paramNames = new String[param.length];
-        params = new ArrayList<Reference<Class>>(param.length);
+        params = new ArrayList<Reference<Class<?>>>(param.length);
         for (int i = 0; i < param.length; i++) {
             paramNames[i] = param[i].getName();
             params.add(RefUtil.createWeakReference(param[i]));
@@ -233,12 +233,12 @@ public final class MethodDescriptor implements FeatureDescriptor {
         return paramNames;
     }
 
-    private synchronized Class[] getParams() {
-        Class[] clss = new Class[params.size()];
+    private synchronized Class<?>[] getParams() {
+        Class<?>[] clss = new Class[params.size()];
 
         for (int i = 0; i < params.size(); i++) {
-            Reference<Class> ref = params.get(i);
-            Class cls = RefUtil.getObject(ref);
+            Reference<Class<?>> ref = params.get(i);
+            Class<?> cls = RefUtil.getObject(ref);
             if (cls == null) {
                 return null;
             } else {
@@ -288,7 +288,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
         return DescriptorType.METHOD;
     }
 
-    private Class getClass0() {
+    private Class<?> getClass0() {
         return RefUtil.getObject(classRef);
     }
 
@@ -335,7 +335,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
      * @return a copy of the descriptor data, or <code>null</code>
      * if no descriptor data is present
      */
-    DescriptorData getDescriptorData() {
+    public DescriptorData getDescriptorData() {
         return (descriptorData == null) ? null : (DescriptorData) descriptorData.clone();
     }
 
