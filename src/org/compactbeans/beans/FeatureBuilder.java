@@ -40,9 +40,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * Sets the programmatic name of this feature.
      *
      * @param name The programmatic name of the bean/property/method/event
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setName(String name);
+    FeatureBuilder<T> setName(String name);
 
     /**
      * Gets the programmatic name of this feature.
@@ -64,9 +64,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param displayName The localized display name for the
      *                    bean/property/method/event.
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setDisplayName(String displayName);
+    FeatureBuilder<T> setDisplayName(String displayName);
 
     /**
      * Gets the localized display name of this feature. By convention, this
@@ -82,9 +82,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param expert <code>True</code> if this feature is intended for use
      * by experts only.
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setExpert(boolean expert);
+    FeatureBuilder<T> setExpert(boolean expert);
 
     /**
      * The "expert" flag is used to distinguish between those features that are
@@ -101,9 +101,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param hidden  <code>True</code> if this feature should be hidden
      * from human users.
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setHidden(boolean hidden);
+    FeatureBuilder<T> setHidden(boolean hidden);
 
     /**
      * The "hidden" flag is used to identify features that are intended only
@@ -120,9 +120,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param preferred  <code>True</code> if this feature should be
      * preferentially shown to human users.
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setPreferred(boolean preferred);
+    FeatureBuilder<T> setPreferred(boolean preferred);
 
     /**
      * The "preferred" flag is used to identify features that are particularly
@@ -139,9 +139,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param text  A (localized) short description to be associated with
      * this property/method/event.
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setShortDescription(String text);
+    FeatureBuilder<T> setShortDescription(String text);
 
     /**
      * Gets the short description of this feature. When the descriptor
@@ -166,9 +166,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      *
      * @param attributeName  The locale-independent name of the attribute
      * @param value  The value.
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setValue(String attributeName, Object value);
+    FeatureBuilder<T> setValue(String attributeName, Object value);
 
     /**
      * Retrieve a named attribute with this feature.
@@ -193,9 +193,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * If any attribute already exists its value will be overridden.
      *
      * @param table  the attribute table with new values
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder addTable(Map<String, Object> table);
+    FeatureBuilder<T> addTable(Map<String, Object> table);
 
     /**
      * Copies all descriptor data from this given object, replacing
@@ -204,9 +204,9 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * descriptor data.
      *
      * @param descriptorData the descriptor data to be copied
-     * @return this builder
+     * @return this builder, for chaining
      */
-    FeatureBuilder setDescriptorData(DescriptorData descriptorData);
+    FeatureBuilder<T> setDescriptorData(DescriptorData descriptorData);
 
     /**
      * Return a copy (clone) of the descriptor data in this feature builder.
@@ -225,4 +225,101 @@ public interface FeatureBuilder <T extends FeatureDescriptor> {
      * @return the newly built feature
      */
     T build();
+
+    /**
+     * Generate an array of event set descriptor objects from a parameter array
+     * of builders.
+     * <p>
+     * This is a convenience method to batch-convert event set builders
+     * into an array of event set descriptors suitable for returning in a
+     * <code>BeanInfo</code> object.</p>
+     *
+     * @param builders the builders to build into the resulting array of
+     * event set descriptors
+     * @return the resulting array of event set descriptors
+     */
+    @SafeVarargs
+    public static EventSetDescriptor[] toEventSetArray(FeatureBuilder<? extends EventSetDescriptor>... builders) {
+        EventSetDescriptor[] result = new EventSetDescriptor[builders.length];
+        for(int i = 0; i < builders.length; i++) {
+            FeatureBuilder<? extends EventSetDescriptor> builder = builders[i];
+            if(builder != null) {
+                result[i] = builder.build();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Generate an array of method descriptor objects from a parameter array
+     * of builders.
+     * <p>
+     * This is a convenience method to batch-convert method builders
+     * into an array of method descriptors suitable for returning in a
+     * <code>BeanInfo</code> object.</p>
+     *
+     * @param builders the builders to build into the resulting array of
+     * method descriptors
+     * @return the resulting array of method descriptors
+     */
+    @SafeVarargs
+    static MethodDescriptor[] toMethodArray(FeatureBuilder<? extends MethodDescriptor>... builders) {
+        MethodDescriptor[] result = new MethodDescriptor[builders.length];
+        for(int i = 0; i < builders.length; i++) {
+            FeatureBuilder<? extends MethodDescriptor> builder = builders[i];
+            if(builder != null) {
+                result[i] = builder.build();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Generate an array of parameter descriptor objects from a parameter array
+     * of builders.
+     * <p>
+     * This is a convenience method to batch-convert parameter builders
+     * into an array of parameter descriptors suitable for passing into a
+     * <code>MethodBuilder</code> or <code>MethodDescriptor</code> object.</p>
+     *
+     * @param builders the builders to build into the resulting array of
+     * parameter descriptors
+     * @return the resulting array of parameter descriptors
+     */
+    @SafeVarargs
+    static ParameterDescriptor[] toParameterArray(FeatureBuilder<? extends ParameterDescriptor>... builders) {
+        ParameterDescriptor[] result = new ParameterDescriptor[builders.length];
+        for(int i = 0; i < builders.length; i++) {
+            FeatureBuilder<? extends ParameterDescriptor> builder = builders[i];
+            if(builder != null) {
+                result[i] = builder.build();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Generate an array of property descriptor objects from a parameter array
+     * of builders.
+     * <p>
+     * This is a convenience method to batch-convert property builders
+     * (including indexed property builders) into an array of property
+     * descriptors suitable for returning in a <code>BeanInfo</code> object.
+     * </p>
+     *
+     * @param builders the builders to build into the resulting array of
+     * property descriptors
+     * @return the resulting array of property descriptors
+     */
+    @SafeVarargs
+    static PropertyDescriptor[] toPropertyArray(FeatureBuilder<? extends PropertyDescriptor>... builders) {
+        PropertyDescriptor[] result = new PropertyDescriptor[builders.length];
+        for(int i = 0; i < builders.length; i++) {
+            FeatureBuilder<? extends PropertyDescriptor> builder = builders[i];
+            if(builder != null) {
+                result[i] = builder.build();
+            }
+        }
+        return result;
+    }
 }
