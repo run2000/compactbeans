@@ -31,7 +31,7 @@ package org.compactbeans.beans;
  * Typical causes include not being able to map a string class name
  * to a <code>Class</code> object, not being able to resolve a string method
  * name, or specifying a method name that has the wrong type signature for
- * its intended use.
+ * its intended use.</p>
  */
 
 public class IntrospectionException extends Exception {

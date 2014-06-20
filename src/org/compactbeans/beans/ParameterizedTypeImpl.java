@@ -55,7 +55,7 @@ final class ParameterizedTypeImpl implements ParameterizedType {
     }
 
     private void validateConstructorArguments() {
-        TypeVariable/*<?>*/[] formals = rawType.getTypeParameters();
+        TypeVariable<?>[] formals = rawType.getTypeParameters();
         // check correct arity of actual type args
         if (formals.length != actualTypeArguments.length){
             throw new MalformedParameterizedTypeException();
@@ -72,15 +72,20 @@ final class ParameterizedTypeImpl implements ParameterizedType {
      * This class can be instantiated with a a raw type that does not
      * represent a generic type, provided the list of actual type
      * arguments is empty.
+     * <p>
      * If the ownerType argument is null, the declaring class of the
-     * raw type is used as the owner type.
-     * <p> This method throws a MalformedParameterizedTypeException
-     * under the following circumstances:
-     * If the number of actual type arguments (i.e., the size of the
+     * raw type is used as the owner type.</p>
+     * <p>
+     * This method throws a MalformedParameterizedTypeException
+     * under the following circumstances:</p>
+     * <ul>
+     * <li>If the number of actual type arguments (i.e., the size of the
      * array <code>typeArgs</code>) does not correspond to the number of
-     * formal type arguments.
-     * If any of the actual type arguments is not an instance of the
-     * bounds on the corresponding formal.
+     * formal type arguments.</li>
+     * <li>If any of the actual type arguments is not an instance of the
+     * bounds on the corresponding formal.</li>
+     * </ul>
+     *
      * @param rawType the Class representing the generic type declaration being
      * instantiated
      * @param actualTypeArguments a (possibly empty) array of types
@@ -104,7 +109,7 @@ final class ParameterizedTypeImpl implements ParameterizedType {
      *
      * <p>Note that in some cases, the returned array be empty. This can occur
      * if this type represents a non-parameterized type nested within
-     * a parameterized type.
+     * a parameterized type.</p>
      *
      * @return an array of <code>Type</code> objects representing the actual
      *     type arguments to this type
@@ -136,7 +141,7 @@ final class ParameterizedTypeImpl implements ParameterizedType {
      * is a member of.  For example, if this type is <code>O&lt;T&gt;.I&lt;S&gt;</code>,
      * return a representation of <code>O&lt;T&gt;</code>.
      *
-     * <p>If this type is a top-level type, <code>null</code> is returned.
+     * <p>If this type is a top-level type, <code>null</code> is returned.</p>
      *
      * @return a <code>Type</code> object representing the type that
      *     this type is a member of. If this type is a top-level type,
@@ -220,7 +225,7 @@ final class ParameterizedTypeImpl implements ParameterizedType {
 
         if (ownerType != null) {
             if (ownerType instanceof Class)
-                sb.append(((Class)ownerType).getName());
+                sb.append(((Class<?>)ownerType).getName());
             else
                 sb.append(ownerType.toString());
 
@@ -244,7 +249,7 @@ final class ParameterizedTypeImpl implements ParameterizedType {
                 if (!first)
                     sb.append(", ");
                 if (t instanceof Class)
-                    sb.append(((Class)t).getName());
+                    sb.append(((Class<?>)t).getName());
                 else
                     sb.append(t.toString());
                 first = false;

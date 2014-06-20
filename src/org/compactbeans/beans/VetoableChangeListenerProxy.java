@@ -37,14 +37,14 @@ import java.util.EventListenerProxy;
  * <p>
  * If the object has a {@code getVetoableChangeListeners} method
  * then the array returned could be a mixture of {@code VetoableChangeListener}
- * and {@code VetoableChangeListenerProxy} objects.
+ * and {@code VetoableChangeListenerProxy} objects.</p>
  *
  * @see java.util.EventListenerProxy
  * @see VetoableChangeSupport#getVetoableChangeListeners
  * @since 1.4
  */
 public class VetoableChangeListenerProxy
-        extends EventListenerProxy/*<VetoableChangeListener>*/
+        extends EventListenerProxy<VetoableChangeListener>
         implements VetoableChangeListener {
 
     private final String propertyName;
@@ -69,8 +69,8 @@ public class VetoableChangeListenerProxy
     * @throws PropertyVetoException if the recipient wishes the property
     *                                  change to be rolled back
     */
-    public void vetoableChange(PropertyChangeEvent event) throws PropertyVetoException{
-        ((VetoableChangeListener)getListener()).vetoableChange(event);
+    public void vetoableChange(PropertyChangeEvent event) throws PropertyVetoException {
+        getListener().vetoableChange(event);
     }
 
     /**

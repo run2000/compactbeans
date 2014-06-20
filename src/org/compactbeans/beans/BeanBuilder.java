@@ -182,8 +182,8 @@ public final class BeanBuilder implements FeatureBuilder<BeanDescriptor> {
      * The "preferred" flag is used to identify features that are particularly
      * important for presenting to humans.
      *
-     * @param preferred  True if this feature should be preferentially shown
-     *                   to human users.
+     * @param preferred  <code>True</code> if this feature should be
+     * preferentially shown to human users.
      */
     public BeanBuilder setPreferred(boolean preferred) {
         if(protoDescriptor == null) {

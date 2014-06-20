@@ -41,7 +41,7 @@ final class ClassFinder {
      * using the default class loader.
      * <p>
      * The {@code name} can denote an array class
-     * (see {@link Class#getName} for details).
+     * (see {@link Class#getName} for details).</p>
      *
      * @param name  fully qualified name of the desired class
      * @return class object representing the desired class
@@ -80,10 +80,10 @@ final class ClassFinder {
      * using the given class loader.
      * <p>
      * The {@code name} can denote an array class
-     * (see {@link Class#getName} for details).
+     * (see {@link Class#getName} for details).</p>
      * <p>
-     * If the parameter {@code loader} is null,
-     * the class is loaded through the default class loader.
+     * If the parameter {@code loader} is <code>null</code>,
+     * the class is loaded through the default class loader.</p>
      *
      * @param name    fully qualified name of the desired class
      * @param loader  class loader from which the class must be loaded
@@ -115,14 +115,14 @@ final class ClassFinder {
      * using the default class loader.
      * <p>
      * The {@code name} can denote an array class
-     * (see {@link Class#getName} for details).
+     * (see {@link Class#getName} for details).</p>
      * <p>
      * This method can be used to obtain
      * any of the {@code Class} objects
      * representing {@code void} or primitive Java types:
      * {@code char}, {@code byte}, {@code short},
      * {@code int}, {@code long}, {@code float},
-     * {@code double} and {@code boolean}.
+     * {@code double} and {@code boolean}.</p>
      *
      * @param name  fully qualified name of the desired class
      * @return class object representing the desired class
@@ -142,17 +142,17 @@ final class ClassFinder {
      * using the given class loader.
      * <p>
      * The {@code name} can denote an array class
-     * (see {@link Class#getName} for details).
+     * (see {@link Class#getName} for details).</p>
      * <p>
      * If the parameter {@code loader} is null,
-     * the class is loaded through the default class loader.
+     * the class is loaded through the default class loader.</p>
      * <p>
      * This method can be used to obtain
      * any of the {@code Class} objects
      * representing {@code void} or primitive Java types:
      * {@code char}, {@code byte}, {@code short},
      * {@code int}, {@code long}, {@code float},
-     * {@code double} and {@code boolean}.
+     * {@code double} and {@code boolean}.</p>
      *
      * @param name    fully qualified name of the desired class
      * @param loader  class loader from which the class must be loaded

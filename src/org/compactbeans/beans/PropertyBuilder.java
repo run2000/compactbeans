@@ -184,6 +184,7 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * get fired when the property is changed.
      *
      * @param bound <code>True</code> if this is a bound property.
+     * @return this builder, for chaining
      */
     public PropertyBuilder setBound(boolean bound) {
         protoFeature.setBound(bound);
@@ -205,6 +206,7 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * event to get fired when the property is changed.
      *
      * @param constrained <code>True</code> if this is a constrained property.
+     * @return this builder, for chaining
      */
     public PropertyBuilder setConstrained(boolean constrained) {
         protoFeature.setConstrained(constrained);
@@ -225,6 +227,8 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * Sets the method that should be used to read the property value.
      *
      * @param readMethod The new read method.
+     * @return this builder, for chaining
+     * @throws IntrospectionException if the read method is invalid
      */
     public PropertyBuilder setReadMethod(Method readMethod) throws IntrospectionException {
         protoFeature.setReadMethod(readMethod);
@@ -245,6 +249,8 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * Sets the method that should be used to write the property value.
      *
      * @param writeMethod The new write method.
+     * @return this builder, for chaining
+     * @throws IntrospectionException if the write method is invalid
      */
     public PropertyBuilder setWriteMethod(Method writeMethod) throws IntrospectionException {
         protoFeature.setWriteMethod(writeMethod);
@@ -265,7 +271,8 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * The "expert" flag is used to distinguish between features that are
      * intended for expert users from those that are intended for normal users.
      *
-     * @param expert True if this feature is intended for use by experts only.
+     * @param expert <code>True</code> if this feature is intended for use
+     * by experts only.
      */
     public PropertyBuilder setExpert(boolean expert) {
         if(protoDescriptor == null) {
@@ -290,7 +297,8 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * The "hidden" flag is used to identify features that are intended only
      * for tool use, and which should not be exposed to humans.
      *
-     * @param hidden  True if this feature should be hidden from human users.
+     * @param hidden <code>True</code> if this feature should be hidden
+     * from human users.
      */
     public PropertyBuilder setHidden(boolean hidden) {
         if(protoDescriptor == null) {
@@ -315,8 +323,8 @@ public final class PropertyBuilder implements FeatureBuilder<PropertyDescriptor>
      * The "preferred" flag is used to identify features that are particularly
      * important for presenting to humans.
      *
-     * @param preferred  True if this feature should be preferentially shown
-     *                   to human users.
+     * @param preferred  <code>True</code> if this feature should be
+     * preferentially shown to human users.
      */
     public PropertyBuilder setPreferred(boolean preferred) {
         if(protoDescriptor == null) {

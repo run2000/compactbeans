@@ -138,7 +138,8 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
      * The "expert" flag is used to distinguish between features that are
      * intended for expert users from those that are intended for normal users.
      *
-     * @param expert True if this feature is intended for use by experts only.
+     * @param expert <code>True</code> if this feature is intended for use
+     * by experts only.
      */
     public ParameterBuilder setExpert(boolean expert) {
         if(protoDescriptor == null) {
@@ -163,7 +164,8 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
      * The "hidden" flag is used to identify features that are intended only
      * for tool use, and which should not be exposed to humans.
      *
-     * @param hidden  True if this feature should be hidden from human users.
+     * @param hidden <code>True</code> if this feature should be hidden from
+     * human users.
      */
     public ParameterBuilder setHidden(boolean hidden) {
         if(protoDescriptor == null) {
@@ -188,8 +190,8 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
      * The "preferred" flag is used to identify features that are particularly
      * important for presenting to humans.
      *
-     * @param preferred  True if this feature should be preferentially shown
-     *                   to human users.
+     * @param preferred  <code>True</code> if this feature should be
+     * preferentially shown to human users.
      */
     public ParameterBuilder setPreferred(boolean preferred) {
         if(protoDescriptor == null) {
@@ -229,8 +231,7 @@ public final class ParameterBuilder implements FeatureBuilder<ParameterDescripto
      * Gets the short description of this feature. When the descriptor
      * is built, this will default to be the display name.
      *
-     * @return  A localized short description associated with this
-     * bean/property/method/event.
+     * @return  A localized short description associated with this parameter.
      */
     public String getShortDescription() {
         return (protoDescriptor == null) ? null : protoDescriptor.getShortDescription();

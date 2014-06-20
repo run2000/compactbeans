@@ -32,8 +32,7 @@ import java.lang.reflect.Type;
  *
  * @jdksource sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl
  */
-final class GenericArrayTypeImpl
-        implements GenericArrayType {
+final class GenericArrayTypeImpl implements GenericArrayType {
     private Type genericComponentType;
 
     // private constructor enforces use of static factory
@@ -43,7 +42,7 @@ final class GenericArrayTypeImpl
 
     /**
      * Factory method.
-     * @param ct - the desired component type of the generic array type
+     * @param ct the desired component type of the generic array type
      * being created
      * @return a generic array type with the desired component type
      */

@@ -202,7 +202,7 @@ public final class VetoableChangeSupport implements Serializable {
     public void addVetoableChangeListener(
                                 String propertyName,
                 VetoableChangeListener listener) {
-        if (listener == null || propertyName == null) {
+        if ((listener == null) || (propertyName == null)) {
             return;
         }
         listener = this.map.extract(listener);
@@ -229,7 +229,7 @@ public final class VetoableChangeSupport implements Serializable {
      */
     public void removeVetoableChangeListener(String propertyName,
                 VetoableChangeListener listener) {
-        if (listener == null || propertyName == null) {
+        if ((listener == null) || (propertyName == null)) {
             return;
         }
         listener = this.map.extract(listener);
@@ -277,7 +277,7 @@ public final class VetoableChangeSupport implements Serializable {
      */
     public void fireVetoableChange(String propertyName, Object oldValue, Object newValue)
             throws PropertyVetoException {
-        if (oldValue == null || newValue == null || !oldValue.equals(newValue)) {
+        if ((oldValue == null) || (newValue == null) || !oldValue.equals(newValue)) {
             fireVetoableChange(new PropertyChangeEvent(this.source, propertyName, oldValue, newValue));
         }
     }
@@ -534,7 +534,7 @@ public final class VetoableChangeSupport implements Serializable {
          */
         public final VetoableChangeListener extract(VetoableChangeListener listener) {
             while (listener instanceof VetoableChangeListenerProxy) {
-                listener = (VetoableChangeListener)((VetoableChangeListenerProxy) listener).getListener();
+                listener = ((VetoableChangeListenerProxy) listener).getListener();
             }
             return listener;
         }

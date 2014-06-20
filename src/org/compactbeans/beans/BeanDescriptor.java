@@ -115,36 +115,91 @@ public final class BeanDescriptor implements FeatureDescriptor {
         return DescriptorType.BEAN;
     }
 
+    /**
+     * Gets the localized display name of this feature. By convention, this
+     * will be the same as the programmatic name of the corresponding feature.
+     *
+     * @return The localized display name for the bean.
+     */
     public String getDisplayName() {
         String displayName = (descriptorData == null) ? null : descriptorData.getDisplayName();
         return (displayName == null) ? name : displayName;
     }
 
+    /**
+     * The "expert" flag is used to distinguish between those features that are
+     * intended for expert users from those that are intended for normal users.
+     *
+     * @return <code>True</code> if this feature is intended for use
+     * by experts only.
+     */
     public boolean isExpert() {
         return (descriptorData != null) && descriptorData.isExpert();
     }
 
+    /**
+     * The "hidden" flag is used to identify features that are intended only
+     * for tool use, and which should not be exposed to humans.
+     *
+     * @return <code>True</code> if this feature should be hidden from
+     * human users.
+     */
     public boolean isHidden() {
         return (descriptorData != null) && descriptorData.isHidden();
     }
 
+    /**
+     * The "preferred" flag is used to identify features that are particularly
+     * important for presenting to humans.
+     *
+     * @return <code>True</code> if this feature should be preferentially
+     * shown to human users.
+     */
     public boolean isPreferred() {
         return (descriptorData != null) && descriptorData.isPreferred();
     }
 
+    /**
+     * Gets the short description of this feature.
+     *
+     * @return  A localized short description associated with this bean.
+     * This defaults to be the display name.
+     */
     public String getShortDescription() {
         String description = (descriptorData == null) ? null : descriptorData.getShortDescription();
         return (description == null) ? getDisplayName() : description;
     }
 
+    /**
+     * Determine whether this feature descriptor has any attributes.
+     * Use this to short-circuit any internal table creation.
+     *
+     * @return <code>true</code> if there are any named attributes
+     * in this feature, otherwise <code>false</code>
+     */
     public boolean hasAttributes() {
         return (descriptorData != null) && descriptorData.hasAttributes();
     }
 
+    /**
+     * Retrieve a named attribute with this feature.
+     *
+     * @param attributeName  The locale-independent name of the attribute
+     * @return  The value of the attribute.  May be <code>null</code> if
+     *     the attribute is unknown.
+     */
     public Object getValue(String attributeName) {
         return (descriptorData == null) ? null : descriptorData.getValue(attributeName);
     }
 
+    /**
+     * Gets an enumeration of the locale-independent names of this
+     * feature. If there are no attributes, an empty enumeration
+     * will be returned.
+     *
+     * @return  An enumeration of the locale-independent names of any
+     *    attributes that have been registered.
+     */
     public Enumeration<String> attributeNames() {
         return (descriptorData == null) ? Collections.<String>emptyEnumeration() : descriptorData.attributeNames();
     }

@@ -252,6 +252,7 @@ public final class EventSetBuilder implements FeatureBuilder<EventSetDescriptor>
      * Mark an event set as unicast (or not).
      *
      * @param unicast <code>True</code> if the event set is unicast.
+     * @return this builder, for chaining
      */
     public EventSetBuilder setUnicast(boolean unicast) {
         protoFeature.setUnicast(unicast);
@@ -275,6 +276,7 @@ public final class EventSetBuilder implements FeatureBuilder<EventSetDescriptor>
      *
      * @param inDefaultEventSet <code>true</code> if the event set is in
      * the &quot;default&quot; set, <code>false</code> if not
+     * @return this builder, for chaining
      */
     public EventSetBuilder setInDefaultEventSet(boolean inDefaultEventSet) {
         protoFeature.setInDefaultEventSet(inDefaultEventSet);

@@ -203,7 +203,7 @@ public final class PropertyChangeSupport implements Serializable {
     public void addPropertyChangeListener(
                 String propertyName,
                 PropertyChangeListener listener) {
-        if (listener == null || propertyName == null) {
+        if ((listener == null) || (propertyName == null)) {
             return;
         }
         listener = this.map.extract(listener);
@@ -230,7 +230,7 @@ public final class PropertyChangeSupport implements Serializable {
     public void removePropertyChangeListener(
                 String propertyName,
                 PropertyChangeListener listener) {
-        if (listener == null || propertyName == null) {
+        if ((listener == null) || (propertyName == null)) {
             return;
         }
         listener = this.map.extract(listener);
@@ -270,7 +270,7 @@ public final class PropertyChangeSupport implements Serializable {
      * @param newValue      the new value of the property
      */
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        if (oldValue == null || newValue == null || !oldValue.equals(newValue)) {
+        if ((oldValue == null) || (newValue == null) || !oldValue.equals(newValue)) {
             firePropertyChange(new PropertyChangeEvent(this.source, propertyName, oldValue, newValue));
         }
     }
@@ -367,7 +367,7 @@ public final class PropertyChangeSupport implements Serializable {
      * @since 1.5
      */
     public void fireIndexedPropertyChange(String propertyName, int index, Object oldValue, Object newValue) {
-        if (oldValue == null || newValue == null || !oldValue.equals(newValue)) {
+        if ((oldValue == null) || (newValue == null) || !oldValue.equals(newValue)) {
             firePropertyChange(new IndexedPropertyChangeEvent(source, propertyName, oldValue, newValue, index));
         }
     }

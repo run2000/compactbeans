@@ -37,10 +37,10 @@ final class ReflectUtil {
 
     /**
      * Checks package access on the given class.
-     *
+     * <p>
      * If it is a {@link Proxy#isProxyClass(java.lang.Class)} that implements
      * a non-public interface (i.e. may be in a non-restricted package),
-     * also check the package access on the proxy interfaces.
+     * also check the package access on the proxy interfaces.</p>
      */
     public static void checkPackageAccess(Class<?> clazz) {
         checkPackageAccess(clazz.getName());
@@ -51,9 +51,10 @@ final class ReflectUtil {
 
     /**
      * Checks package access on the given classname.
+     * <p>
      * This method is typically called when the Class instance is not
      * available and the caller attempts to load a class on behalf of
-     * the true caller (application).
+     * the true caller (application).</p>
      */
     public static void checkPackageAccess(String name) {
         SecurityManager s = System.getSecurityManager();
@@ -74,9 +75,10 @@ final class ReflectUtil {
 
     /**
      * Determines whether the package is accessible on the given classname.
+     * <p>
      * This method is typically called when the Class instance is not
      * available and the caller attempts to load a class on behalf of
-     * the true caller (application).
+     * the true caller (application).</p>
      */
     public static boolean isPackageAccessible(Class<?> clazz) {
         try {

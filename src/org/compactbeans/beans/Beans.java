@@ -71,6 +71,7 @@ public final class Beans {
      *                        then the system class-loader is used
      * @param     beanName    the name of the bean within the class-loader.
      *                        For example "sun.beanbox.foobah"
+     * @return the instantiated bean object
      *
      * @throws ClassNotFoundException if the class of a serialized
      *              object could not be found
@@ -135,7 +136,7 @@ public final class Beans {
 
         if (result == null) {
             // No serialized object, try just instantiating the class
-            Class cl;
+            Class<?> cl;
 
             try {
                 cl = ClassFinder.findClass(beanName, cls1);
@@ -182,7 +183,7 @@ public final class Beans {
      *
      * @param bean <code>Object</code> from which we want to obtain a view
      * @param targetType The type of view we'd like to get
-     *
+     * @return the bean object with the specified target type
      */
     public static Object getInstanceOf(Object bean, Class<?> targetType) {
         return bean;
@@ -251,7 +252,7 @@ public final class Beans {
         /**
          * Use the given ClassLoader rather than using the system class
          */
-        protected Class resolveClass(ObjectStreamClass classDesc)
+        protected Class<?> resolveClass(ObjectStreamClass classDesc)
             throws IOException, ClassNotFoundException {
 
             String cname = classDesc.getName();

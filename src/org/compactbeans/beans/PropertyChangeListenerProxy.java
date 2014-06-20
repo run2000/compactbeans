@@ -37,14 +37,14 @@ import java.util.EventListenerProxy;
  * <p>
  * If the object has a {@code getPropertyChangeListeners} method
  * then the array returned could be a mixture of {@code PropertyChangeListener}
- * and {@code PropertyChangeListenerProxy} objects.
+ * and {@code PropertyChangeListenerProxy} objects.</p>
  *
  * @see java.util.EventListenerProxy
  * @see PropertyChangeSupport#getPropertyChangeListeners
  * @since 1.4
  */
 public class PropertyChangeListenerProxy
-        extends EventListenerProxy/*<PropertyChangeListener>*/
+        extends EventListenerProxy<PropertyChangeListener>
         implements PropertyChangeListener {
 
     private final String propertyName;
@@ -67,7 +67,7 @@ public class PropertyChangeListenerProxy
      * @param event  the property change event
      */
     public void propertyChange(PropertyChangeEvent event) {
-        ((PropertyChangeListener)getListener()).propertyChange(event);
+        getListener().propertyChange(event);
     }
 
     /**

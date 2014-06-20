@@ -198,6 +198,7 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * event to be fired when the property is changed.
      *
      * @param bound True if this is a bound property.
+     * @return this builder, for chaining
      */
     public IndexedPropertyBuilder setBound(boolean bound) {
         protoFeature.setBound(bound);
@@ -219,6 +220,7 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * event to get fired when the property is changed.
      *
      * @param constrained True if this is a constrained property.
+     * @return this builder, for chaining
      */
     public IndexedPropertyBuilder setConstrained(boolean constrained) {
         protoFeature.setConstrained(constrained);
@@ -239,6 +241,8 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * Sets the method that should be used to read the property value.
      *
      * @param readMethod The new read method.
+     * @return this builder, for chaining
+     * @throws IntrospectionException if the read method is invalid
      */
     public IndexedPropertyBuilder setReadMethod(Method readMethod) throws IntrospectionException {
         protoFeature.setReadMethod(readMethod);
@@ -259,6 +263,8 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * Sets the method that should be used to write the property value.
      *
      * @param writeMethod The new write method.
+     * @return this builder, for chaining
+     * @throws IntrospectionException if the write method is invalid
      */
     public IndexedPropertyBuilder setWriteMethod(Method writeMethod) throws IntrospectionException {
         protoFeature.setWriteMethod(writeMethod);
@@ -279,6 +285,8 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * Sets the method that should be used to read an indexed property value.
      *
      * @param readMethod The new indexed read method.
+     * @return this builder, for chaining
+     * @throws IntrospectionException if the indexed read method is invalid
      */
     public IndexedPropertyBuilder setIndexedReadMethod(Method readMethod)
             throws IntrospectionException {
@@ -302,6 +310,8 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * Sets the method that should be used to write an indexed property value.
      *
      * @param writeMethod The new indexed write method.
+     * @return this builder, for chaining
+     * @throws IntrospectionException if the indexed write method is invalid
      */
     public IndexedPropertyBuilder setIndexedWriteMethod(Method writeMethod)
             throws IntrospectionException {
@@ -375,8 +385,8 @@ public final class IndexedPropertyBuilder implements FeatureBuilder<IndexedPrope
      * The "preferred" flag is used to identify features that are particularly
      * important for presenting to humans.
      *
-     * @param preferred  True if this feature should be preferentially shown
-     *                   to human users.
+     * @param preferred <code>True</code> if this feature should be
+     * preferentially shown to human users.
      */
     public IndexedPropertyBuilder setPreferred(boolean preferred) {
         if(protoDescriptor == null) {
