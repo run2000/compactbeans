@@ -38,8 +38,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
 
     private String name;
     private Reference<Class<?>> propertyTypeRef;
-    private Reference<Method> readMethodRef;
-    private Reference<Method> writeMethodRef;
+    private final MethodRef readMethodRef = new MethodRef();
+    private final MethodRef writeMethodRef = new MethodRef();
 
     private boolean bound;
     private boolean constrained;
@@ -275,8 +275,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
         baseName = old.baseName;
         classRef = old.classRef;
         propertyTypeRef = old.propertyTypeRef;
-        readMethodRef = old.readMethodRef;
-        writeMethodRef = old.writeMethodRef;
+        this.readMethodRef.set(old.readMethodRef.get());
+        this.writeMethodRef.set(old.writeMethodRef.get());
         readMethodName = old.readMethodName;
         writeMethodName = old.writeMethodName;
         bound = old.bound;
@@ -296,8 +296,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
         baseName = old.baseName;
         classRef = old.classRef;
         propertyTypeRef = old.propertyTypeRef;
-        readMethodRef = old.readMethodRef;
-        writeMethodRef = old.writeMethodRef;
+        this.readMethodRef.set(old.readMethodRef.get());
+        this.writeMethodRef.set(old.writeMethodRef.get());
         readMethodName = old.readMethodName;
         writeMethodName = old.writeMethodName;
         bound = old.bound;
@@ -308,7 +308,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
     void updateGenericsFor(Class<?> type) {
         setClass0(type);
         try {
-            setPropertyType(findPropertyType(getReadMethod0(), getWriteMethod0()));
+            setPropertyType(findPropertyType(this.readMethodRef.get(), this.writeMethodRef.get()));
         }
         catch (IntrospectionException exception) {
             setPropertyType(null);
@@ -355,10 +355,10 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * May return <code>null</code> if the property can't be read.
      */
     public synchronized Method getReadMethod() {
-        Method readMethod = getReadMethod0();
+        Method readMethod = this.readMethodRef.get();
         if (readMethod == null) {
             Class<?> cls = getClass0();
-            if ((cls == null) || ((readMethodName == null) && (readMethodRef == null))) {
+            if ((cls == null) || ((readMethodName == null) && !this.readMethodRef.isSet())) {
                 // The read method was explicitly set to null.
                 return null;
             }
@@ -399,17 +399,16 @@ public class PropertyDescriptor implements FeatureDescriptor {
      */
     synchronized void setReadMethod(Method readMethod)
             throws IntrospectionException {
+        this.readMethodRef.set(readMethod);
         if (readMethod == null) {
             readMethodName = null;
-            readMethodRef = null;
-        } else {
-            // The property type is determined by the read method.
-            setPropertyType(findPropertyType(readMethod, getWriteMethod0()));
-            setClass0(readMethod.getDeclaringClass());
-
-            readMethodName = readMethod.getName();
-            readMethodRef = RefUtil.createSoftReference(readMethod);
+            return;
         }
+        // The property type is determined by the read method.
+        setPropertyType(findPropertyType(readMethod, this.writeMethodRef.get()));
+        setClass0(readMethod.getDeclaringClass());
+
+        readMethodName = readMethod.getName();
     }
 
     /**
@@ -419,10 +418,10 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * May return <code>null</code> if the property can't be written.
      */
     public synchronized Method getWriteMethod() {
-        Method writeMethod = getWriteMethod0();
+        Method writeMethod = this.writeMethodRef.get();
         if (writeMethod == null) {
             Class<?> cls = getClass0();
-            if ((cls == null) || ((writeMethodName == null) && (writeMethodRef == null))) {
+            if ((cls == null) || ((writeMethodName == null) && !this.writeMethodRef.isSet())) {
                 // The write method was explicitly set to null.
                 return null;
             }
@@ -469,25 +468,16 @@ public class PropertyDescriptor implements FeatureDescriptor {
      */
     synchronized void setWriteMethod(Method writeMethod)
             throws IntrospectionException {
+        this.writeMethodRef.set(writeMethod);
         if (writeMethod == null) {
             writeMethodName = null;
-            writeMethodRef = null;
-        } else {
-            // Set the property type - which validates the method
-            setPropertyType(findPropertyType(getReadMethod(), writeMethod));
-            setClass0(writeMethod.getDeclaringClass());
-
-            writeMethodName = writeMethod.getName();
-            writeMethodRef = RefUtil.createSoftReference(writeMethod);
+            return;
         }
-    }
+        // Set the property type - which validates the method
+        setPropertyType(findPropertyType(getReadMethod(), writeMethod));
+        setClass0(writeMethod.getDeclaringClass());
 
-    private Method getReadMethod0() {
-        return RefUtil.getObject(readMethodRef);
-    }
-
-    private Method getWriteMethod0() {
-        return RefUtil.getObject(writeMethodRef);
+        writeMethodName = writeMethod.getName();
     }
 
     /**
@@ -818,8 +808,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
             sb.append("; constrained");
         }
         appendTo(sb, "propertyType", this.propertyTypeRef);
-        appendTo(sb, "readMethod", this.readMethodRef);
-        appendTo(sb, "writeMethod", this.writeMethodRef);
+        appendTo(sb, "readMethod", this.readMethodRef.get());
+        appendTo(sb, "writeMethod", this.writeMethodRef.get());
         appendTo(sb);
         return sb.append("]").toString();
     }
@@ -827,12 +817,9 @@ public class PropertyDescriptor implements FeatureDescriptor {
     void appendTo(StringBuilder sb) {
     }
 
-    static void appendTo(StringBuilder sb, String name, Reference<?> reference) {
-        if (reference != null) {
-            Object value = reference.get();
-            if (value != null) {
-                sb.append("; ").append(name).append("=").append(value);
-            }
+    static void appendTo(StringBuilder sb, String name, Object value) {
+        if (value != null) {
+            sb.append("; ").append(name).append('=').append(value);
         }
     }
 

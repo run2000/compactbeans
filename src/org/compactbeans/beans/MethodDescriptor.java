@@ -39,8 +39,8 @@ import java.util.List;
 
 public final class MethodDescriptor implements FeatureDescriptor {
 
+    private final MethodRef methodRef = new MethodRef();
     private String name;
-    private Reference<Method> methodRef;
     private String[] paramNames;
     private List<Reference<Class<?>>> params;
     private Reference<Class<?>> classRef;
@@ -94,9 +94,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
             classRef = y.classRef;
         }
 
-        methodRef = RefUtil.createSoftReference(
-                resolve(RefUtil.getObject(x.methodRef),
-                        RefUtil.getObject(y.methodRef)));
+        this.methodRef.set(resolve(x.methodRef.get(), y.methodRef.get()));
         params = x.params;
         if (y.params != null) {
             params = y.params;
@@ -142,7 +140,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
         name = old.name;
         classRef = old.classRef;
 
-        methodRef = old.methodRef;
+        this.methodRef.set(old.getMethod());
         params = old.params;
         paramNames = old.paramNames;
         descriptorData = old.getDescriptorData();
@@ -167,7 +165,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
         name = old.name;
         classRef = old.classRef;
 
-        methodRef = old.methodRef;
+        this.methodRef.set(old.getMethod());
         params = old.params;
         paramNames = old.paramNames;
 
@@ -187,7 +185,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
      * @return The low-level description of the method
      */
     public synchronized Method getMethod() {
-        Method method = getMethod0();
+        Method method = this.methodRef.get();
         if (method == null) {
             Class<?> cls = getClass0();
             String name = getName();
@@ -220,7 +218,7 @@ public final class MethodDescriptor implements FeatureDescriptor {
             classRef = RefUtil.createWeakReference(method.getDeclaringClass());
         }
         setParams(IntrospectorSupport.getParameterTypes(getClass0(), method));
-        this.methodRef = RefUtil.createSoftReference(method);
+        this.methodRef.set(method);
     }
 
     private synchronized void setParams(Class<?>[] param) {
@@ -233,10 +231,6 @@ public final class MethodDescriptor implements FeatureDescriptor {
             paramNames[i] = param[i].getName();
             params.add(RefUtil.createWeakReference(param[i]));
         }
-    }
-
-    private Method getMethod0() {
-        return RefUtil.getObject(methodRef);
     }
 
     // pp getParamNames used as an optimization to avoid method.getParameterTypes.
@@ -416,17 +410,9 @@ public final class MethodDescriptor implements FeatureDescriptor {
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());
         sb.append("[name=").append(this.name);
-        if (this.methodRef != null) {
-            Object value = this.methodRef.get();
-            if (value != null) {
-                sb.append("; method=").append(value);
-            }
-        }
-        if (this.methodRef != null) {
-            Object value = this.methodRef.get();
-            if (value != null) {
-                sb.append("; ").append("method").append('=').append(value);
-            }
+        Method m = this.methodRef.get();
+        if(m != null) {
+            sb.append("; method=").append(m);
         }
         if (this.parameterDescriptors != null) {
             sb.append("; parameterDescriptors={");
