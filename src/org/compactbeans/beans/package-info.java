@@ -32,7 +32,7 @@
  * <a href="http://hg.openjdk.java.net/jdk8u/jdk8u20-dev">http://hg.openjdk.java.net/jdk8u/jdk8u20-dev</a>.
  * </p>
  * <p>
- * The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
+ * The license is the same as for OpenJDK8 itself. That is, GPL version 2 only,
  * with the "Classpath" exception as described in the LICENSE file.</p>
  */
 package org.compactbeans.beans;
