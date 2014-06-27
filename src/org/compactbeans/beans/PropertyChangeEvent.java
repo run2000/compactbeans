@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,6 +25,8 @@
 
 package org.compactbeans.beans;
 
+import java.util.EventObject;
+
 /**
  * A PropertyChange event gets delivered whenever a bean changes a "bound"
  * or "constrained" property.  A <code>PropertyChangeEvent</code> object
@@ -45,17 +47,18 @@ package org.compactbeans.beans;
  * old and new values should also be <code>null</code>.</p>
  */
 
-public class PropertyChangeEvent extends java.util.EventObject {
+public class PropertyChangeEvent extends EventObject {
     private static final long serialVersionUID = 7042693688939648123L;
 
     /**
-     * Constructs a new <code>PropertyChangeEvent</code>.
+     * Constructs a new {@code PropertyChangeEvent}.
      *
-     * @param source The bean that fired the event.
-     * @param propertyName The programmatic name of the property
-     *          that was changed.
-     * @param oldValue The old value of the property.
-     * @param newValue The new value of the property.
+     * @param source        the bean that fired the event
+     * @param propertyName  the programmatic name of the property that was changed
+     * @param oldValue      the old value of the property
+     * @param newValue      the new value of the property
+     *
+     * @throws IllegalArgumentException if {@code source} is {@code null}
      */
     public PropertyChangeEvent(Object source, String propertyName,
                                      Object oldValue, Object newValue) {

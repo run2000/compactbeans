@@ -107,6 +107,8 @@ final class ReflectUtil {
         }
     }
 
+    // Note that bytecode instrumentation tools may exclude 'sun.*'
+    // classes but not generated proxy classes and so keep it in com.sun.*
     private static final String PROXY_PACKAGE = "com.sun.proxy";
 
     /**
@@ -119,5 +121,14 @@ final class ReflectUtil {
         int i = name.lastIndexOf('.');
         String pkg = (i != -1) ? name.substring(0, i) : "";
         return Proxy.isProxyClass(cls) && !pkg.equals(PROXY_PACKAGE);
+    }
+
+    /**
+     * Checks if {@code Class cls} is a VM-anonymous class
+     * as defined by {@link sun.misc.Unsafe#defineAnonymousClass}
+     * (not to be confused with a Java Language anonymous inner class).
+     */
+    public static boolean isVMAnonymousClass(Class<?> cls) {
+        return cls.getName().indexOf('/') > -1;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -104,9 +104,9 @@ public final class Beans {
         // Try to find a serialized object with this name
         final String serName = beanName.replace('.', '/').concat(".ser");
         final ClassLoader loader = cls1;
-        ins = (InputStream)AccessController.doPrivileged
-            (new PrivilegedAction() {
-                public Object run() {
+        ins = AccessController.doPrivileged
+            (new PrivilegedAction<InputStream>() {
+                public InputStream run() {
                     if (loader == null)
                         return ClassLoader.getSystemResourceAsStream(serName);
                     else

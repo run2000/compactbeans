@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2012, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -26,96 +26,110 @@
 package org.compactbeans.beans;
 
 /**
- * Bean introspection provide a BeanInfo class that implements this
- * BeanInfo interface and provides information about the methods,
- * properties, events, etc, of their bean.
+ * Use the {@code BeanInfo} interface
+ * to create a {@code BeanInfo} class
+ * and provide explicit information about the methods,
+ * properties, events, and other features of your beans.
  * <p>
- * To learn about all the behaviour of a bean see the Introspector class.
+ * When developing your bean, you can implement
+ * the bean features required for your application task
+ * omitting the rest of the {@code BeanInfo} features.
+ * They will be obtained through the automatic analysis
+ * by using the low-level reflection of the bean methods
+ * and applying standard design patterns.
+ * You have an opportunity to provide additional bean information
+ * through various descriptor classes.</p>
+ * <p>
+ * See the {@link SimpleBeanInfo} class that is
+ * a convenient basic class for {@code BeanInfo} classes.
+ * You can override the methods and properties of
+ * the {@code SimpleBeanInfo} class to define specific information.</p>
+ * <p>
+ * See also the {@link Introspector} class to learn more about bean behavior.
  * </p>
  */
-
 public interface BeanInfo {
 
     /**
-     * Gets the bean's <code>BeanDescriptor</code>.
+     * Returns the bean descriptor
+     * that provides overall information about the bean,
+     * such as its display name or its customizer.
      *
-     * @return  A BeanDescriptor providing overall information about
-     * the bean.
+     * @return  a {@link BeanDescriptor} object,
+     *          or {@code null} if the information is to
+     *          be obtained through the automatic analysis
      */
     BeanDescriptor getBeanDescriptor();
 
     /**
-     * Gets the bean's <code>EventSetDescriptor</code>s.
+     * Returns the event descriptors of the bean
+     * that define the types of events fired by this bean.
      *
-     * @return  An array of EventSetDescriptors describing the kinds of
-     * events fired by this bean.
+     * @return  an array of {@link EventSetDescriptor} objects,
+     *          or {@code null} if the information is to
+     *          be obtained through the automatic analysis
      */
     EventSetDescriptor[] getEventSetDescriptors();
 
     /**
-     * A bean may have a "default" event that is the event that will
-     * mostly commonly be used by humans when using the bean.
-     * <p>
-     * Returns -1 if there is no default event.</p>
+     * A bean may have a default event typically applied when this bean is used.
      *
-     * @return Index of the default event in the
-     * <code>EventSetDescriptor</code> array returned by
-     * <code>getEventSetDescriptors</code>.
-     *
+     * @return  index of the default event in the {@code EventSetDescriptor} array
+     *          returned by the {@code getEventSetDescriptors} method,
+     *          or -1 if there is no default event
      */
     int getDefaultEventIndex();
 
     /**
-     * Gets the beans <code>PropertyDescriptor</code>s.
+     * Returns descriptors for all properties of the bean.
      * <p>
-     * If a property is indexed, then its entry in the result array will
-     * belong to the <code>IndexedPropertyDescriptor</code> subclass of
-     * <code>PropertyDescriptor</code>. A client of getPropertyDescriptors
-     * can use <code>getDescriptorType()</code> to check if a given
-     * <code>PropertyDescriptor</code> is an
-     * <code>IndexedPropertyDescriptor</code>.</p>
+     * If a property is indexed, then its entry in the result array
+     * belongs to the {@link IndexedPropertyDescriptor} subclass
+     * of the {@link PropertyDescriptor} class.
+     * A client of the {@code getPropertyDescriptors} method
+     * can use the {@code instanceof} operator to check
+     * whether a given {@code PropertyDescriptor}
+     * is an {@code IndexedPropertyDescriptor}.</p>
      *
-     * @return An array of PropertyDescriptors describing the editable
-     * properties supported by this bean.
+     * @return  an array of {@code PropertyDescriptor} objects,
+     *          or {@code null} if the information is to
+     *          be obtained through the automatic analysis
      */
     PropertyDescriptor[] getPropertyDescriptors();
 
     /**
-     * A bean may have a "default" property that is the property that will
-     * mostly commonly be initially chosen for update by humans who are
-     * customizing the bean.
-     * <p>
-     * Returns -1 if there is no default property.</p>
+     * A bean may have a default property commonly updated when this bean is customized.
      *
-     * @return  Index of the default property in the
-     * <code>PropertyDescriptor</code> array returned by
-     * <code>getPropertyDescriptors</code>.
+     * @return  index of the default property in the {@code PropertyDescriptor} array
+     *          returned by the {@code getPropertyDescriptors} method,
+     *          or -1 if there is no default property
      */
     int getDefaultPropertyIndex();
 
     /**
-     * Gets the beans <code>MethodDescriptor</code>s.
+     * Returns the method descriptors of the bean
+     * that define the externally visible methods supported by this bean.
      *
-     * @return An array of MethodDescriptors describing the externally
-     * visible methods supported by this bean.
+     * @return  an array of {@link MethodDescriptor} objects,
+     *          or {@code null} if the information is to
+     *          be obtained through the automatic analysis
      */
     MethodDescriptor[] getMethodDescriptors();
 
     /**
-     * This method allows a BeanInfo object to return an arbitrary collection
-     * of other BeanInfo objects that provide additional information on the
-     * current bean.
+     * This method enables the current {@code BeanInfo} object
+     * to return an arbitrary collection of other {@code BeanInfo} objects
+     * that provide additional information about the current bean.
      * <p>
-     * If there are conflicts or overlaps between the information provided
-     * by different BeanInfo objects, then the current BeanInfo takes precedence
-     * over the getAdditionalBeanInfo objects, and later elements in the array
-     * take precedence over earlier ones.</p>
-     * <p>
-     * Additional bean info is not recursive. If a BeanInfo returned from this
-     * method itself has additional bean info, it will be ignored by the
-     * Introspector.</p>
+     * If there are conflicts or overlaps between the information
+     * provided by different {@code BeanInfo} objects,
+     * the current {@code BeanInfo} object takes priority
+     * over the additional {@code BeanInfo} objects.
+     * Array elements with higher indices take priority
+     * over the elements with lower indices.</p>
      *
-     * @return an array of BeanInfo objects.  May return <code>null</code>.
+     * @return  an array of {@code BeanInfo} objects,
+     *          or {@code null} if there are no additional {@code BeanInfo} objects
      */
     BeanInfo[] getAdditionalBeanInfo();
 

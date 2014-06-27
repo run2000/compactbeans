@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -447,25 +447,26 @@ public final class IndexedPropertyDescriptor extends PropertyDescriptor {
             if (params[0] != Integer.TYPE) {
                 throw new IntrospectionException("non int index to indexed read method");
             }
-            indexedPropertyType = indexedReadMethod.getReturnType();
+            indexedPropertyType = IntrospectorSupport.getReturnType(getClass0(), indexedReadMethod);
             if (indexedPropertyType == Void.TYPE) {
                 throw new IntrospectionException("indexed read method returns void");
             }
         }
         if (indexedWriteMethod != null) {
-            Class<?> params[] = indexedWriteMethod.getParameterTypes();
+            Class<?> params[] = IntrospectorSupport.getParameterTypes(getClass0(), indexedWriteMethod);
             if (params.length != 2) {
                 throw new IntrospectionException("bad indexed write method arg count");
             }
             if (params[0] != Integer.TYPE) {
                 throw new IntrospectionException("non int index to indexed write method");
             }
-            if (indexedPropertyType != null && indexedPropertyType != params[1]) {
+            if ((indexedPropertyType == null) || params[1].isAssignableFrom(indexedPropertyType)) {
+                indexedPropertyType = params[1];
+            } else if (!indexedPropertyType.isAssignableFrom(params[1])) {
                 throw new IntrospectionException(
                         "type mismatch between indexed read and indexed write methods: "
                                 + getName());
             }
-            indexedPropertyType = params[1];
         }
         Class<?> propertyType = getPropertyType();
         if ((propertyType != null) && (!propertyType.isArray() ||

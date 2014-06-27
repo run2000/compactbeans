@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ import java.util.Map.Entry;
  * <p>
  * Here is an example of {@code VetoableChangeSupport} usage that follows
  * the rules and recommendations laid out in the JavaBeans&trade; specification:</p>
- * <pre>
+ * <pre>{@code
  * public class MyBean {
  *     private final VetoableChangeSupport vcs = new VetoableChangeSupport(this);
  *
@@ -64,7 +64,7 @@ import java.util.Map.Entry;
  *
  *     [...]
  * }
- * </pre>
+ * }</pre>
  * <p>
  * A {@code VetoableChangeSupport} instance is thread-safe.</p>
  * <p>
@@ -161,7 +161,7 @@ public final class VetoableChangeSupport implements Serializable {
      * <code>VetoableChangeListenerProxy</code>, perform the cast, and
      * examine the parameter.</p>
      *
-     * <pre>
+     * <pre>{@code
      * VetoableChangeListener[] listeners = bean.getVetoableChangeListeners();
      * for (int i = 0; i &lt; listeners.length; i++) {
      *        if (listeners[i] instanceof VetoableChangeListenerProxy) {
@@ -173,7 +173,7 @@ public final class VetoableChangeSupport implements Serializable {
      *     }
      *   }
      * }
-     *</pre>
+     * }</pre>
      *
      * @see VetoableChangeListenerProxy
      * @return all of the <code>VetoableChangeListeners</code> added or an
@@ -461,6 +461,7 @@ public final class VetoableChangeSupport implements Serializable {
 
         ObjectInputStream.GetField fields = s.readFields();
 
+        @SuppressWarnings("unchecked")
         Hashtable<String, VetoableChangeSupport> children = (Hashtable<String, VetoableChangeSupport>) fields.get("children", null);
         this.source = fields.get("source", null);
         fields.get("vetoableChangeSupportSerializedDataVersion", 2);

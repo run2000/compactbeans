@@ -73,7 +73,9 @@ public final class MethodDescriptor implements FeatureDescriptor {
                 ParameterDescriptor parameterDescriptors[]) {
         this.name = method.getName();
         setMethod(method);
-        this.parameterDescriptors = parameterDescriptors;
+        this.parameterDescriptors = (parameterDescriptors != null)
+                ? parameterDescriptors.clone()
+                : null;
         this.descriptorData = null;
     }
 
@@ -92,10 +94,9 @@ public final class MethodDescriptor implements FeatureDescriptor {
             classRef = y.classRef;
         }
 
-        methodRef = x.methodRef;
-        if (y.methodRef != null) {
-            methodRef = y.methodRef;
-        }
+        methodRef = RefUtil.createSoftReference(
+                resolve(RefUtil.getObject(x.methodRef),
+                        RefUtil.getObject(y.methodRef)));
         params = x.params;
         if (y.params != null) {
             params = y.params;
@@ -121,6 +122,16 @@ public final class MethodDescriptor implements FeatureDescriptor {
         } else {
             descriptorData = new DescriptorData(x.descriptorData, y.descriptorData);
         }
+    }
+
+    private static Method resolve(Method oldMethod, Method newMethod) {
+        if (oldMethod == null) {
+            return newMethod;
+        }
+        if (newMethod == null) {
+            return oldMethod;
+        }
+        return (!oldMethod.isSynthetic() && newMethod.isSynthetic()) ? oldMethod : newMethod;
     }
 
     /*

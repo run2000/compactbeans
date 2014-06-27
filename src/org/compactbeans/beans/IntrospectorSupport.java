@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -156,7 +156,20 @@ final class IntrospectorSupport {
                 for (int i = 0; i < result.length; i++) {
                     Method method = result[i];
                     if (!method.getDeclaringClass().equals(clz)) {
-                        result[i] = null;
+                        result[i] = null; // ignore methods declared elsewhere
+                    }
+                    else {
+                        try {
+                            method = MethodFinder.findAccessibleMethod(method);
+                            Class<?> type = method.getDeclaringClass();
+                            result[i] = type.equals(clz) || type.isInterface()
+                                    ? method
+                                    : null; // ignore methods from superclasses
+                        }
+                        catch (NoSuchMethodException exception) {
+                            // commented out because of 6976577
+                            // result[i] = null; // ignore inaccessible methods
+                        }
                     }
                 }
                 declaredMethodCache.put(clz, result);
@@ -204,11 +217,12 @@ final class IntrospectorSupport {
                     }
                 } else {
                     if (pd.getReadMethod() != null) {
+                        String pdName = pd.getReadMethod().getName();
                         if (gpd != null) {
                             // Don't replace the existing read
                             // method if it starts with "is"
-                            Method method = gpd.getReadMethod();
-                            if (!method.getName().startsWith(IntrospectorSupport.IS_PREFIX)) {
+                            String gpdName = gpd.getReadMethod().getName();
+                            if (gpdName.equals(pdName) || !gpdName.startsWith(IS_PREFIX)) {
                                 gpd = new PropertyDescriptor(gpd, pd);
                             }
                         } else {
@@ -226,8 +240,7 @@ final class IntrospectorSupport {
                     ipd = (IndexedPropertyDescriptor) pd;
                     if (ipd.getIndexedWriteMethod() != null) {
                         if (igpd != null) {
-                            if (igpd.getIndexedPropertyType()
-                                    == ipd.getIndexedPropertyType()) {
+                            if (isAssignable(igpd.getIndexedPropertyType(), ipd.getIndexedPropertyType())) {
                                 if (ispd != null) {
                                     ispd = new IndexedPropertyDescriptor(ispd, ipd);
                                 } else {
@@ -245,7 +258,7 @@ final class IntrospectorSupport {
                 } else {
                     if (pd.getWriteMethod() != null) {
                         if (gpd != null) {
-                            if (gpd.getPropertyType() == pd.getPropertyType()) {
+                            if (isAssignable(gpd.getPropertyType(), pd.getPropertyType())) {
                                 if (spd != null) {
                                     spd = new PropertyDescriptor(spd, pd);
                                 } else {
@@ -348,6 +361,12 @@ final class IntrospectorSupport {
         }
 
         return properties;
+    }
+
+    private static boolean isAssignable(Class<?> current, Class<?> candidate) {
+        return ((current == null) || (candidate == null))
+                ? (current == candidate)
+                : current.isAssignableFrom(candidate);
     }
 
     /**

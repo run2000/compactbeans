@@ -395,6 +395,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Sets the method that should be used to read the property value.
      *
      * @param readMethod The new read method.
+     * @throws IntrospectionException if the read method is invalid
      */
     synchronized void setReadMethod(Method readMethod)
             throws IntrospectionException {
@@ -464,6 +465,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Sets the method that should be used to write the property value.
      *
      * @param writeMethod The new write method.
+     * @throws IntrospectionException if the write method is invalid
      */
     synchronized void setWriteMethod(Method writeMethod)
             throws IntrospectionException {
