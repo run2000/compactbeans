@@ -6,13 +6,13 @@ associated Descriptor classes, targeted at Java 1.8SE Compact Profile 1.
 The intended platform is a small server-like device capable of running
 JavaSE embedded, such as a Raspberry Pi.
 
-The code is based on the openjdk7u60 source bundle, downloaded from the
-Mercurial repository at http://hg.openjdk.java.net/jdk7u/jdk7u60
+The code is based on the openjdk8u20-dev source bundle, downloaded from the
+Mercurial repository at http://hg.openjdk.java.net/jdk8u/jdk8u20-dev
 
 License
 -------
 
-The license is the same as for OpenJDK7 itself. That is, GPL version 2 only,
+The license is the same as for OpenJDK8 itself. That is, GPL version 2 only,
 with the "Classpath" exception as described in the LICENSE file.
 
 This can be found on the OpenJDK web site at
