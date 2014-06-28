@@ -123,6 +123,14 @@
               failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test7193977" fork="true"
               failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test8027648" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test8027905" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test8039776" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test8040656" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.TestEquals" fork="true"
               failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.TestListeners" fork="true"
