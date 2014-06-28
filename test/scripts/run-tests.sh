@@ -51,6 +51,10 @@ $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7186794
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7189112
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7192955
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7193977
+$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test8027648
+$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test8027905
+$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test8039776
+$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test8040656
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.TestEquals
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.TestListeners
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.TestSerialization
