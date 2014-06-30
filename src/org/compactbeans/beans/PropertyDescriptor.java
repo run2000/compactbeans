@@ -588,8 +588,8 @@ public class PropertyDescriptor implements FeatureDescriptor {
      * Returns the property type that corresponds to the read and write method.
      * The type precedence is given to the readMethod.
      *
-     * @return the type of the property descriptor or null if both
-     * read and write methods are null.
+     * @return the type of the property descriptor or <code>null</code> if both
+     * read and write methods are <code>null</code>.
      * @throws IntrospectionException if the read or write method is invalid
      */
     private Class<?> findPropertyType(Method readMethod, Method writeMethod)
@@ -614,7 +614,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
                     throw new IntrospectionException("bad write method arg count: "
                             + writeMethod);
                 }
-                if (propertyType != null && !params[0].isAssignableFrom(propertyType)) {
+                if ((propertyType != null) && !params[0].isAssignableFrom(propertyType)) {
                     throw new IntrospectionException("type mismatch between read and write methods");
                 }
                 propertyType = params[0];
