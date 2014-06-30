@@ -807,7 +807,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
         if (this.constrained) {
             sb.append("; constrained");
         }
-        appendTo(sb, "propertyType", this.propertyTypeRef);
+        appendTo(sb, "propertyType", RefUtil.getObject(this.propertyTypeRef));
         appendTo(sb, "readMethod", this.readMethodRef.get());
         appendTo(sb, "writeMethod", this.writeMethodRef.get());
         appendTo(sb);
@@ -823,7 +823,7 @@ public class PropertyDescriptor implements FeatureDescriptor {
         }
     }
 
-    private boolean isAssignable(Method m1, Method m2) {
+    boolean isAssignable(Method m1, Method m2) {
         if (m1 == null) {
             return true; // choose second method
         }
