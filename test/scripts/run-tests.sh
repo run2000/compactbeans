@@ -47,6 +47,7 @@ $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test6963811
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.x6976577.Test6976577
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.x7122138.Test7122138
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7148143
+$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7172865
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7186794
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7189112
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test7192955
