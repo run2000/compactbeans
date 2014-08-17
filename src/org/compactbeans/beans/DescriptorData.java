@@ -44,14 +44,17 @@ import java.util.Map.Entry;
  * </p>
  */
 public class DescriptorData implements Serializable, Cloneable {
-    private static final long serialVersionUID = -6556452834342672815L;
+    private static final long serialVersionUID = 8369929748202289702L;
 
-    private boolean expert;
-    private boolean hidden;
-    private boolean preferred;
+    private static final int EXPERT_FLAG = 1;
+    private static final int HIDDEN_FLAG = 2;
+    private static final int PREFERRED_FLAG = 4;
+    private static final int ALL_FLAGS = 7;
+
     private String shortDescription;
     private String displayName;
     private Hashtable<String, Object> table;
+    private int flags;
 
     /**
      * Constructs an empty <code>DescriptorData</code> object.
@@ -70,9 +73,7 @@ public class DescriptorData implements Serializable, Cloneable {
      * @param y  The second (higher priority) MethodDescriptor
      */
     DescriptorData(DescriptorData x, DescriptorData y) {
-        expert = x.expert | y.expert;
-        hidden = x.hidden | y.hidden;
-        preferred = x.preferred | y.preferred;
+        flags = x.flags | y.flags;
         shortDescription = x.shortDescription;
         if (y.shortDescription != null) {
             shortDescription = y.shortDescription;
@@ -90,9 +91,7 @@ public class DescriptorData implements Serializable, Cloneable {
      * This must isolate the new object from any changes to the old object.
      */
     DescriptorData(DescriptorData old) {
-        expert = old.expert;
-        hidden = old.hidden;
-        preferred = old.preferred;
+        flags = old.flags;
         shortDescription = old.shortDescription;
         displayName = old.displayName;
 
@@ -109,7 +108,9 @@ public class DescriptorData implements Serializable, Cloneable {
     public Object clone() {
         try {
             DescriptorData newData = (DescriptorData) super.clone();
-            newData.addTable(this.table);
+            if(this.table != null) {
+                newData.table = new Hashtable<String, Object>(this.table);
+            }
             return newData;
         } catch(CloneNotSupportedException ex) {
             throw new RuntimeException("Not cloneable");
@@ -144,7 +145,7 @@ public class DescriptorData implements Serializable, Cloneable {
      * experts only.
      */
     public boolean isExpert() {
-        return expert;
+        return (flags & EXPERT_FLAG) != 0;
     }
 
     /**
@@ -155,7 +156,8 @@ public class DescriptorData implements Serializable, Cloneable {
      * by experts only.
      */
     public void setExpert(boolean expert) {
-        this.expert = expert;
+        this.flags = (this.flags & (ALL_FLAGS - EXPERT_FLAG)) +
+                (expert ? EXPERT_FLAG : 0);
     }
 
     /**
@@ -166,7 +168,7 @@ public class DescriptorData implements Serializable, Cloneable {
      * human users.
      */
     public boolean isHidden() {
-        return hidden;
+        return (flags & HIDDEN_FLAG) != 0;
     }
 
     /**
@@ -177,7 +179,8 @@ public class DescriptorData implements Serializable, Cloneable {
      * human users.
      */
     public void setHidden(boolean hidden) {
-        this.hidden = hidden;
+        this.flags = (this.flags & (ALL_FLAGS - HIDDEN_FLAG)) +
+                (hidden ? HIDDEN_FLAG : 0);
     }
 
     /**
@@ -188,7 +191,7 @@ public class DescriptorData implements Serializable, Cloneable {
      * shown to human users.
      */
     public boolean isPreferred() {
-        return preferred;
+        return (flags & PREFERRED_FLAG) != 0;
     }
 
     /**
@@ -199,7 +202,8 @@ public class DescriptorData implements Serializable, Cloneable {
      * preferentially shown to human users.
      */
     public void setPreferred(boolean preferred) {
-        this.preferred = preferred;
+        this.flags = (this.flags & (ALL_FLAGS - PREFERRED_FLAG)) +
+                (preferred ? PREFERRED_FLAG : 0);
     }
 
     /**
@@ -325,13 +329,7 @@ public class DescriptorData implements Serializable, Cloneable {
 
         DescriptorData that = (DescriptorData) o;
 
-        if (expert != that.expert) {
-            return false;
-        }
-        if (hidden != that.hidden) {
-            return false;
-        }
-        if (preferred != that.preferred) {
+        if (flags != that.flags) {
             return false;
         }
         if ((displayName != null) ? !displayName.equals(that.displayName) : (that.displayName != null)) {
@@ -348,9 +346,7 @@ public class DescriptorData implements Serializable, Cloneable {
         int result = (table != null ? table.hashCode() : 0);
         result = 31 * result + (shortDescription != null ? shortDescription.hashCode() : 0);
         result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-        result = 31 * result + (hidden ? 1 : 0);
-        result = 31 * result + (preferred ? 1 : 0);
-        result = 31 * result + (expert ? 1 : 0);
+        result = 31 * result + flags;
         return result;
     }
 
@@ -365,9 +361,9 @@ public class DescriptorData implements Serializable, Cloneable {
         sb.append('[');
         appendTo(sb, "displayName", this.displayName);
         appendTo(sb, "shortDescription", this.shortDescription);
-        appendTo(sb, "preferred", this.preferred);
-        appendTo(sb, "hidden", this.hidden);
-        appendTo(sb, "expert", this.expert);
+        appendTo(sb, "preferred", ((this.flags & PREFERRED_FLAG) != 0));
+        appendTo(sb, "hidden", ((this.flags & HIDDEN_FLAG) != 0));
+        appendTo(sb, "expert", ((this.flags & EXPERT_FLAG) != 0));
         if ((this.table != null) && !this.table.isEmpty()) {
             sb.append("values={");
             for (Entry<String, Object> entry : this.table.entrySet()) {
