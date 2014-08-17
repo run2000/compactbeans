@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
 final class BeanInfoFinder {
 
     private static final String DEFAULT = "sun.beans.infos";
-    private static final String DEFAULT_NEW = "com.sun.beans.infos";
+    private static final String DEFAULT_NEW = "org.compactbeans.infos";
 
     protected static final String[] EMPTY = { };
 
