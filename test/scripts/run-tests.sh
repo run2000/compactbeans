@@ -59,3 +59,4 @@ $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.Test8040656
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.TestEquals
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.TestListeners
 $JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.TestSerialization
+$JAVA_EXE -cp $TESTPATH org.compactbeans.beans.test.DescriptorDataTest
