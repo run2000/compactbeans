@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2014, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import java.util.Objects;
  * @jdksource sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl
  */
 final class GenericArrayTypeImpl implements GenericArrayType {
-    private Type genericComponentType;
+    private final Type genericComponentType;
 
     // private constructor enforces use of static factory
     private GenericArrayTypeImpl(Type ct) {
@@ -50,7 +50,6 @@ final class GenericArrayTypeImpl implements GenericArrayType {
     public static GenericArrayTypeImpl make(Type ct) {
         return new GenericArrayTypeImpl(ct);
     }
-
 
     /**
      * Returns a <code>Type</code> object representing the component type
