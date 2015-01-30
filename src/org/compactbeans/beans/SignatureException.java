@@ -24,6 +24,9 @@
  */
 package org.compactbeans.beans;
 
+/**
+ * @jdksource com.sun.beans.finder.SignatureException
+ */
 final class SignatureException extends RuntimeException {
     private static final long serialVersionUID = 4536098341586118473L;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2014, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -285,27 +285,53 @@ final class IntrospectorSupport {
             if ((igpd != null) && (ispd != null)) {
                 // Complete indexed properties set
                 // Merge any classic property descriptors
-                if (gpd != null) {
-                    PropertyDescriptor tpd = mergePropertyDescriptorWithIndexed(igpd, gpd);
-                    if (tpd instanceof IndexedPropertyDescriptor) {
-                        igpd = (IndexedPropertyDescriptor) tpd;
-                    }
-                }
-                if (spd != null) {
-                    PropertyDescriptor tpd = mergePropertyDescriptorWithIndexed(ispd, spd);
-                    if (tpd instanceof IndexedPropertyDescriptor) {
-                        ispd = (IndexedPropertyDescriptor) tpd;
-                    }
+                if ((gpd == spd) || (gpd == null)) {
+                    pd = spd;
+                } else if (spd == null) {
+                    pd = gpd;
+                } else if (spd instanceof IndexedPropertyDescriptor) {
+                    pd = mergePropertyWithIndexedProperty(gpd, (IndexedPropertyDescriptor) spd);
+                } else if (gpd instanceof IndexedPropertyDescriptor) {
+                    pd = mergePropertyWithIndexedProperty(spd, (IndexedPropertyDescriptor) gpd);
+                } else {
+                    pd = mergePropertyDescriptors(gpd, spd);
                 }
                 if (igpd == ispd) {
-                    pd = igpd;
+                    ipd = igpd;
                 } else {
-                    pd = mergeIndexedPropertyDescriptors(igpd, ispd);
+                    ipd = mergeIndexedPropertyDescriptors(igpd, ispd);
+                }
+                if (pd == null) {
+                    pd = ipd;
+                } else {
+                    Class<?> propType = pd.getPropertyType();
+                    Class<?> ipropType = ipd.getIndexedPropertyType();
+                    if (propType.isArray() && (propType.getComponentType() == ipropType)) {
+                        pd = pd.getClass0().isAssignableFrom(ipd.getClass0())
+                                ? new IndexedPropertyDescriptor(pd, ipd)
+                                : new IndexedPropertyDescriptor(ipd, pd);
+                    } else if (pd.getClass0().isAssignableFrom(ipd.getClass0())) {
+                        pd = pd.getClass0().isAssignableFrom(ipd.getClass0())
+                                ? new PropertyDescriptor(pd, ipd)
+                                : new PropertyDescriptor(ipd, pd);
+                    } else {
+                        pd = ipd;
+                    }
                 }
             } else if ((gpd != null) && (spd != null)) {
+                if (igpd != null) {
+                    gpd = mergePropertyWithIndexedProperty(gpd, igpd);
+                }
+                if (ispd != null) {
+                    spd = mergePropertyWithIndexedProperty(spd, ispd);
+                }
                 // Complete simple properties set
                 if (gpd == spd) {
                     pd = gpd;
+                } else if (spd instanceof IndexedPropertyDescriptor) {
+                    pd = mergePropertyWithIndexedProperty(gpd, (IndexedPropertyDescriptor) spd);
+                } else if (gpd instanceof IndexedPropertyDescriptor) {
+                    pd = mergePropertyWithIndexedProperty(spd, (IndexedPropertyDescriptor) gpd);
                 } else {
                     pd = mergePropertyDescriptors(gpd, spd);
                 }
@@ -369,6 +395,16 @@ final class IntrospectorSupport {
                 : current.isAssignableFrom(candidate);
     }
 
+    private static PropertyDescriptor mergePropertyWithIndexedProperty(PropertyDescriptor pd, IndexedPropertyDescriptor ipd) {
+        Class<?> type = pd.getPropertyType();
+        if (type.isArray() && (type.getComponentType() == ipd.getIndexedPropertyType())) {
+            return pd.getClass0().isAssignableFrom(ipd.getClass0())
+                    ? new IndexedPropertyDescriptor(pd, ipd)
+                    : new IndexedPropertyDescriptor(ipd, pd);
+        }
+        return pd;
+    }
+
     /**
      * Adds the property descriptor to the indexed property descriptor
      * only if the types are the same.
@@ -388,6 +424,12 @@ final class IntrospectorSupport {
             } else {
                 result = new IndexedPropertyDescriptor(ipd, pd);
             }
+        } else if ((ipd.getReadMethod() == null) && (ipd.getWriteMethod() == null)) {
+            if (pd.getClass0().isAssignableFrom(ipd.getClass0())) {
+                result = new PropertyDescriptor(pd, ipd);
+            } else {
+                result = new PropertyDescriptor(ipd, pd);
+            }
         } else {
             // Cannot merge the pd because of type mismatch
             // Return the most specific pd
@@ -401,8 +443,8 @@ final class IntrospectorSupport {
                 Method read = result.getReadMethod();
 
                 if ((read == null) && (write != null)) {
-                    read = IntrospectorSupport.findMethod(result.getClass0(),
-                            IntrospectorSupport.GET_PREFIX + NameGenerator.capitalize(result.getName()), 0);
+                    read = findMethod(result.getClass0(),
+                            GET_PREFIX + NameGenerator.capitalize(result.getName()), 0);
                     if (read != null) {
                         try {
                             result.setReadMethod(read);
@@ -412,9 +454,9 @@ final class IntrospectorSupport {
                     }
                 }
                 if ((write == null) && (read != null)) {
-                    write = IntrospectorSupport.findMethod(result.getClass0(),
-                            IntrospectorSupport.SET_PREFIX + NameGenerator.capitalize(result.getName()), 1,
-                            new Class<?>[]{read.getReturnType()});
+                    write = findMethod(result.getClass0(),
+                            SET_PREFIX + NameGenerator.capitalize(result.getName()), 1,
+                            new Class<?>[]{getReturnType(result.getClass0(), read)});
                     if (write != null) {
                         try {
                             result.setWriteMethod(write);
@@ -443,7 +485,7 @@ final class IntrospectorSupport {
     /**
      * Handle regular indexed property descriptor merge.
      */
-    private static PropertyDescriptor mergeIndexedPropertyDescriptors(
+    private static IndexedPropertyDescriptor mergeIndexedPropertyDescriptors(
             IndexedPropertyDescriptor ipd1, IndexedPropertyDescriptor ipd2) {
         if (ipd1.getClass0().isAssignableFrom(ipd2.getClass0())) {
             return new IndexedPropertyDescriptor(ipd1, ipd2);

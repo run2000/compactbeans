@@ -129,6 +129,10 @@
               failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test8027905" fork="true"
               failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test8034085" fork="true"
+              failonerror="true" classpath="${testcp}" />
+        <java classname="org.compactbeans.beans.test.Test8034164" fork="true"
+              failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test8039776" fork="true"
               failonerror="true" classpath="${testcp}" />
         <java classname="org.compactbeans.beans.test.Test8040656" fork="true"
