@@ -1,8 +1,8 @@
 Overview
 ========
 
-This is the test suite, based on the openjdk8u20-dev test suite, downloaded
-from the Mercurial repository at http://hg.openjdk.java.net/jdk8u/jdk8u20-dev
+This is the test suite, based on the openjdk8u40 test suite, downloaded
+from the Mercurial repository at http://hg.openjdk.java.net/jdk8u/jdk8u40
 
 License
 -------
