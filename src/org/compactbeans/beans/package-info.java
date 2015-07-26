@@ -27,9 +27,9 @@
  * This is a separated-out implementation of the java.beans.Introspector and
  * associated Descriptor classes, targeted at JavaSE 1.8 Compact Profile 1.
  * <p>
- * The code is based on the openjdk8u40 source bundle, downloaded from the
+ * The code is based on the openjdk8u60 source bundle, downloaded from the
  * Mercurial repository at 
- * <a href="http://hg.openjdk.java.net/jdk8u/jdk8u40">http://hg.openjdk.java.net/jdk8u/jdk8u40</a>.
+ * <a href="http://hg.openjdk.java.net/jdk8u/jdk8u60">http://hg.openjdk.java.net/jdk8u/jdk8u60</a>.
  * </p>
  * <p>
  * The license is the same as for OpenJDK8 itself. That is, GPL version 2 only,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2015, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -32,9 +32,6 @@ import java.io.ObjectStreamClass;
 import java.io.StreamCorruptedException;
 
 import java.lang.reflect.Modifier;
-
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 /**
  * This class provides some general purpose beans control methods.
@@ -79,7 +76,6 @@ public final class Beans {
      */
 
     public static Object instantiate(ClassLoader cls, String beanName) throws IOException, ClassNotFoundException {
-        ClassLoader cls1 = cls;
 
         InputStream ins;
         ObjectInputStream oins = null;
@@ -92,9 +88,9 @@ public final class Beans {
         // use that instead.
         // Note that calls on the system class loader will
         // look in the bootstrap class loader first.
-        if (cls1 == null) {
+        if (cls == null) {
             try {
-                cls1 = ClassLoader.getSystemClassLoader();
+                cls = ClassLoader.getSystemClassLoader();
             } catch (SecurityException ex) {
                 // We're not allowed to access the system class loader.
                 // Drop through.
@@ -103,22 +99,16 @@ public final class Beans {
 
         // Try to find a serialized object with this name
         final String serName = beanName.replace('.', '/').concat(".ser");
-        final ClassLoader loader = cls1;
-        ins = AccessController.doPrivileged
-            (new PrivilegedAction<InputStream>() {
-                public InputStream run() {
-                    if (loader == null)
-                        return ClassLoader.getSystemResourceAsStream(serName);
-                    else
-                        return loader.getResourceAsStream(serName);
-                }
-        });
+        if (cls == null)
+            ins =  ClassLoader.getSystemResourceAsStream(serName);
+        else
+            ins =  cls.getResourceAsStream(serName);
         if (ins != null) {
             try {
-                if (cls1 == null) {
+                if (cls == null) {
                     oins = new ObjectInputStream(ins);
                 } else {
-                    oins = new ObjectInputStreamWithLoader(ins, cls1);
+                    oins = new ObjectInputStreamWithLoader(ins, cls);
                 }
                 result = oins.readObject();
                 serialized = true;
@@ -139,7 +129,7 @@ public final class Beans {
             Class<?> cl;
 
             try {
-                cl = ClassFinder.findClass(beanName, cls1);
+                cl = ClassFinder.findClass(beanName, cls);
             } catch (ClassNotFoundException ex) {
                 // There is no appropriate class.  If we earlier tried to
                 // deserialize an object and got an IO exception, throw that,
